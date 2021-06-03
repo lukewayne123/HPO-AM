@@ -158,7 +158,7 @@ if __name__ == "__main__":  # noqa: C901
         save_replay_buffer=args.save_replay_buffer,
         verbose=args.verbose,
         vec_env_type=args.vec_env,
-        classifier = args.classifier
+        # classifier = args.classifier
     )
 
     # Prepare experiment and launch hyperparameter optimization if needed

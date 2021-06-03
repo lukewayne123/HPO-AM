@@ -177,7 +177,7 @@ class HPG(OnPolicyAlgorithm):
         # if args.algo == 'HPG':
         #     print("args.algo == 'HPG' can use in hpg.py")
         # print("custom_hyperparams: ",self.custom_hyperparams)
-        print("self .classifier",self.classifier)
+        print("in hpg.py def train: self .classifier",self.classifier)
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
