@@ -74,6 +74,7 @@ class ExperimentManager(object):
         verbose: int = 1,
         vec_env_type: str = "dummy",
         n_eval_envs: int = 1,
+        classifier: str="AM"
     ):
         super(ExperimentManager, self).__init__()
         self.algo = algo
@@ -99,6 +100,7 @@ class ExperimentManager(object):
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
         self.n_eval_envs = n_eval_envs
+        
 
         self.n_envs = 1  # it will be updated when reading hyperparams
         self.n_actions = None  # For DDPG/TD3 action noise objects
@@ -126,6 +128,7 @@ class ExperimentManager(object):
         # Logging
         self.log_folder = log_folder
         self.tensorboard_log = None if tensorboard_log == "" else os.path.join(tensorboard_log, env_id)
+        self.classifier = classifier
         self.verbose = verbose
         self.args = args
         self.log_interval = log_interval
@@ -154,7 +157,7 @@ class ExperimentManager(object):
         env = self.create_envs(self.n_envs, no_log=False)
 
         self._hyperparams = self._preprocess_action_noise(hyperparams, saved_hyperparams, env)
-
+        # print("self._hyperparams",self._hyperparams)
         if self.continue_training:
             model = self._load_pretrained_agent(self._hyperparams, env)
         elif self.optimize_hyperparameters:

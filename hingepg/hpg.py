@@ -79,6 +79,7 @@ class HPG(OnPolicyAlgorithm):
         create_eval_env: bool = False,
         policy_kwargs: Optional[Dict[str, Any]] = None,
         verbose: int = 0,
+        classifier: int =0,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
@@ -99,6 +100,7 @@ class HPG(OnPolicyAlgorithm):
             tensorboard_log=tensorboard_log,
             policy_kwargs=policy_kwargs,
             verbose=verbose,
+            # classifier=classifier,#super is for  inherit class ,inherit class does not have classifier
             device=device,
             create_eval_env=create_eval_env,
             seed=seed,
@@ -133,7 +135,7 @@ class HPG(OnPolicyAlgorithm):
         self.clip_range = clip_range
         self.clip_range_vf = clip_range_vf
         self.target_kl = target_kl
-
+        self.classifier = classifier
         if _init_setup_model:
             self._setup_model()
 
@@ -172,8 +174,10 @@ class HPG(OnPolicyAlgorithm):
         ratio_p = []
 
         alpha = 0.1
-
-
+        # if args.algo == 'HPG':
+        #     print("args.algo == 'HPG' can use in hpg.py")
+        # print("custom_hyperparams: ",self.custom_hyperparams)
+        print("self .classifier",self.classifier)
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
