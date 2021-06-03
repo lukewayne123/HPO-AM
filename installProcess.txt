@@ -1,0 +1,9 @@
+
+System:
+apt-get install gcc g++ cmake git vim zlib1g zlib1g-dev swig
+
+rl-baselines3:
+pip install -r requirement.txt
+
+atari-py:
+pip install -e .
