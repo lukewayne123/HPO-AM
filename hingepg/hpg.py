@@ -213,16 +213,19 @@ class HPG(OnPolicyAlgorithm):
                 
                 # HPG: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
-                #x1 = th.exp(log_prob - rollout_data.old_log_prob) # ratio
-                #x2 = th.ones_like(x1.clone().detach())
-
+                if self.classifier == "AM":
+                    ## not sure this is AM ?
+                    x1 = th.exp(log_prob - rollout_data.old_log_prob) # ratio
+                    x2 = th.ones_like(x1.clone().detach())
+                elif self.classifier == "AM-log":
                 # log(pi) - log(mu)
-                #x1 = log_prob
-                #x2 = rollout_data.old_log_prob
+                    x1 = log_prob
+                    x2 = rollout_data.old_log_prob
 
                 # root: (pi/mu)^(1/2) - 1
-                x1 = th.sqrt(th.exp(log_prob - rollout_data.old_log_prob)) # ratio
-                x2 = th.ones_like(x1.clone().detach())
+                elif self.classifier == "AM-root":
+                    x1 = th.sqrt(th.exp(log_prob - rollout_data.old_log_prob)) # ratio
+                    x2 = th.ones_like(x1.clone().detach())
 
                 #advantages = rollout_data.advantages.cpu().detach()
                 advantages = rollout_data.advantages.detach()

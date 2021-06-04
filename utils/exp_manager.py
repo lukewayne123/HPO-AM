@@ -129,6 +129,7 @@ class ExperimentManager(object):
         self.log_folder = log_folder
         self.tensorboard_log = None if tensorboard_log == "" else os.path.join(tensorboard_log, env_id)
         self.classifier = classifier
+        # print("classifier in exp_manager",classifier) am log
         self.verbose = verbose
         self.args = args
         self.log_interval = log_interval
@@ -164,13 +165,23 @@ class ExperimentManager(object):
             return None
         else:
             # Train an agent from scratch
-            model = ALGOS[self.algo](
-                env=env,
-                tensorboard_log=self.tensorboard_log,
-                seed=self.seed,
-                verbose=self.verbose,
-                **self._hyperparams,
-            )
+            if self.algo=='hpg':
+                model = ALGOS[self.algo](
+                    env=env,
+                    tensorboard_log=self.tensorboard_log,
+                    seed=self.seed,
+                    verbose=self.verbose,
+                    classifier = self.classifier,
+                    **self._hyperparams,
+                )
+            else:
+                model = ALGOS[self.algo](
+                    env=env,
+                    tensorboard_log=self.tensorboard_log,
+                    seed=self.seed,
+                    verbose=self.verbose,
+                    **self._hyperparams,
+                )
 
         self._save_config(saved_hyperparams)
         return model

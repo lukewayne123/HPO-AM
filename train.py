@@ -149,6 +149,7 @@ if __name__ == "__main__":  # noqa: C901
         args.n_jobs,
         args.sampler,
         args.pruner,
+        # args.classifier,
         n_startup_trials=args.n_startup_trials,
         n_evaluations=args.n_evaluations,
         truncate_last_trajectory=args.truncate_last_trajectory,
@@ -158,7 +159,7 @@ if __name__ == "__main__":  # noqa: C901
         save_replay_buffer=args.save_replay_buffer,
         verbose=args.verbose,
         vec_env_type=args.vec_env,
-        # classifier = args.classifier
+        classifier = args.classifier
     )
 
     # Prepare experiment and launch hyperparameter optimization if needed
