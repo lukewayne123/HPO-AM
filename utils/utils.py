@@ -18,7 +18,8 @@ from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecEnv,
 # For custom activation fn
 from torch import nn as nn  # noqa: F401 pylint: disable=unused-import
 
-from hingepg import HPG
+#from hingepg import HPG
+from hpo import HPO
 
 ALGOS = {
     "a2c": A2C,
@@ -32,7 +33,8 @@ ALGOS = {
     "qrdqn": QRDQN,
     "tqc": TQC,
     # HPG
-    "hpg": HPG
+    #"hpg": HPG
+    "hpo": HPO
 }
 
 

@@ -14,7 +14,7 @@ from stable_baselines3.common.utils import explained_variance, get_schedule_fn
 
 import math
 
-class HPG(OnPolicyAlgorithm):
+class HPO(OnPolicyAlgorithm):
     """
     :param policy: The policy model to use (MlpPolicy, CnnPolicy, ...)
     :param env: The environment to learn from (if registered in Gym, can be str)
@@ -86,7 +86,7 @@ class HPG(OnPolicyAlgorithm):
         _init_setup_model: bool = True,
     ):
 
-        super(HPG, self).__init__(
+        super(HPO, self).__init__(
             policy,
             env,
             learning_rate=learning_rate,
@@ -141,7 +141,7 @@ class HPG(OnPolicyAlgorithm):
             self._setup_model()
 
     def _setup_model(self) -> None:
-        super(HPG, self)._setup_model()
+        super(HPO, self)._setup_model()
 
         # Initialize schedules for policy/value clipping
         self.clip_range = get_schedule_fn(self.clip_range)
@@ -175,8 +175,8 @@ class HPG(OnPolicyAlgorithm):
         ratio_p = []
 
         alpha = 0.1
-        # if args.algo == 'HPG':
-        #     print("args.algo == 'HPG' can use in hpg.py")
+        # if args.algo == 'HPO':
+        #     print("args.algo == 'HPO' can use in hpg.py")
         # print("custom_hyperparams: ",self.custom_hyperparams)
         print("in hpg.py def train: self .classifier",self.classifier)
         # train for n_epochs epochs
@@ -211,7 +211,7 @@ class HPG(OnPolicyAlgorithm):
                 #policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
                 #policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
                 
-                # HPG: max(0, epsilon - weight_a (ratio - 1))
+                # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
                 if self.classifier == "AM":
                     ## not sure this is AM ?
@@ -380,13 +380,13 @@ class HPG(OnPolicyAlgorithm):
         if self.clip_range_vf is not None:
             logger.record("train/clip_range_vf", clip_range_vf)
 
-        # HPG
-        logger.record("HPG/margin", np.mean(margins))
-        #logger.record("HPG/positive_advantage", np.mean(positive_a))
-        #logger.record("HPG/negative_advantage", np.mean(negative_a))
-        logger.record("HPG/positive_advantage_prob", np.mean(positive_p))
-        logger.record("HPG/negative_advantage_prob", np.mean(negative_p))
-        logger.record("HPG/prob_ratio", np.mean(ratio_p))
+        # HPO
+        logger.record("HPO/margin", np.mean(margins))
+        #logger.record("HPO/positive_advantage", np.mean(positive_a))
+        #logger.record("HPO/negative_advantage", np.mean(negative_a))
+        logger.record("HPO/positive_advantage_prob", np.mean(positive_p))
+        logger.record("HPO/negative_advantage_prob", np.mean(negative_p))
+        logger.record("HPO/prob_ratio", np.mean(ratio_p))
 
     def learn(
         self,
@@ -396,12 +396,12 @@ class HPG(OnPolicyAlgorithm):
         eval_env: Optional[GymEnv] = None,
         eval_freq: int = -1,
         n_eval_episodes: int = 5,
-        tb_log_name: str = "HPG",
+        tb_log_name: str = "HPO",
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
-    ) -> "HPG":
+    ) -> "HPO":
 
-        return super(HPG, self).learn(
+        return super(HPO, self).learn(
             total_timesteps=total_timesteps,
             callback=callback,
             log_interval=log_interval,
