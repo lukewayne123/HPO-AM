@@ -200,14 +200,14 @@ class HPO(OnPolicyAlgorithm):
         print("in hpg.py def train: self .classifier",self.classifier)
         
         # Hard update for target policy -6~8
-        #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
+        polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
             # Hard update for target policy - 9
-            polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
+            #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
             for rollout_data in self.rollout_buffer.get(self.batch_size):
                 # print("len(rollout_data): ",len(rollout_data))
                 
@@ -223,16 +223,16 @@ class HPO(OnPolicyAlgorithm):
                 if self.use_sde:
                     self.policy.reset_noise(self.batch_size)
 
-                values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                #values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                #
+                ##_, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ##values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                #values = values.flatten()
                 
-                #_, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                #values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
-                values = values.flatten()
-                
-                #val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                ## print("values before flatten",values)
-                #val_values = val_values.flatten()
-                ## print("values after flatten",val_values)# v use this
+                val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                # print("values before flatten",values)
+                val_values = val_values.flatten()
+                # print("values after flatten",val_values)# v use this
                 
                 # org version
                 # Normalize advantage
@@ -403,8 +403,9 @@ class HPO(OnPolicyAlgorithm):
                     policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
                 #print("Policy loss", policy_loss_data)
-                #policy_loss = -th.mean(th.stack(policy_loss_data))
-                policy_loss = th.mean(th.stack(policy_loss_data))
+                # debug 6
+                policy_loss = -th.mean(th.stack(policy_loss_data))
+                #policy_loss = th.mean(th.stack(policy_loss_data))
                 #print("Policy loss", policy_loss.item())
                 #for i in range(self.batch_size):
                 #    epsilon[i] = alpha * min(1, prob_ratio[i])
@@ -436,7 +437,7 @@ class HPO(OnPolicyAlgorithm):
                 # Entropy loss favor exploration
                 if entropy is None:
                     # Approximate entropy when no analytical form
-                    entropy_loss = -th.mean(-log_prob)
+                    entropy_loss = -th.mean(-val_log_prob)
                 else:
                     entropy_loss = -th.mean(entropy)
 
@@ -453,7 +454,7 @@ class HPO(OnPolicyAlgorithm):
                 ## Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
-                approx_kl_divs.append(th.mean(rollout_data.old_log_prob - log_prob).detach().cpu().numpy())
+                approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
 
             all_kl_divs.append(np.mean(approx_kl_divs))
 
