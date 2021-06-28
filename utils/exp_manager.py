@@ -165,7 +165,7 @@ class ExperimentManager(object):
             return None
         else:
             # Train an agent from scratch
-            if self.algo=='hpg':
+            if self.algo=='hpo':
                 model = ALGOS[self.algo](
                     env=env,
                     tensorboard_log=self.tensorboard_log,

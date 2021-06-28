@@ -228,6 +228,12 @@ class HPO(OnPolicyAlgorithm):
                 #_, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
                 #values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
                 values = values.flatten()
+                
+                #val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ## print("values before flatten",values)
+                #val_values = val_values.flatten()
+                ## print("values after flatten",val_values)# v use this
+                
                 # org version
                 # Normalize advantage
                 #advantages = rollout_data.advantages
@@ -245,22 +251,23 @@ class HPO(OnPolicyAlgorithm):
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
                 if self.classifier == "AM":
-                    x1 = th.exp(log_prob - rollout_data.old_log_prob) # ratio
+                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 elif self.classifier == "AM-log":# log(pi) - log(mu)
-                    x1 = log_prob
+                    x1 = val_log_prob
                     x2 = rollout_data.old_log_prob
                 elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                    x1 = th.sqrt(th.exp(log_prob - rollout_data.old_log_prob)) # ratio
+                    x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 elif self.classifier == "AM-sub":
-                    x1 = th.exp(log_prob )
+                    x1 = th.exp(val_log_prob )
                     x2 = th.exp(rollout_data.old_log_prob)
                 elif self.classifier == "AM-square":
-                    x1 = th.square(th.exp(log_prob - rollout_data.old_log_prob)) # ratio
+                    x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 #advantages = rollout_data.advantages.cpu().detach()
                 advantages = rollout_data.advantages.detach()
+                # print("advantages",advantages)
                 #abs_adv = np.abs(advantages.cpu())
                 abs_adv = th.abs(advantages)
                 y = advantages / abs_adv
@@ -305,7 +312,22 @@ class HPO(OnPolicyAlgorithm):
                     # print("np.shape(batch_values)",np.shape(batch_values))
                     #batch_values += (v*p).cpu().detach().numpy()
                     #print("batch_values", batch_values)
+                    ## print("action", a, batch_actions[0])
+                    ## batch_actions.full(batch_actions.shape,a)
+                    #values, log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #v = values.flatten().cpu().detach()
+                    #p = th.exp(log_prob).cpu().detach()
+                    ##v = values.flatten()
+                    ##p = th.exp(log_prob)
+                    #print("rollout_data.observations",rollout_data.observations)
+                    #print("Action {}: v={}; log_prob={}/p={}".format(a,  v, log_prob, p))
+                    ## print("")
+                    #batch_values += (v*p).numpy()
+                    ## print("np.shape(batch_values)",np.shape(batch_values))
+                    ##batch_values += (v*p).cpu().detach().numpy()
+                    
                     action_advantages.append(v)
+                    # action_advantages.append(advantages.cpu())
                     action_probs.append(p)
                     
                     #batch_actions += 1
@@ -315,7 +337,10 @@ class HPO(OnPolicyAlgorithm):
                 #         if action_advantages[i][a] > 0:
 
                 #         elif action_advantages[i][a] < 0:
-                # print("action_advantages shape",action_advantages.shape)
+                
+                # print("batch_values", batch_values)
+                # print("action_advantages",action_advantages)
+                # action_advantages = action_advantages.cpu()
                 for i in range(self.action_space.n):
                     # print("action_advantages shape",action_advantages[i].shape)
                     #print("Before A", action_advantages[i])
@@ -395,12 +420,12 @@ class HPO(OnPolicyAlgorithm):
 
                 if self.clip_range_vf is None:
                     # No clipping
-                    values_pred = values
+                    values_pred = val_values
                 else:
                     # Clip the different between old and new value
                     # NOTE: this depends on the reward scaling
                     values_pred = rollout_data.old_values + th.clamp(
-                        values - rollout_data.old_values, -clip_range_vf, clip_range_vf
+                        val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf
                     )
                 # Value loss using the TD(gae_lambda) target
                 #value_loss = F.mse_loss(rollout_data.returns.unsqueeze(1), values_pred )
