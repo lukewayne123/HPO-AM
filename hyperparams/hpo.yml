@@ -9,11 +9,13 @@ atari:
   #n_epochs: 100
   #n_epochs: 10
   batch_size: 256
-  #n_timesteps: !!float 1e6
-  n_timesteps: !!float 2e6
+  #batch_size: 24
+  #n_timesteps: !!float 1e3
+  n_timesteps: !!float 1e6
+  #n_timesteps: !!float 2e6
   #n_timesteps: !!float 1e7
   learning_rate: lin_2.5e-4
-  #learning_rate: !!float 1e-4
+  #learning_rate: lin_1e-2
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
   vf_coef: 0.5

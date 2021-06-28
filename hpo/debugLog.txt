@@ -1,0 +1,7 @@
+[0627]
+Try target policy (X) 5
+Fixed (?) policy gradient direction (loss = -policy_loss) (X) 6
+Try value policy (value network apart from policy network) (X) 7
+Try value policy (value network apart from policy network) without 6 (X) 8
+Try change hard update location value policy (value network apart from policy network) without 6 (X) 9
+Try change hard update location without 6 (X?) 10
