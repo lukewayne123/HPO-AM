@@ -153,14 +153,14 @@ class HPO(OnPolicyAlgorithm):
         self.target_policy = self.target_policy.to(self.device)
         self.target_policy.load_state_dict(self.policy.state_dict())
         
-        #self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
-        #    self.observation_space,
-        #    self.action_space,
-        #    self.lr_schedule,
-        #    use_sde=self.use_sde,
-        #    **self.policy_kwargs  # pytype:disable=not-instantiable
-        #)
-        #self.value_policy = self.value_policy.to(self.device)
+        self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
+            self.observation_space,
+            self.action_space,
+            self.lr_schedule,
+            use_sde=self.use_sde,
+            **self.policy_kwargs  # pytype:disable=not-instantiable
+        )
+        self.value_policy = self.value_policy.to(self.device)
 
         # Initialize schedules for policy/value clipping
         self.clip_range = get_schedule_fn(self.clip_range)
@@ -224,12 +224,12 @@ class HPO(OnPolicyAlgorithm):
                     self.policy.reset_noise(self.batch_size)
 
                 #values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                #val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
                 #
-                ##_, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                ##values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                _, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                val_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
                 #values = values.flatten()
                 
-                val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
                 # print("values before flatten",values)
                 val_values = val_values.flatten()
                 # print("values after flatten",val_values)# v use this
@@ -266,9 +266,9 @@ class HPO(OnPolicyAlgorithm):
                     x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 #advantages = rollout_data.advantages.cpu().detach()
-                advantages = rollout_data.advantages.detach()
                 # print("advantages",advantages)
                 #abs_adv = np.abs(advantages.cpu())
+                advantages = rollout_data.advantages.detach()
                 abs_adv = th.abs(advantages)
                 y = advantages / abs_adv
                 #y = advantages / self.batch_size
@@ -286,10 +286,10 @@ class HPO(OnPolicyAlgorithm):
                 batch_values = np.zeros(self.batch_size)
                 action_advantages = []
                 action_probs = []
-                # positive_adv_prob = 0
-                # negative_adv_prob = 0
                 positive_adv_prob = np.zeros(self.batch_size)
                 negative_adv_prob = np.zeros(self.batch_size)
+                # positive_adv_prob = 0
+                # negative_adv_prob = 0
                 # Q-value
                 minMu = np.ones(self.batch_size)
                 epsilon = np.zeros(self.batch_size)
@@ -299,9 +299,10 @@ class HPO(OnPolicyAlgorithm):
                 for a in range(self.action_space.n):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
-                    q_values, a_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #q_values, a_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #q_values, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    _, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     v = q_values.flatten().cpu().detach()
                     p = th.exp(a_log_prob).cpu().detach()
                     batch_values += (v*p).numpy()
@@ -326,8 +327,8 @@ class HPO(OnPolicyAlgorithm):
                     ## print("np.shape(batch_values)",np.shape(batch_values))
                     ##batch_values += (v*p).cpu().detach().numpy()
                     
-                    action_advantages.append(v)
                     # action_advantages.append(advantages.cpu())
+                    action_advantages.append(v)
                     action_probs.append(p)
                     
                     #batch_actions += 1
@@ -382,8 +383,8 @@ class HPO(OnPolicyAlgorithm):
                 #epsilon = math.log(1 + alpha * min(1, prob_ratio))
                 # root: (pi/mu)^(1/2) - 1
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
-                #policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
-                policy_loss_data = []
+                policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
+                #policy_loss_data = []
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
                         epsilon[i] = alpha * min(1, prob_ratio[i])
@@ -399,12 +400,14 @@ class HPO(OnPolicyAlgorithm):
                     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
                     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
-                    #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
-                    policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
+                    policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                    #policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
+                policy_loss /= self.batch_size
                 #print("Policy loss", policy_loss_data)
                 # debug 6
-                policy_loss = -th.mean(th.stack(policy_loss_data))
+                #policy_loss = -th.mean(th.stack(policy_loss_data))
+                # org
                 #policy_loss = th.mean(th.stack(policy_loss_data))
                 #print("Policy loss", policy_loss.item())
                 #for i in range(self.batch_size):
@@ -445,7 +448,8 @@ class HPO(OnPolicyAlgorithm):
 
                 # org version
                 #loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
-                loss = policy_loss + self.vf_coef * value_loss
+                #loss = policy_loss + self.vf_coef * value_loss
+                loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
 
                 ## Optimization step
@@ -455,6 +459,14 @@ class HPO(OnPolicyAlgorithm):
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
                 approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
+                
+                # value policy
+                value_loss = self.vf_coef * value_loss
+                self.value_policy.optimizer.zero_grad()
+                value_loss.backward()
+                ## Clip grad norm
+                th.nn.utils.clip_grad_norm_(self.value_policy.parameters(), self.max_grad_norm)
+                self.value_policy.optimizer.step()
 
             all_kl_divs.append(np.mean(approx_kl_divs))
 
