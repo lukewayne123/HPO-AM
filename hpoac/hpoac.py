@@ -246,7 +246,7 @@ class HPOAC(OnPolicyAlgorithm):
                 entropy_loss = -th.mean(entropy)
 
             #loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
-            loss = policy_loss + self.vf_coef * value_loss
+            loss = -policy_loss + self.vf_coef * value_loss
 
             # Optimization step
             self.policy.optimizer.zero_grad()
