@@ -231,6 +231,7 @@ class HPO(OnPolicyAlgorithm):
                 #values = values.flatten()
                 
                 # print("values before flatten",values)
+                print("val_log_prob: ",val_log_prob)
                 val_values = val_values.flatten()
                 # print("values after flatten",val_values)# v use this
                 
@@ -251,26 +252,27 @@ class HPO(OnPolicyAlgorithm):
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
                 if self.classifier == "AM":
-                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob) # ratio
+                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 elif self.classifier == "AM-log":# log(pi) - log(mu)
                     x1 = val_log_prob
                     x2 = rollout_data.old_log_prob
                 elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                    x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
+                    x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 elif self.classifier == "AM-sub":
                     x1 = th.exp(val_log_prob )
                     x2 = th.exp(rollout_data.old_log_prob)
                 elif self.classifier == "AM-square":
-                    x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
+                    x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 #advantages = rollout_data.advantages.cpu().detach()
                 # print("advantages",advantages)
                 #abs_adv = np.abs(advantages.cpu())
                 advantages = rollout_data.advantages.detach()
                 abs_adv = th.abs(advantages)
-                y = advantages / abs_adv
+                # y = advantages / abs_adv
+                y = rollout_data.advantages / abs_adv
                 #y = advantages / self.batch_size
                 #y = advantages
 
@@ -308,7 +310,7 @@ class HPO(OnPolicyAlgorithm):
                     batch_values += (v*p).numpy()
                     #v = values.flatten()
                     #p = th.exp(log_prob)
-                    #print("Action {}: V={}/v={}; log_prob={}/p={}".format(a, values, v, log_prob, p))
+                    print("state: {} Action {}: v={};/p={}".format(rollout_data.observations,a, v, p))
                     #print("")
                     # print("np.shape(batch_values)",np.shape(batch_values))
                     #batch_values += (v*p).cpu().detach().numpy()
@@ -400,14 +402,14 @@ class HPO(OnPolicyAlgorithm):
                     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
                     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
-                    policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
-                    #policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
+                    #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                    # policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
+                    policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
                 policy_loss /= self.batch_size
                 #print("Policy loss", policy_loss_data)
                 # debug 6
-                #policy_loss = -th.mean(th.stack(policy_loss_data))
-                # org
+                policy_loss = th.mean(th.stack(policy_loss_data))
                 #policy_loss = th.mean(th.stack(policy_loss_data))
                 #print("Policy loss", policy_loss.item())
                 #for i in range(self.batch_size):

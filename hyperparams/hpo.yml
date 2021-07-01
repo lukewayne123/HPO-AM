@@ -1,7 +1,7 @@
 gridworld_randR_env-v0:
   # frame_stack: 4
   policy: 'MlpPolicy'
-  n_envs: 1
+  n_envs: 4
   n_steps: 256
   n_epochs: 4 # default
   #n_epochs: 100
@@ -10,12 +10,12 @@ gridworld_randR_env-v0:
   #n_timesteps: !!float 1e6
   n_timesteps: !!float 2e6
   #n_timesteps: !!float 1e7
-  #learning_rate: lin_2.5e-4
+  learning_rate: lin_9e-3
   #learning_rate: !!float 1e-4
   #learning_rate: !!float 2e-4
   learning_rate: !!float 1e-2
   clip_range: lin_0.1
-  vf_coef: 0.5
+  vf_coef: 1
   ent_coef: 0.01
 
 atari:
