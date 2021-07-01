@@ -13,9 +13,11 @@ gridworld_randR_env-v0:
   learning_rate: lin_9e-3
   #learning_rate: !!float 1e-4
   #learning_rate: !!float 2e-4
+  learning_rate: !!float 1e-2
   clip_range: lin_0.1
   vf_coef: 1
   ent_coef: 0.01
+
 atari:
   env_wrapper:
     - stable_baselines3.common.atari_wrappers.AtariWrapper

@@ -20,6 +20,7 @@ from torch import nn as nn  # noqa: F401 pylint: disable=unused-import
 
 #from hingepg import HPG
 from hpo import HPO
+from hpoac import HPOAC
 
 ALGOS = {
     "a2c": A2C,
@@ -34,7 +35,8 @@ ALGOS = {
     "tqc": TQC,
     # HPG
     #"hpg": HPG
-    "hpo": HPO
+    "hpo": HPO,
+    "hpoac": HPOAC,
 }
 
 
