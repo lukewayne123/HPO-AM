@@ -152,24 +152,25 @@ class HPOAC(OnPolicyAlgorithm):
             #if self.normalize_advantage:
             #    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
             if self.classifier == "AM":
-                x1 = th.exp(val_log_prob - rollout_data.old_log_prob) # ratio
+                x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                 x2 = th.ones_like(x1.clone().detach())
             elif self.classifier == "AM-log":# log(pi) - log(mu)
                 x1 = val_log_prob
                 x2 = rollout_data.old_log_prob
             elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
+                x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
                 x2 = th.ones_like(x1.clone().detach())
             elif self.classifier == "AM-sub":
                 x1 = th.exp(val_log_prob )
                 x2 = th.exp(rollout_data.old_log_prob)
             elif self.classifier == "AM-square":
-                x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob)) # ratio
+                x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
                 x2 = th.ones_like(x1.clone().detach())
             
             advantages = rollout_data.advantages.detach()
             abs_adv = th.abs(advantages)
-            y = advantages / abs_adv
+            #y = advantages / abs_adv
+            y = rollout_data.advantages / abs_adv
 
             # handle each data
             #print(type(actions))
@@ -229,7 +230,8 @@ class HPOAC(OnPolicyAlgorithm):
                 # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                 # th.tensor([x1[i]])
                 #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
-                policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
             policy_loss /= float(len(rollout_data))
 
             ## Policy gradient loss
@@ -246,7 +248,8 @@ class HPOAC(OnPolicyAlgorithm):
                 entropy_loss = -th.mean(entropy)
 
             #loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
-            loss = -policy_loss + self.vf_coef * value_loss
+            #loss = -policy_loss + self.vf_coef * value_loss
+            loss = policy_loss + self.vf_coef * value_loss
 
             # Optimization step
             self.policy.optimizer.zero_grad()

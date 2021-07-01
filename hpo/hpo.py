@@ -231,7 +231,7 @@ class HPO(OnPolicyAlgorithm):
                 #values = values.flatten()
                 
                 # print("values before flatten",values)
-                print("val_log_prob: ",val_log_prob)
+                #print("val_log_prob: ",val_log_prob)
                 val_values = val_values.flatten()
                 # print("values after flatten",val_values)# v use this
                 
@@ -310,7 +310,7 @@ class HPO(OnPolicyAlgorithm):
                     batch_values += (v*p).numpy()
                     #v = values.flatten()
                     #p = th.exp(log_prob)
-                    print("state: {} Action {}: v={};/p={}".format(rollout_data.observations,a, v, p))
+                    #print("state: {} Action {}: v={};/p={}".format(rollout_data.observations,a, v, p))
                     #print("")
                     # print("np.shape(batch_values)",np.shape(batch_values))
                     #batch_values += (v*p).cpu().detach().numpy()
@@ -461,7 +461,8 @@ class HPO(OnPolicyAlgorithm):
                 ## Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
-                approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
+                #approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
+                approx_kl_divs.append(th.mean(rollout_data.old_log_prob.detach() - val_log_prob).detach().cpu().numpy())
                 
                 # value policy
                 value_loss = self.vf_coef * value_loss
