@@ -17,3 +17,5 @@ Fixed (?) policy gradient direction (loss = -policy_loss) without 5 (?) long epi
 [0630]
 Try target policy again (X) 21 # 5 not update value policy
 
+[0701] 
+Maybe correct 26
