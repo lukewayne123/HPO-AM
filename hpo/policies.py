@@ -1,12 +1,14 @@
 # This file is here just to define MlpPolicy/CnnPolicy
 # that work for PPO
-from stable_baselines3.common.policies import ActorCriticCnnPolicy, ActorCriticPolicy, register_policy
+#from stable_baselines3.common.policies import ActorCriticCnnPolicy, ActorCriticPolicy, register_policy
+#from stable_baselines3.common.policies import ActorCriticCnnPolicy, register_policy
+from stable_baselines3.common.policies import register_policy
 
 #MlpPolicy = ActorCriticPolicy
-CnnPolicy = ActorCriticCnnPolicy
+#CnnPolicy = ActorCriticCnnPolicy
 
 #register_policy("MlpPolicy", ActorCriticPolicy)
-register_policy("CnnPolicy", ActorCriticCnnPolicy)
+#register_policy("CnnPolicy", ActorCriticCnnPolicy)
 
 import collections
 import copy
@@ -40,6 +42,9 @@ from stable_baselines3.common.torch_layers import (
 from stable_baselines3.common.type_aliases import Schedule
 from stable_baselines3.common.utils import get_device, is_vectorized_observation, obs_as_tensor
 from stable_baselines3.common.policies import BaseModel, BasePolicy
+
+
+
 
 class ActorCriticPolicy2(BasePolicy):
     """
@@ -230,8 +235,13 @@ class ActorCriticPolicy2(BasePolicy):
             raise NotImplementedError(f"Unsupported distribution '{self.action_dist}'.")
 
         # self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 1)
+        # org version
+        #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 1)
+        # q-value version (vf + a)
+        #self.q_value_net = nn.Linear(self.mlp_extractor.latent_dim_vf + 1, 1)
         #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, latent_dim_pi)
-        self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 4)
+        self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
+        #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 4)
         # Init weights: use orthogonal initialization
         # with small initial weight for the output
         if self.ortho_init:
@@ -244,6 +254,7 @@ class ActorCriticPolicy2(BasePolicy):
                 self.mlp_extractor: np.sqrt(2),
                 self.action_net: 0.01,
                 self.value_net: 1,
+                #self.q_value_net: 1,
             }
             for module, gain in module_gains.items():
                 module.apply(partial(self.init_weights, gain=gain))
@@ -260,11 +271,17 @@ class ActorCriticPolicy2(BasePolicy):
         """
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
         # Evaluate the values for the given observations
+        # org version
         values = self.value_net(latent_vf)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde=latent_sde)
         actions = distribution.get_actions(deterministic=deterministic)
+
+        #print(latent_vf.shape, th.unsqueeze(actions, 1).shape) 
+        #print(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1).shape) 
+        #q_values = self.q_value_net(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1))
         log_prob = distribution.log_prob(actions)
         return actions, values, log_prob
+        #return actions, q_values, log_prob
 
     def _get_latent(self, obs: th.Tensor) -> Tuple[th.Tensor, th.Tensor, th.Tensor]:
         """
@@ -333,7 +350,108 @@ class ActorCriticPolicy2(BasePolicy):
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde)
         log_prob = distribution.log_prob(actions)
         values = self.value_net(latent_vf)
+        #q_values = self.q_value_net(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1))
         return values, log_prob, distribution.entropy()
+        #return q_values, log_prob, distribution.entropy()
+
+class ActorCriticCnnPolicy2(ActorCriticPolicy2):
+    def __init__(
+        self,
+        observation_space: gym.spaces.Space,
+        action_space: gym.spaces.Space,
+        lr_schedule: Schedule,
+        net_arch: Optional[List[Union[int, Dict[str, List[int]]]]] = None,
+        activation_fn: Type[nn.Module] = nn.Tanh,
+        ortho_init: bool = True,
+        use_sde: bool = False,
+        log_std_init: float = 0.0,
+        full_std: bool = True,
+        sde_net_arch: Optional[List[int]] = None,
+        use_expln: bool = False,
+        squash_output: bool = False,
+        features_extractor_class: Type[BaseFeaturesExtractor] = NatureCNN,
+        features_extractor_kwargs: Optional[Dict[str, Any]] = None,
+        normalize_images: bool = True,
+        optimizer_class: Type[th.optim.Optimizer] = th.optim.Adam,
+        optimizer_kwargs: Optional[Dict[str, Any]] = None,
+    ):
+        super(ActorCriticCnnPolicy2, self).__init__(
+            observation_space,
+            action_space,
+            lr_schedule,
+            net_arch,
+            activation_fn,
+            ortho_init,
+            use_sde,
+            log_std_init,
+            full_std,
+            sde_net_arch,
+            use_expln,
+            squash_output,
+            features_extractor_class,
+            features_extractor_kwargs,
+            normalize_images,
+            optimizer_class,
+            optimizer_kwargs,
+        )
+
+    #def _build(self, lr_schedule: Schedule) -> None:
+    #    """
+    #    Create the networks and the optimizer.
+    #    :param lr_schedule: Learning rate schedule
+    #        lr_schedule(1) is the initial learning rate
+    #    """
+    #    self._build_mlp_extractor()
+
+    #    latent_dim_pi = self.mlp_extractor.latent_dim_pi
+
+    #    # Separate features extractor for gSDE
+    #    if self.sde_net_arch is not None:
+    #        self.sde_features_extractor, latent_sde_dim = create_sde_features_extractor(
+    #            self.features_dim, self.sde_net_arch, self.activation_fn
+    #        )
+
+    #    if isinstance(self.action_dist, DiagGaussianDistribution):
+    #        self.action_net, self.log_std = self.action_dist.proba_distribution_net(
+    #            latent_dim=latent_dim_pi, log_std_init=self.log_std_init
+    #        )
+    #    elif isinstance(self.action_dist, StateDependentNoiseDistribution):
+    #        latent_sde_dim = latent_dim_pi if self.sde_net_arch is None else latent_sde_dim
+    #        self.action_net, self.log_std = self.action_dist.proba_distribution_net(
+    #            latent_dim=latent_dim_pi, latent_sde_dim=latent_sde_dim, log_std_init=self.log_std_init
+    #        )
+    #    elif isinstance(self.action_dist, CategoricalDistribution):
+    #        self.action_net = self.action_dist.proba_distribution_net(latent_dim=latent_dim_pi)
+    #    elif isinstance(self.action_dist, MultiCategoricalDistribution):
+    #        self.action_net = self.action_dist.proba_distribution_net(latent_dim=latent_dim_pi)
+    #    elif isinstance(self.action_dist, BernoulliDistribution):
+    #        self.action_net = self.action_dist.proba_distribution_net(latent_dim=latent_dim_pi)
+    #    else:
+    #        raise NotImplementedError(f"Unsupported distribution '{self.action_dist}'.")
+
+    #    #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 1)
+    #    self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, latent_dim_pi)
+    #    # Init weights: use orthogonal initialization
+    #    # with small initial weight for the output
+    #    if self.ortho_init:
+    #        # TODO: check for features_extractor
+    #        # Values from stable-baselines.
+    #        # features_extractor/mlp values are
+    #        # originally from openai/baselines (default gains/init_scales).
+    #        module_gains = {
+    #            self.features_extractor: np.sqrt(2),
+    #            self.mlp_extractor: np.sqrt(2),
+    #            self.action_net: 0.01,
+    #            self.value_net: 1,
+    #        }
+    #        for module, gain in module_gains.items():
+    #            module.apply(partial(self.init_weights, gain=gain))
+
+    #    # Setup optimizer with initial learning rate
+    #    self.optimizer = self.optimizer_class(self.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
 
 MlpPolicy = ActorCriticPolicy2
 register_policy("MlpPolicy", ActorCriticPolicy2)
+CnnPolicy = ActorCriticCnnPolicy2
+#register_policy("CnnPolicy", CnnPolicy)
+register_policy("CnnPolicy", ActorCriticCnnPolicy2)
