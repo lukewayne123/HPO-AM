@@ -232,25 +232,34 @@ class HPO(OnPolicyAlgorithm):
             # Compute value
             values = th.Tensor(np.zeros_like(actions, dtype=float)).to(self.device)
             batch_actions = np.zeros_like(actions)
+            # V = SUM(p(s,a)*q(s,a))
             with th.no_grad():
                 # Convert to pytorch tensor or to TensorDict
-                new_obs_tensor = obs_as_tensor(new_obs, self.device)
+                obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 for a in range(self.action_space.n):
                     batch_actions = np.full(batch_actions.shape, a)
-                    #print(batch_actions)
-                    next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
-                    #print(next_q_values.shape, next_log_probs.shape)
-                    #print(rewards.shape)
-                    #print(next_q_values[:,a])
-                    exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
-                    #print(exp_q_values)
-                    #print(rewards)
-                    #values += th.Tensor(rewards).to(self.device) + exp_q_values
+                    q_values, log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                    exp_q_values = (th.exp(log_probs) * q_values[:,a]).clone().flatten().detach()
                     values += exp_q_values
-                    #print(values)
-            #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
-            #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
-            #print(values.shape)
+            #with th.no_grad():
+            #    # Convert to pytorch tensor or to TensorDict
+            #    new_obs_tensor = obs_as_tensor(new_obs, self.device)
+            #    for a in range(self.action_space.n):
+            #        batch_actions = np.full(batch_actions.shape, a)
+            #        #print(batch_actions)
+            #        next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+            #        #print(next_q_values.shape, next_log_probs.shape)
+            #        #print(rewards.shape)
+            #        #print(next_q_values[:,a])
+            #        exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
+            #        #print(exp_q_values)
+            #        #print(rewards)
+            #        #values += th.Tensor(rewards).to(self.device) + exp_q_values
+            #        values += exp_q_values
+            #        #print(values)
+            ##values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
+            ##values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
+            ##print(values.shape)
 
             self.num_timesteps += env.num_envs
 
@@ -278,13 +287,23 @@ class HPO(OnPolicyAlgorithm):
             for a in range(self.action_space.n):
                 batch_actions = np.full(batch_actions.shape, a)
                 #print(batch_actions)
-                next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                q_values, log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                #next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
                 #print(next_q_values.shape, next_log_probs.shape)
-                exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
+                exp_q_values = (th.exp(log_probs) * q_values[:,a]).clone().flatten().detach()
+                #exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
                 #print(exp_q_values)
                 values += exp_q_values
 
         rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
+
+        for step in reversed(range(rollout_buffer.buffer_size)):
+            if step == rollout_buffer.buffer_size - 1:
+                next_non_terminal = 1.0 - dones
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + rollout_buffer.gamma * values.clone().cpu().numpy().flatten() * next_non_terminal
+            else:
+                next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + rollout_buffer.returns[step + 1]
 
         callback.on_rollout_end()
 
@@ -313,7 +332,7 @@ class HPO(OnPolicyAlgorithm):
         negative_p = []
         ratio_p = []
 
-        alpha = self.alpha
+        #alpha = 0.1
         # if args.algo == 'HPO':
         #     print("args.algo == 'HPO' can use in hpg.py")
         # print("custom_hyperparams: ",self.custom_hyperparams)
@@ -343,26 +362,26 @@ class HPO(OnPolicyAlgorithm):
                 if self.use_sde:
                     self.policy.reset_noise(self.batch_size)
 
-                #values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                #_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                #
-                #_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                #val_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
-                #values = values.flatten()
-                advantages = rollout_data.advantages.detach()
+                ##values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                #val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ##_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ##
+                ##_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ##val_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                ##values = values.flatten()
+                #advantages = rollout_data.advantages.detach()
                 
-                #print("values before flatten",val_values)
-                #print("val_log_prob: ",val_log_prob)
-                #tmp_values = th.Tensor(np.zeros(self.batch_size), requires_grad=True).to(self.device)
-                tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                #val_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                for i in range(self.batch_size):
-                    tmp_values[i] = val_values[i, actions[i]]
-                val_values = tmp_values  ## no rewards --> MC?
-                #val_values = tmp_values + rollout_data.rewards ## no rewards???
-                # V = Q - A
-                #val_values = tmp_values - advantages # not work
+                ##print("values before flatten",val_values)
+                ##print("val_log_prob: ",val_log_prob)
+                ##tmp_values = th.Tensor(np.zeros(self.batch_size), requires_grad=True).to(self.device)
+                #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
+                ##val_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
+                #for i in range(self.batch_size):
+                #    tmp_values[i] = val_values[i, actions[i]]
+                #val_values = tmp_values  ## no rewards --> MC?
+                ##val_values = tmp_values + rollout_data.rewards ## no rewards???
+                ## V = Q - A
+                ##val_values = tmp_values - advantages # not work
                 
 
                 #val_values = val_values.flatten()
@@ -381,32 +400,6 @@ class HPO(OnPolicyAlgorithm):
                 #policy_loss_1 = advantages * ratio
                 #policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
                 #policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
-                
-                # HPO: max(0, epsilon - weight_a (ratio - 1))
-                #      max(0, margin - y * (x1 - x2))
-                if self.classifier == "AM":
-                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
-                    x2 = th.ones_like(x1.clone().detach())
-                elif self.classifier == "AM-log":# log(pi) - log(mu)
-                    x1 = val_log_prob
-                    x2 = rollout_data.old_log_prob
-                elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                    x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
-                    x2 = th.ones_like(x1.clone().detach())
-                elif self.classifier == "AM-sub":
-                    x1 = th.exp(val_log_prob )
-                    x2 = th.exp(rollout_data.old_log_prob)
-                elif self.classifier == "AM-square":
-                    x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
-                    x2 = th.ones_like(x1.clone().detach())
-                #advantages = rollout_data.advantages.cpu().detach()
-                # print("advantages",advantages)
-                #abs_adv = np.abs(advantages.cpu())
-                abs_adv = th.abs(advantages)
-                # y = advantages / abs_adv
-                y = rollout_data.advantages / abs_adv
-                #y = advantages / self.batch_size
-                #y = advantages
 
                 #adv_positive = np.count_nonzero(advantages.cpu() > 0)
                 #adv_negative = np.count_nonzero(advantages.cpu() < 0)
@@ -418,6 +411,13 @@ class HPO(OnPolicyAlgorithm):
                 
                 batch_actions = np.zeros(self.batch_size)
                 batch_values = np.zeros(self.batch_size)
+
+                val_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
+                #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
+                val_log_prob = th.zeros(self.batch_size).to(self.device)
+                advantages = th.zeros(self.batch_size).to(self.device)
+                #advantages = np.zeros(self.batch_size)
+
                 action_advantages = []
                 action_probs = []
                 positive_adv_prob = np.zeros(self.batch_size)
@@ -440,6 +440,8 @@ class HPO(OnPolicyAlgorithm):
                     v = q_values[:,a].flatten().cpu().detach()
                     p = th.exp(a_log_prob).cpu().detach()
                     batch_values += (v*p).numpy()
+
+                    val_values += th.exp(a_log_prob) * q_values[:,a]
                     
                     #val_values += th.exp(a_log_prob) * q_values[:,a]
                     #v = values.flatten()
@@ -466,6 +468,7 @@ class HPO(OnPolicyAlgorithm):
                     # action_advantages.append(advantages.cpu())
                     action_advantages.append(v)
                     action_probs.append(p)
+                    #print("val_values: ", val_values)
                     
                     #batch_actions += 1
                 # not a correct implement
@@ -489,6 +492,37 @@ class HPO(OnPolicyAlgorithm):
                             positive_adv_prob[j] += action_probs[i][j].float()
                         if action_advantages[i][j] < 0:
                             negative_adv_prob[j] += action_probs[i][j].float()
+                        if i == actions[j]:
+                            val_log_prob[j] = action_probs[i][j]
+                            advantages[j] = action_advantages[i][j]
+                    #print("val_log_prob: ", val_log_prob)
+                
+                # HPO: max(0, epsilon - weight_a (ratio - 1))
+                #      max(0, margin - y * (x1 - x2))
+                if self.classifier == "AM":
+                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
+                    x2 = th.ones_like(x1.clone().detach())
+                elif self.classifier == "AM-log":# log(pi) - log(mu)
+                    x1 = val_log_prob
+                    x2 = rollout_data.old_log_prob
+                elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
+                    x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
+                    x2 = th.ones_like(x1.clone().detach())
+                elif self.classifier == "AM-sub":
+                    x1 = th.exp(val_log_prob )
+                    x2 = th.exp(rollout_data.old_log_prob)
+                elif self.classifier == "AM-square":
+                    x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
+                    x2 = th.ones_like(x1.clone().detach())
+                #advantages = rollout_data.advantages.cpu().detach()
+                #print("advantages",advantages)
+                #abs_adv = np.abs(advantages.cpu())
+                advantages = advantages.detach()
+                abs_adv = th.abs(advantages)
+                y = advantages / abs_adv
+                #y = rollout_data.advantages / abs_adv
+                #y = advantages / self.batch_size
+                #y = advantages
 
                 #adv_prob = th.exp(log_prob.clone()).cpu().detach()
                 #adv_positive = advantages.cpu() > 0
@@ -523,15 +557,15 @@ class HPO(OnPolicyAlgorithm):
                 #policy_loss_data = []
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
-                        epsilon[i] = alpha * min(1, prob_ratio[i])
+                        epsilon[i] = self.alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-log":
-                        epsilon[i] = math.log(1 + alpha * min(1, prob_ratio[i]))
+                        epsilon[i] = math.log(1 + self.alpha * min(1, prob_ratio[i]))
                     elif self.classifier == "AM-root":
-                        epsilon[i] = math.sqrt(1 + alpha * min(1, prob_ratio[i])) - 1
+                        epsilon[i] = math.sqrt(1 + self.alpha * min(1, prob_ratio[i])) - 1
                     elif self.classifier == "AM-sub":
-                        epsilon[i] = minMu[i] * alpha * min(1, prob_ratio[i])
+                        epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-square":
-                        epsilon[i] = ( 1+alpha * min(1, prob_ratio[i]) )** 2
+                        epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
                     policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
                     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
@@ -576,6 +610,7 @@ class HPO(OnPolicyAlgorithm):
                 value_losses.append(value_loss.item())
 
                 # ?? SKIP entropy loss??
+                entropy = None
                 # Entropy loss favor exploration
                 if entropy is None:
                     # Approximate entropy when no analytical form
