@@ -145,6 +145,9 @@ class Gridworld_RandReward_4x4_Env(gym.Env):
 
     def __init__(self):
         super(Gridworld_RandReward_4x4_Env, self).__init__()
+        self.counter=0
+        self.max_steps = 200
+
         self.distance = 0
         self.reward_range = (-1, 0)
         self.action_space = spaces.Discrete(4)
@@ -188,7 +191,7 @@ class Gridworld_RandReward_4x4_Env(gym.Env):
         
     def step(self, action):
         
-        
+        self.counter += 1
         
         next_obs = np.random.choice(self.observation_space.n, 1, p=self.P[action, self.obs, :].flatten())
         # print("self.observation_space.n",self.observation_space.n)
@@ -201,6 +204,8 @@ class Gridworld_RandReward_4x4_Env(gym.Env):
         reward = -1.2 + 2.2 * np.random.randint(0, 2)
         # reward = self.R[action,self.obs]
         done = True if next_obs == 0 else False
+        if self.counter > self.max_steps:
+            done = True
         # next_obs = None if next_obs == 0 else next_obs    # Terminal state == None
         next_obs = 0 if next_obs == 0 else next_obs    # Terminal state == None
         self.obs = next_obs
@@ -210,6 +215,7 @@ class Gridworld_RandReward_4x4_Env(gym.Env):
     def reset(self):
         # Reset the state uniformly at random
         #self.obs = 6
+        self.counter = 0
         self.obs = np.random.randint(1, self.observation_space.n, size=1)
         self.distance = ( int(self.obs/4) + self.obs%4 )
         return self.obs
