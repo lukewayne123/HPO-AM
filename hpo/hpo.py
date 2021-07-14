@@ -282,7 +282,7 @@ class HPO(OnPolicyAlgorithm):
         batch_actions = np.zeros_like(actions.reshape(-1))
         with th.no_grad():
             # Compute value for the last timestep
-            obs_tensor = obs_as_tensor(new_obs, self.device)
+            obs_tensor = obs_as_tensor(self._last_obs, self.device)
             #_, values, _ = self.policy.forward(obs_tensor)
             for a in range(self.action_space.n):
                 batch_actions = np.full(batch_actions.shape, a)
@@ -299,11 +299,11 @@ class HPO(OnPolicyAlgorithm):
 
         for step in reversed(range(rollout_buffer.buffer_size)):
             if step == rollout_buffer.buffer_size - 1:
-                next_non_terminal = 1.0 - dones
+                next_non_terminal = 1.0 - self._last_episode_starts 
                 rollout_buffer.returns[step] = rollout_buffer.rewards[step] + rollout_buffer.gamma * values.clone().cpu().numpy().flatten() * next_non_terminal
             else:
                 next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
-                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + rollout_buffer.returns[step + 1]
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
 
         callback.on_rollout_end()
 
@@ -412,7 +412,7 @@ class HPO(OnPolicyAlgorithm):
                 batch_actions = np.zeros(self.batch_size)
                 batch_values = np.zeros(self.batch_size)
 
-                val_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
+                val_q_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
                 #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
                 val_log_prob = th.zeros(self.batch_size).to(self.device)
                 advantages = th.zeros(self.batch_size).to(self.device)
@@ -420,6 +420,7 @@ class HPO(OnPolicyAlgorithm):
 
                 action_advantages = []
                 action_probs = []
+                action_log_probs = []
                 positive_adv_prob = np.zeros(self.batch_size)
                 negative_adv_prob = np.zeros(self.batch_size)
                 # positive_adv_prob = 0
@@ -437,47 +438,16 @@ class HPO(OnPolicyAlgorithm):
                     #q_values, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    v = q_values[:,a].flatten().cpu().detach()
+                    q = q_values[:,a].flatten().cpu().detach()
                     p = th.exp(a_log_prob).cpu().detach()
-                    batch_values += (v*p).numpy()
+                    batch_values += (p*q).numpy()
 
-                    val_values += th.exp(a_log_prob) * q_values[:,a]
-                    
-                    #val_values += th.exp(a_log_prob) * q_values[:,a]
-                    #v = values.flatten()
-                    #p = th.exp(log_prob)
-                    #print("state: {} Action {}: v={};/p={}".format(rollout_data.observations,a, v, p))
-                    #print("")
-                    # print("np.shape(batch_values)",np.shape(batch_values))
-                    #batch_values += (v*p).cpu().detach().numpy()
-                    #print("batch_values", batch_values)
-                    ## print("action", a, batch_actions[0])
-                    ## batch_actions.full(batch_actions.shape,a)
-                    #values, log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #v = values.flatten().cpu().detach()
-                    #p = th.exp(log_prob).cpu().detach()
-                    ##v = values.flatten()
-                    ##p = th.exp(log_prob)
-                    #print("rollout_data.observations",rollout_data.observations)
-                    #print("Action {}: v={}; log_prob={}/p={}".format(a,  v, log_prob, p))
-                    ## print("")
-                    #batch_values += (v*p).numpy()
-                    ## print("np.shape(batch_values)",np.shape(batch_values))
-                    ##batch_values += (v*p).cpu().detach().numpy()
-                    
                     # action_advantages.append(advantages.cpu())
-                    action_advantages.append(v)
+                    action_advantages.append(q)
                     action_probs.append(p)
+                    action_log_probs.append(a_log_prob)
                     #print("val_values: ", val_values)
                     
-                    #batch_actions += 1
-                # not a correct implement
-                # for i in range(self.batch_size):
-                #     for a in range(self.action_space.n):
-                #         if action_advantages[i][a] > 0:
-
-                #         elif action_advantages[i][a] < 0:
-                
                 # print("batch_values", batch_values)
                 # print("action_advantages",action_advantages)
                 # action_advantages = action_advantages.cpu()
@@ -493,7 +463,8 @@ class HPO(OnPolicyAlgorithm):
                         if action_advantages[i][j] < 0:
                             negative_adv_prob[j] += action_probs[i][j].float()
                         if i == actions[j]:
-                            val_log_prob[j] = action_probs[i][j]
+                            val_log_prob[j] = action_log_probs[i][j]
+                            val_q_values[j] = action_advantages[i][j] + batch_values[j]
                             advantages[j] = action_advantages[i][j]
                     #print("val_log_prob: ", val_log_prob)
                 
@@ -595,7 +566,8 @@ class HPO(OnPolicyAlgorithm):
 
                 if self.clip_range_vf is None:
                     # No clipping
-                    values_pred = val_values # org version
+                    #values_pred = val_values # org version
+                    values_pred = val_q_values # org version
                     #values_pred = th.exp(val_log_prob) * val_values
                 else:
                     # Clip the different between old and new value

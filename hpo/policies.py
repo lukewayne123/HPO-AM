@@ -240,7 +240,8 @@ class ActorCriticPolicy2(BasePolicy):
         # q-value version (vf + a)
         #self.q_value_net = nn.Linear(self.mlp_extractor.latent_dim_vf + 1, 1)
         #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, latent_dim_pi)
-        self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
+        #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
+        self.q_value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
         #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 4)
         # Init weights: use orthogonal initialization
         # with small initial weight for the output
@@ -253,8 +254,8 @@ class ActorCriticPolicy2(BasePolicy):
                 self.features_extractor: np.sqrt(2),
                 self.mlp_extractor: np.sqrt(2),
                 self.action_net: 0.01,
-                self.value_net: 1,
-                #self.q_value_net: 1,
+                #self.value_net: 1,
+                self.q_value_net: 1,
             }
             for module, gain in module_gains.items():
                 module.apply(partial(self.init_weights, gain=gain))
@@ -272,7 +273,8 @@ class ActorCriticPolicy2(BasePolicy):
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
         # Evaluate the values for the given observations
         # org version
-        values = self.value_net(latent_vf)
+        #values = self.value_net(latent_vf)
+        q_values = self.q_value_net(latent_vf)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde=latent_sde)
         actions = distribution.get_actions(deterministic=deterministic)
 
@@ -280,7 +282,7 @@ class ActorCriticPolicy2(BasePolicy):
         #print(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1).shape) 
         #q_values = self.q_value_net(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1))
         log_prob = distribution.log_prob(actions)
-        return actions, values, log_prob
+        return actions, q_values, log_prob
         #return actions, q_values, log_prob
 
     def _get_latent(self, obs: th.Tensor) -> Tuple[th.Tensor, th.Tensor, th.Tensor]:
@@ -349,9 +351,10 @@ class ActorCriticPolicy2(BasePolicy):
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde)
         log_prob = distribution.log_prob(actions)
-        values = self.value_net(latent_vf)
+        #values = self.value_net(latent_vf)
+        q_values = self.q_value_net(latent_vf)
         #q_values = self.q_value_net(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1))
-        return values, log_prob, distribution.entropy()
+        return q_values, log_prob, distribution.entropy()
         #return q_values, log_prob, distribution.entropy()
 
 class ActorCriticCnnPolicy2(ActorCriticPolicy2):
