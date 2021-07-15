@@ -300,10 +300,11 @@ class HPO(OnPolicyAlgorithm):
         for step in reversed(range(rollout_buffer.buffer_size)):
             if step == rollout_buffer.buffer_size - 1:
                 next_non_terminal = 1.0 - self._last_episode_starts 
-                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + rollout_buffer.gamma * values.clone().cpu().numpy().flatten() * next_non_terminal
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
             else:
                 next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
                 rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
+                #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
 
         callback.on_rollout_end()
 
@@ -362,65 +363,20 @@ class HPO(OnPolicyAlgorithm):
                 if self.use_sde:
                     self.policy.reset_noise(self.batch_size)
 
-                ##values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                #val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                ##_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                ##
-                ##_, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                ##val_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
-                ##values = values.flatten()
-                #advantages = rollout_data.advantages.detach()
-                
-                ##print("values before flatten",val_values)
-                ##print("val_log_prob: ",val_log_prob)
-                ##tmp_values = th.Tensor(np.zeros(self.batch_size), requires_grad=True).to(self.device)
-                #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                ##val_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                #for i in range(self.batch_size):
-                #    tmp_values[i] = val_values[i, actions[i]]
-                #val_values = tmp_values  ## no rewards --> MC?
-                ##val_values = tmp_values + rollout_data.rewards ## no rewards???
-                ## V = Q - A
-                ##val_values = tmp_values - advantages # not work
-                
-
-                #val_values = val_values.flatten()
-                #print("values after flatten",val_values, val_values.shape)# v use this
-                
-                # org version
-                # Normalize advantage
-                #advantages = rollout_data.advantages
-                #advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-
-
-                ## ratio between old and new policy, should be one at the first iteration
-                #ratio = th.exp(log_prob - rollout_data.old_log_prob)
-
-                ## clipped surrogate loss
-                #policy_loss_1 = advantages * ratio
-                #policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
-                #policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
-
-                #adv_positive = np.count_nonzero(advantages.cpu() > 0)
-                #adv_negative = np.count_nonzero(advantages.cpu() < 0)
-
-                #adv_positive = th.count_nonzero(advantages > 0)
-                #adv_negative = th.count_nonzero(advantages < 0)
-                #positive_a.append(adv_positive)
-                #negative_a.append(adv_negative)
                 
                 batch_actions = np.zeros(self.batch_size)
                 batch_values = np.zeros(self.batch_size)
 
                 val_q_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
                 #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                val_log_prob = th.zeros(self.batch_size).to(self.device)
+                #val_log_prob = th.zeros(self.batch_size).to(self.device)
                 advantages = th.zeros(self.batch_size).to(self.device)
                 #advantages = np.zeros(self.batch_size)
 
                 action_advantages = []
                 action_probs = []
-                action_log_probs = []
+                #action_log_probs = []
+                #action_q_values = []
                 positive_adv_prob = np.zeros(self.batch_size)
                 negative_adv_prob = np.zeros(self.batch_size)
                 # positive_adv_prob = 0
@@ -431,6 +387,7 @@ class HPO(OnPolicyAlgorithm):
                 # old_p = th.exp(rollout_data.old_log_prob).detach()
                 # for i in range(len(old_p)):
                 #     minMu = min(old_p[i],minMu)
+                action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
                 for a in range(self.action_space.n):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
@@ -444,28 +401,30 @@ class HPO(OnPolicyAlgorithm):
 
                     # action_advantages.append(advantages.cpu())
                     action_advantages.append(q)
+                    #action_q_values.append(q)
                     action_probs.append(p)
-                    action_log_probs.append(a_log_prob)
+                    #action_log_probs.append(a_log_prob)
                     #print("val_values: ", val_values)
                     
                 # print("batch_values", batch_values)
                 # print("action_advantages",action_advantages)
                 # action_advantages = action_advantages.cpu()
-                for i in range(self.action_space.n):
+                for a in range(self.action_space.n):
                     # print("action_advantages shape",action_advantages[i].shape)
                     #print("Before A", action_advantages[i])
-                    action_advantages[i] -= batch_values
+                    action_advantages[a] -= batch_values
                     #print("After A", action_advantages[i])
                     for j in range(self.batch_size):
-                        minMu[j] = min(action_probs[i][j].clone().detach().numpy(),minMu[j])
-                        if action_advantages[i][j] > 0:
-                            positive_adv_prob[j] += action_probs[i][j].float()
-                        if action_advantages[i][j] < 0:
-                            negative_adv_prob[j] += action_probs[i][j].float()
-                        if i == actions[j]:
-                            val_log_prob[j] = action_log_probs[i][j]
-                            val_q_values[j] = action_advantages[i][j] + batch_values[j]
-                            advantages[j] = action_advantages[i][j]
+                        minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
+                        if action_advantages[a][j] > 0:
+                            positive_adv_prob[j] += action_probs[a][j].float()
+                        if action_advantages[a][j] < 0:
+                            negative_adv_prob[j] += action_probs[a][j].float()
+                        if a == actions[j]:
+                            #val_log_prob[j] = action_log_probs[i][j]
+                            #val_q_values[j] = action_advantages[i][j] + batch_values[j]
+                            val_q_values[j] = action_q_values[j][a]
+                            advantages[j] = action_advantages[a][j]
                     #print("val_log_prob: ", val_log_prob)
                 
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
