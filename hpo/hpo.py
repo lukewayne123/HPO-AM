@@ -297,14 +297,14 @@ class HPO(OnPolicyAlgorithm):
 
         rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
 
-        for step in reversed(range(rollout_buffer.buffer_size)):
-            if step == rollout_buffer.buffer_size - 1:
-                next_non_terminal = 1.0 - self._last_episode_starts 
-                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
-            else:
-                next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
-                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
-                #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
+        #for step in reversed(range(rollout_buffer.buffer_size)):
+        #    if step == rollout_buffer.buffer_size - 1:
+        #        next_non_terminal = 1.0 - self._last_episode_starts 
+        #        rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
+        #    else:
+        #        next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
+        #        rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
+        #        #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
 
         callback.on_rollout_end()
 
@@ -423,7 +423,7 @@ class HPO(OnPolicyAlgorithm):
                         if a == actions[j]:
                             #val_log_prob[j] = action_log_probs[i][j]
                             #val_q_values[j] = action_advantages[i][j] + batch_values[j]
-                            val_q_values[j] = action_q_values[j][a]
+                            val_q_values[j] = action_q_values[j][a].clone()
                             advantages[j] = action_advantages[a][j]
                     #print("val_log_prob: ", val_log_prob)
                 

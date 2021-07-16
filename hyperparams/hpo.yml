@@ -34,10 +34,10 @@ atari:
   #n_timesteps: !!float 1e5
   n_timesteps: !!float 1e6
   #n_timesteps: !!float 1e7
-  #learning_rate: lin_2.5e-4
+  learning_rate: lin_2.5e-4
   #learning_rate: lin_1e-2
-  #learning_rate: !!float 1e-4
-  learning_rate: !!float 1e-3
+  #learning_rate: !!float 1e-5
+  #learning_rate: !!float 1e-3
   clip_range: lin_0.1
   vf_coef: 0.5
   ent_coef: 0.01
