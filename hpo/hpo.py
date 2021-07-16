@@ -297,14 +297,14 @@ class HPO(OnPolicyAlgorithm):
 
         rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
 
-        #for step in reversed(range(rollout_buffer.buffer_size)):
-        #    if step == rollout_buffer.buffer_size - 1:
-        #        next_non_terminal = 1.0 - self._last_episode_starts 
-        #        rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
-        #    else:
-        #        next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
-        #        rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
-        #        #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
+        for step in reversed(range(rollout_buffer.buffer_size)):
+            if step == rollout_buffer.buffer_size - 1:
+                next_non_terminal = 1.0 - self._last_episode_starts 
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
+            else:
+                next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
+                rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
+                #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
 
         callback.on_rollout_end()
 
@@ -332,6 +332,7 @@ class HPO(OnPolicyAlgorithm):
         positive_p = []
         negative_p = []
         ratio_p = []
+        rollout_return = []
 
         #alpha = 0.1
         # if args.algo == 'HPO':
@@ -540,6 +541,8 @@ class HPO(OnPolicyAlgorithm):
                 value_loss = F.mse_loss(rollout_data.returns, values_pred )
                 value_losses.append(value_loss.item())
 
+                rollout_return.append(rollout_data.returns.detach().cpu().numpy())
+
                 # ?? SKIP entropy loss??
                 entropy = None
                 # Entropy loss favor exploration
@@ -610,6 +613,7 @@ class HPO(OnPolicyAlgorithm):
         logger.record("HPO/positive_advantage_prob", np.mean(positive_p))
         logger.record("HPO/negative_advantage_prob", np.mean(negative_p))
         logger.record("HPO/prob_ratio", np.mean(ratio_p))
+        logger.record("HPO/rollout_return", np.mean(rollout_return))
 
     def learn(
         self,
