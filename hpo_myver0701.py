@@ -4,24 +4,16 @@ from typing import Any, Dict, Optional, Type, Union
 import numpy as np
 import torch as th
 from gym import spaces
-import gym
 from torch.nn import functional as F
 
 from stable_baselines3.common import logger
 from stable_baselines3.common.on_policy_algorithm import OnPolicyAlgorithm
 from stable_baselines3.common.policies import ActorCriticPolicy
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedule
-from stable_baselines3.common.utils import explained_variance, get_schedule_fn, polyak_update, obs_as_tensor
-from stable_baselines3.common.vec_env import VecEnv
-from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.buffers import DictRolloutBuffer, RolloutBuffer
+from stable_baselines3.common.utils import explained_variance, get_schedule_fn, polyak_update
 
 import math
 
-from hpo.policies import ActorCriticPolicy2
-# from hpo.buffer import RolloutBuffer2
-from stable_baselines3.common.policies import BaseModel, BasePolicy
-import random
 class HPO(OnPolicyAlgorithm):
     """
     :param policy: The policy model to use (MlpPolicy, CnnPolicy, ...)
@@ -67,7 +59,7 @@ class HPO(OnPolicyAlgorithm):
 
     def __init__(
         self,
-        policy: Union[str, Type[ActorCriticPolicy2]],
+        policy: Union[str, Type[ActorCriticPolicy]],
         env: Union[GymEnv, str],
         learning_rate: Union[float, Schedule] = 3e-4,
         n_steps: int = 2048,
@@ -82,7 +74,6 @@ class HPO(OnPolicyAlgorithm):
         max_grad_norm: float = 0.5,
         use_sde: bool = False,
         sde_sample_freq: int = -1,
-        policy_base: Type[BasePolicy] = ActorCriticPolicy2,
         target_kl: Optional[float] = None,
         tensorboard_log: Optional[str] = None,
         create_eval_env: bool = False,
@@ -93,13 +84,11 @@ class HPO(OnPolicyAlgorithm):
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
-        alpha: float = 0.1,
     ):
 
         super(HPO, self).__init__(
             policy,
             env,
-            policy_base=policy_base,
             learning_rate=learning_rate,
             n_steps=n_steps,
             gamma=gamma,
@@ -148,36 +137,31 @@ class HPO(OnPolicyAlgorithm):
         self.clip_range_vf = clip_range_vf
         self.target_kl = target_kl
         self.classifier = classifier
-        self.alpha = alpha
         if _init_setup_model:
             self._setup_model()
         
 
     def _setup_model(self) -> None:
         super(HPO, self)._setup_model()
-        # self.target_policy = self.policy_class(  # pytype:disable=not-instantiable
-        #     self.observation_space,
-        #     self.action_space,
-        #     self.lr_schedule,
-        #     use_sde=self.use_sde,
-        #     **self.policy_kwargs  # pytype:disable=not-instantiable
-        # )
-        # self.target_policy = self.target_policy.to(self.device)
-        # self.target_policy.load_state_dict(self.policy.state_dict())
+        self.target_policy = self.policy_class(  # pytype:disable=not-instantiable
+            self.observation_space,
+            self.action_space,
+            self.lr_schedule,
+            use_sde=self.use_sde,
+            **self.policy_kwargs  # pytype:disable=not-instantiable
+        )
+        self.target_policy = self.target_policy.to(self.device)
+        self.target_policy.load_state_dict(self.policy.state_dict())
         
-        # self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
-        #     self.observation_space,
-        #     self.action_space,
-        #     self.lr_schedule,
-        #     use_sde=self.use_sde,
-        #     **self.policy_kwargs  # pytype:disable=not-instantiable
-        # )
-        # self.value_policy = self.value_policy.to(self.device)
-        # print("self.value_policy",self.value_policy)
-        # print("self.target_policy",self.target_policy)
-        # print("self.policy",self.policy)
-        # envname = self.env.unwrapped.spec.id
-        
+        #self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
+        #    self.observation_space,
+        #    self.action_space,
+        #    self.lr_schedule,
+        #    use_sde=self.use_sde,
+        #    **self.policy_kwargs  # pytype:disable=not-instantiable
+        #)
+        #self.value_policy = self.value_policy.to(self.device)
+
         # Initialize schedules for policy/value clipping
         self.clip_range = get_schedule_fn(self.clip_range)
         if self.clip_range_vf is not None:
@@ -186,150 +170,10 @@ class HPO(OnPolicyAlgorithm):
 
             self.clip_range_vf = get_schedule_fn(self.clip_range_vf)
 
-    def collect_rollouts(
-        self,
-        env: VecEnv,
-        callback: BaseCallback,
-        rollout_buffer: RolloutBuffer,
-        # rollout_buffer: ReplayBuffer,
-        n_rollout_steps: int,
-    ) -> bool:
-        """
-        Collect experiences using the current policy and fill a ``RolloutBuffer``.
-        The term rollout here refers to the model-free notion and should not
-        be used with the concept of rollout used in model-based RL or planning.
-        :param env: The training environment
-        :param callback: Callback that will be called at each step
-            (and at the beginning and end of the rollout)
-        :param rollout_buffer: Buffer to fill with rollouts
-        :param n_steps: Number of experiences to collect per environment
-        :return: True if function returned with at least `n_rollout_steps`
-            collected, False if callback terminated rollout prematurely.
-        """
-        assert self._last_obs is not None, "No previous observation was provided"
-        # print("envname",env)
-        n_steps = 0
-        # exploration_rate = 0.1
-        rollout_buffer.reset()
-        # Sample new weights for the state dependent exploration
-        if self.use_sde:
-            self.policy.reset_noise(env.num_envs)
-
-        callback.on_rollout_start()
-        # dones = False
-        # self._last_obs = env.reset()
-        while n_steps < n_rollout_steps :
-            # print("n_steps:",n_steps,"n_rollout_steps: ",n_rollout_steps)
-            if self.use_sde and self.sde_sample_freq > 0 and n_steps % self.sde_sample_freq == 0:
-                # Sample a new noise matrix
-                self.policy.reset_noise(env.num_envs)
-
-            with th.no_grad():
-                # Convert to pytorch tensor or to TensorDict
-                obs_tensor = obs_as_tensor(self._last_obs, self.device)
-                #actions, values, log_probs = self.policy.forward(obs_tensor) # org
-                print("collect rollout forward")
-                actions, _, log_probs = self.policy.forward(obs_tensor)
-            
-            # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
-            # if exploration_rate > random.random():
-            #     # print("random choose action")
-            #     actions = np.array([self.action_space.sample()])
-            # else:
-                # actions = actions.cpu().numpy()
-            actions = actions.cpu().numpy()
-            # Rescale and perform action
-            clipped_actions = actions
-            # Clip the actions to avoid out of bound error
-            if isinstance(self.action_space, gym.spaces.Box):
-                clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
-            
-            new_obs, rewards, dones, infos = env.step(clipped_actions)
-            # print("infos:",infos)
-            # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
-            # Compute value
-            values = th.Tensor(np.zeros_like(actions, dtype=float)).to(self.device)
-            batch_actions = np.zeros_like(actions)
-            with th.no_grad():
-                # Convert to pytorch tensor or to TensorDict
-                # new_obs_tensor = obs_as_tensor(new_obs, self.device)
-                new_obs_tensor = obs_as_tensor(self._last_obs, self.device)
-                for a in range(self.action_space.n):
-                    batch_actions = np.full(batch_actions.shape, a)
-                    #print(batch_actions)
-                    # print("collect_rollouts self.policy.evaluate_actions")
-                    next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
-                    # print("print(next_q_values.shape, next_log_probs.shape) ",next_q_values.shape, next_log_probs.shape) 4,1
-                    #print(rewards.shape)
-                    #print(next_q_values[:,a])
-                    exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
-                    # exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a])
-                    #print(exp_q_values)
-                    #print(rewards)
-                    # values += th.Tensor(rewards).to(self.device) + exp_q_values
-                    values += exp_q_values
-                    #print(values)
-            #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
-            #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
-            #print(values.shape)
-
-            self.num_timesteps += env.num_envs
-
-            # Give access to local variables
-            callback.update_locals(locals())
-            if callback.on_step() is False:
-                return False
-
-            self._update_info_buffer(infos)
-            n_steps += 1
-
-            if isinstance(self.action_space, gym.spaces.Discrete):
-                # Reshape in case of discrete action
-                actions = actions.reshape(-1, 1)
-            # if dones:
-            # # if dones.any():
-            #     new_obs = env.reset()
-            #     print("env reset")
-                # continue
-            rollout_buffer.add(self._last_obs, actions, rewards, self._last_episode_starts, values, log_probs)
-            self._last_obs = new_obs
-            self._last_episode_starts = dones
-
-        values = th.Tensor(np.zeros_like(actions.reshape(-1), dtype=float)).to(self.device)
-        batch_actions = np.zeros_like(actions.reshape(-1))
-        with th.no_grad():
-                # Compute value for the last timestep
-            obs_tensor = obs_as_tensor(new_obs, self.device)
-            #_, values, _ = self.policy.forward(obs_tensor)
-            for a in range(self.action_space.n):
-                batch_actions = np.full(batch_actions.shape, a)
-                #print(batch_actions)
-                # print("collect_rollouts last timestep self.policy.evaluate_actions")
-                next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
-                #print(next_q_values.shape, next_log_probs.shape)
-                # exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
-                exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
-                #print(exp_q_values)
-                values += exp_q_values
-
-        rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
-        # for step in reversed(range(rollout_buffer.buffer_size)):
-        #     if step == rollout_buffer.buffer_size - 1:
-        #         next_non_terminal = 1.0 - self._last_episode_starts 
-        #         rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * values.clone().cpu().numpy().flatten()
-        #     else:
-        #         next_non_terminal = 1.0 - rollout_buffer.episode_starts[step + 1]
-        #         rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.returns[step + 1]
-        #         #rollout_buffer.returns[step] = rollout_buffer.rewards[step] + next_non_terminal * rollout_buffer.gamma * rollout_buffer.values[step + 1]
-        callback.on_rollout_end()
-        # print("collect rollout self.ep_info_buffer",self.ep_info_buffer)
-        return True
-
     def train(self) -> None:
         """
         Update policy using the currently gathered rollout buffer.
         """
-        # print("train self.ep_info_buffer",self.ep_info_buffer)
         # Update optimizer learning rate
         self._update_learning_rate(self.policy.optimizer)
         # Compute current clip range
@@ -348,16 +192,15 @@ class HPO(OnPolicyAlgorithm):
         positive_p = []
         negative_p = []
         ratio_p = []
-        rollout_return = []
 
-        #alpha = 0.1
+        alpha = 0.1
         # if args.algo == 'HPO':
         #     print("args.algo == 'HPO' can use in hpg.py")
         # print("custom_hyperparams: ",self.custom_hyperparams)
-        #print("in hpg.py def train: self .classifier",self.classifier)
+        print("in hpg.py def train: self .classifier",self.classifier)
         
         # Hard update for target policy -6~8
-        #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
+        polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
@@ -380,71 +223,31 @@ class HPO(OnPolicyAlgorithm):
                 if self.use_sde:
                     self.policy.reset_noise(self.batch_size)
 
+                #values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                #
+                ##_, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                ##values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                #values = values.flatten()
                 
-                batch_actions = np.zeros(self.batch_size)
-                batch_values = np.zeros(self.batch_size)
+                val_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                # print("values before flatten",values)
+                print("val_log_prob: ",val_log_prob)
+                val_values = val_values.flatten()
+                # print("values after flatten",val_values)# v use this
+                
+                # org version
+                # Normalize advantage
+                #advantages = rollout_data.advantages
+                #advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-                val_q_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                #tmp_values = th.zeros(self.batch_size, requires_grad=True).to(self.device)
-                #val_log_prob = th.zeros(self.batch_size).to(self.device)
-                advantages = th.zeros(self.batch_size).to(self.device)
-                #advantages = np.zeros(self.batch_size)
 
-                action_advantages = []
-                action_probs = []
-                #action_log_probs = []
-                #action_q_values = []
-                positive_adv_prob = np.zeros(self.batch_size)
-                negative_adv_prob = np.zeros(self.batch_size)
-                # positive_adv_prob = 0
-                # negative_adv_prob = 0
-                # Q-value
-                minMu = np.ones(self.batch_size)
-                epsilon = np.zeros(self.batch_size)
-                # old_p = th.exp(rollout_data.old_log_prob).detach()
-                # for i in range(len(old_p)):
-                #     minMu = min(old_p[i],minMu)
-                # print("train self.policy.evaluate_actions real actions")
-                action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
-                for a in range(self.action_space.n):
-                    # print("action", a, batch_actions)
-                    batch_actions = np.full(batch_actions.shape,a)
-                    # print("train self.policy.evaluate_actions batch actions")
-                    q_values, a_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #q_values, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    q = q_values[:,a].flatten().cpu().detach()
-                    p = th.exp(a_log_prob).cpu().detach()
-                    batch_values += (p*q).numpy()
+                ## ratio between old and new policy, should be one at the first iteration
+                #ratio = th.exp(log_prob - rollout_data.old_log_prob)
 
-                    # action_advantages.append(advantages.cpu())
-                    action_advantages.append(q)
-                    #action_q_values.append(q)
-                    action_probs.append(p)
-                    #action_log_probs.append(a_log_prob)
-                    #print("val_values: ", val_values)
-                    
-                # print("batch_values", batch_values)
-                # print("action_advantages",action_advantages)
-                # action_advantages = action_advantages.cpu()
-                for a in range(self.action_space.n):
-                    # print("action_advantages shape",action_advantages[i].shape)
-                    #print("Before A", action_advantages[i])
-                    action_advantages[a] -= batch_values
-                    #print("After A", action_advantages[i])
-                    for j in range(self.batch_size):
-                        minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
-                        if action_advantages[a][j] > 0:
-                            positive_adv_prob[j] += action_probs[a][j].float()
-                        if action_advantages[a][j] < 0:
-                            negative_adv_prob[j] += action_probs[a][j].float()
-                        if a == actions[j]:
-                            #val_log_prob[j] = action_log_probs[i][j]
-                            #val_q_values[j] = action_advantages[i][j] + batch_values[j]
-                            val_q_values[j] = action_q_values[j][a].clone()
-                            advantages[j] = action_advantages[a][j]
-                    #print("val_log_prob: ", val_log_prob)
+                ## clipped surrogate loss
+                #policy_loss_1 = advantages * ratio
+                #policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
+                #policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
                 
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
@@ -464,16 +267,94 @@ class HPO(OnPolicyAlgorithm):
                     x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 #advantages = rollout_data.advantages.cpu().detach()
-                #print("advantages",advantages)
+                print("rollout_data.advantages",rollout_data.advantages)
+                advantages = rollout_data.advantages.detach()
+                # print("advantages",advantages)
                 #abs_adv = np.abs(advantages.cpu())
-                advantages = advantages.detach()
-                y = th.sign(advantages)
-                abs_adv = y*advantages
-                # abs_adv = th.abs(advantages)
+                abs_adv = th.abs(advantages)
                 # y = advantages / abs_adv
-                #y = rollout_data.advantages / abs_adv
+                y = rollout_data.advantages / abs_adv
                 #y = advantages / self.batch_size
                 #y = advantages
+
+                #adv_positive = np.count_nonzero(advantages.cpu() > 0)
+                #adv_negative = np.count_nonzero(advantages.cpu() < 0)
+
+                #adv_positive = th.count_nonzero(advantages > 0)
+                #adv_negative = th.count_nonzero(advantages < 0)
+                #positive_a.append(adv_positive)
+                #negative_a.append(adv_negative)
+                
+                batch_actions = np.zeros(self.batch_size)
+                batch_values = np.zeros(self.batch_size)
+                action_advantages = []
+                action_probs = []
+                # positive_adv_prob = 0
+                # negative_adv_prob = 0
+                positive_adv_prob = np.zeros(self.batch_size)
+                negative_adv_prob = np.zeros(self.batch_size)
+                # Q-value
+                minMu = np.ones(self.batch_size)
+                epsilon = np.zeros(self.batch_size)
+                # old_p = th.exp(rollout_data.old_log_prob).detach()
+                # for i in range(len(old_p)):
+                #     minMu = min(old_p[i],minMu)
+                for a in range(self.action_space.n):
+                    # print("action", a, batch_actions)
+                    batch_actions = np.full(batch_actions.shape,a)
+                    q_values, a_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    v = q_values.flatten().cpu().detach()
+                    p = th.exp(a_log_prob).cpu().detach()
+                    batch_values += (v*p).numpy()
+                    #v = values.flatten()
+                    #p = th.exp(log_prob)
+                    print("state: {} Action {}: v={};/p={}".format(rollout_data.observations,a, v, p))
+                    #print("")
+                    # print("np.shape(batch_values)",np.shape(batch_values))
+                    #batch_values += (v*p).cpu().detach().numpy()
+                    #print("batch_values", batch_values)
+                    ## print("action", a, batch_actions[0])
+                    ## batch_actions.full(batch_actions.shape,a)
+                    #values, log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    #v = values.flatten().cpu().detach()
+                    #p = th.exp(log_prob).cpu().detach()
+                    ##v = values.flatten()
+                    ##p = th.exp(log_prob)
+                    #print("rollout_data.observations",rollout_data.observations)
+                    #print("Action {}: v={}; log_prob={}/p={}".format(a,  v, log_prob, p))
+                    ## print("")
+                    #batch_values += (v*p).numpy()
+                    ## print("np.shape(batch_values)",np.shape(batch_values))
+                    ##batch_values += (v*p).cpu().detach().numpy()
+                    
+                    action_advantages.append(v)
+                    # action_advantages.append(advantages.cpu())
+                    action_probs.append(p)
+                    
+                    #batch_actions += 1
+                # not a correct implement
+                # for i in range(self.batch_size):
+                #     for a in range(self.action_space.n):
+                #         if action_advantages[i][a] > 0:
+
+                #         elif action_advantages[i][a] < 0:
+                
+                # print("batch_values", batch_values)
+                # print("action_advantages",action_advantages)
+                # action_advantages = action_advantages.cpu()
+                for i in range(self.action_space.n):
+                    # print("action_advantages shape",action_advantages[i].shape)
+                    #print("Before A", action_advantages[i])
+                    action_advantages[i] -= batch_values
+                    #print("After A", action_advantages[i])
+                    for j in range(self.batch_size):
+                        minMu[j] = min(action_probs[i][j].clone().detach().numpy(),minMu[j])
+                        if action_advantages[i][j] > 0:
+                            positive_adv_prob[j] += action_probs[i][j].float()
+                        if action_advantages[i][j] < 0:
+                            negative_adv_prob[j] += action_probs[i][j].float()
 
                 #adv_prob = th.exp(log_prob.clone()).cpu().detach()
                 #adv_positive = advantages.cpu() > 0
@@ -504,32 +385,30 @@ class HPO(OnPolicyAlgorithm):
                 #epsilon = math.log(1 + alpha * min(1, prob_ratio))
                 # root: (pi/mu)^(1/2) - 1
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
-                policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
-                #policy_loss_data = []
+                #policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
+                policy_loss_data = []
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
-                        epsilon[i] = self.alpha * min(1, prob_ratio[i])
+                        epsilon[i] = alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-log":
-                        epsilon[i] = math.log(1 + self.alpha * min(1, prob_ratio[i]))
+                        epsilon[i] = math.log(1 + alpha * min(1, prob_ratio[i]))
                     elif self.classifier == "AM-root":
-                        epsilon[i] = math.sqrt(1 + self.alpha * min(1, prob_ratio[i])) - 1
+                        epsilon[i] = math.sqrt(1 + alpha * min(1, prob_ratio[i])) - 1
                     elif self.classifier == "AM-sub":
-                        epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
+                        epsilon[i] = minMu[i] * alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-square":
-                        epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
+                        epsilon[i] = ( 1+alpha * min(1, prob_ratio[i]) )** 2
                     policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
                     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
                     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
                     #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
                     # policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
-                    #policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
-                    policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
+                    policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
-                policy_loss /= self.batch_size
                 #print("Policy loss", policy_loss_data)
                 # debug 6
-                #policy_loss = th.mean(th.stack(policy_loss_data))
+                policy_loss = th.mean(th.stack(policy_loss_data))
                 #policy_loss = th.mean(th.stack(policy_loss_data))
                 #print("Policy loss", policy_loss.item())
                 #for i in range(self.batch_size):
@@ -546,25 +425,19 @@ class HPO(OnPolicyAlgorithm):
 
                 if self.clip_range_vf is None:
                     # No clipping
-                    #values_pred = val_values # org version
-                    values_pred = val_q_values # org version
-                    #values_pred = th.exp(val_log_prob) * val_values
+                    values_pred = val_values
                 else:
                     # Clip the different between old and new value
                     # NOTE: this depends on the reward scaling
                     values_pred = rollout_data.old_values + th.clamp(
-                        val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf # org version
-                        #th.exp(val_log_probs) * val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf
+                        val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf
                     )
                 # Value loss using the TD(gae_lambda) target
                 #value_loss = F.mse_loss(rollout_data.returns.unsqueeze(1), values_pred )
                 value_loss = F.mse_loss(rollout_data.returns, values_pred )
                 value_losses.append(value_loss.item())
 
-                rollout_return.append(rollout_data.returns.detach().cpu().numpy())
-
                 # ?? SKIP entropy loss??
-                entropy = None
                 # Entropy loss favor exploration
                 if entropy is None:
                     # Approximate entropy when no analytical form
@@ -577,7 +450,6 @@ class HPO(OnPolicyAlgorithm):
                 # org version
                 #loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
                 loss = policy_loss + self.vf_coef * value_loss
-                #loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
 
                 ## Optimization step
@@ -586,16 +458,7 @@ class HPO(OnPolicyAlgorithm):
                 ## Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
-                #approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
                 approx_kl_divs.append(th.mean(rollout_data.old_log_prob.detach() - val_log_prob).detach().cpu().numpy())
-                
-                ## value policy
-                #value_loss = self.vf_coef * value_loss
-                #self.value_policy.optimizer.zero_grad()
-                #value_loss.backward()
-                ### Clip grad norm
-                #th.nn.utils.clip_grad_norm_(self.value_policy.parameters(), self.max_grad_norm)
-                #self.value_policy.optimizer.step()
 
             all_kl_divs.append(np.mean(approx_kl_divs))
 
@@ -633,7 +496,6 @@ class HPO(OnPolicyAlgorithm):
         logger.record("HPO/positive_advantage_prob", np.mean(positive_p))
         logger.record("HPO/negative_advantage_prob", np.mean(negative_p))
         logger.record("HPO/prob_ratio", np.mean(ratio_p))
-        logger.record("HPO/rollout_return", np.mean(rollout_return))
 
     def learn(
         self,
@@ -647,7 +509,7 @@ class HPO(OnPolicyAlgorithm):
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
     ) -> "HPO":
-        
+
         return super(HPO, self).learn(
             total_timesteps=total_timesteps,
             callback=callback,
