@@ -241,7 +241,6 @@ class ActorCriticPolicy2(BasePolicy):
         #self.q_value_net = nn.Linear(self.mlp_extractor.latent_dim_vf + 1, 1)
         #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, latent_dim_pi)
         self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
-        #self.q_value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, self.action_space.n)
         #self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 4)
         # Init weights: use orthogonal initialization
         # with small initial weight for the output
@@ -270,11 +269,12 @@ class ActorCriticPolicy2(BasePolicy):
         :param deterministic: Whether to sample or use deterministic actions
         :return: action, value and log probability of the action
         """
+        # print("forward obs:",obs)
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
+        # print("forward latent_pi:",latent_pi,"latent_sde",latent_sde)
         # Evaluate the values for the given observations
         # org version
         values = self.value_net(latent_vf)
-        #q_values = self.q_value_net(latent_vf)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde=latent_sde)
         actions = distribution.get_actions(deterministic=deterministic)
 
@@ -348,11 +348,12 @@ class ActorCriticPolicy2(BasePolicy):
         :return: estimated value, log likelihood of taking those actions
             and entropy of the action distribution.
         """
+        # print("evaluate_actions obs",obs)
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
+        # print("evaluate_actions latent_pi:",latent_pi,"latent_sde",latent_sde)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde)
         log_prob = distribution.log_prob(actions)
         values = self.value_net(latent_vf)
-        #q_values = self.q_value_net(latent_vf)
         #q_values = self.q_value_net(th.cat((latent_vf, th.unsqueeze(actions, 1)), -1))
         return values, log_prob, distribution.entropy()
         #return q_values, log_prob, distribution.entropy()

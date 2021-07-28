@@ -1,9 +1,3 @@
-[0715]
-4: r+gamma*v, rl lin2.5e-4 failed??
-
-3: GAE advantage success??
-
-
 [0627]
 Try target policy (X) 5
 Fixed (?) policy gradient direction (loss = -policy_loss) (X) 6

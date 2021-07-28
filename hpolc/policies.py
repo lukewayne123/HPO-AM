@@ -230,7 +230,7 @@ class ActorCriticPolicy2(BasePolicy):
             raise NotImplementedError(f"Unsupported distribution '{self.action_dist}'.")
 
         # self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 1)
-        self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, latent_dim_pi)
+        self.value_net = nn.Linear(self.mlp_extractor.latent_dim_vf, 4)
         # Init weights: use orthogonal initialization
         # with small initial weight for the output
         if self.ortho_init:
