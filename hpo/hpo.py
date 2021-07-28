@@ -228,7 +228,7 @@ class HPO(OnPolicyAlgorithm):
                 # Convert to pytorch tensor or to TensorDict
                 obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 #actions, values, log_probs = self.policy.forward(obs_tensor) # org
-                print("collect rollout forward")
+                #print("collect rollout forward")
                 actions, _, log_probs = self.policy.forward(obs_tensor)
             
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
