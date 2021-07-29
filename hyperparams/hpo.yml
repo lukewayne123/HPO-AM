@@ -24,22 +24,28 @@ atari:
   frame_stack: 4
   policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 128
-  n_epochs: 4 # default
+  #n_steps: 128
+  n_steps: 64 # 0728
+  #n_epochs: 4 # default
+  n_epochs: 5 # 0728
   #n_epochs: 100
   #n_epochs: 10
   # batch_size: 1
-  batch_size: 256
+  #batch_size: 256
+  batch_size: 512 # 0728
   #n_timesteps: !!float 1e3
-  # n_timesteps: !!float 1e6
-  n_timesteps: !!float 2e6
-  # n_timesteps: !!float 1e7
-  learning_rate: lin_2.5e-4
+  #n_timesteps: !!float 1e6
+  #n_timesteps: !!float 2e6
+  n_timesteps: !!float 1e7
+  #learning_rate: lin_2.5e-4
+  learning_rate: lin_3e-4 # 0728
   #learning_rate: lin_1e-2
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
   vf_coef: 0.5
   ent_coef: 0.01
+  alpha: 1 # debug
+  #alpha: 0.12 # 0728
 
 Pendulum-v0:
   n_envs: 8

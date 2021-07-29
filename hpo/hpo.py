@@ -228,7 +228,7 @@ class HPO(OnPolicyAlgorithm):
                 # Convert to pytorch tensor or to TensorDict
                 obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 #actions, values, log_probs = self.policy.forward(obs_tensor) # org
-                print("collect rollout forward")
+                #print("collect rollout forward")
                 actions, _, log_probs = self.policy.forward(obs_tensor)
             
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
@@ -253,16 +253,16 @@ class HPO(OnPolicyAlgorithm):
             with th.no_grad():
                 # Convert to pytorch tensor or to TensorDict
                 # new_obs_tensor = obs_as_tensor(new_obs, self.device)
-                new_obs_tensor = obs_as_tensor(self._last_obs, self.device)
+                obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 for a in range(self.action_space.n):
                     batch_actions = np.full(batch_actions.shape, a)
                     #print(batch_actions)
                     # print("collect_rollouts self.policy.evaluate_actions")
-                    next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                    q_values, log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
                     # print("print(next_q_values.shape, next_log_probs.shape) ",next_q_values.shape, next_log_probs.shape) 4,1
                     #print(rewards.shape)
                     #print(next_q_values[:,a])
-                    exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
+                    exp_q_values = (th.exp(log_probs) * q_values[:,a]).clone().detach()
                     # exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a])
                     #print(exp_q_values)
                     #print(rewards)
@@ -305,10 +305,10 @@ class HPO(OnPolicyAlgorithm):
                 batch_actions = np.full(batch_actions.shape, a)
                 #print(batch_actions)
                 # print("collect_rollouts last timestep self.policy.evaluate_actions")
-                next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                q_values, log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
                 #print(next_q_values.shape, next_log_probs.shape)
                 # exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
-                exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
+                exp_q_values = (th.exp(log_probs) * q_values[:,a]).clone().detach()
                 #print(exp_q_values)
                 values += exp_q_values
 
