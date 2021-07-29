@@ -7,6 +7,7 @@ from torch import nn as nn
 
 from utils import linear_schedule
 
+# 0708 check batch size, n_step,  lr, clip_range, vf_coef, activation fn
 def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     """
     Sampler for HPO hyperparams.
@@ -14,20 +15,25 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     :param trial:
     :return:
     """
+    alpha = trial.suggest_uniform("alpha", 0.1, 1)
     batch_size = trial.suggest_categorical("batch_size", [128, 256, 512])
     n_steps = trial.suggest_categorical("n_steps", [64, 128, 256])
+    #gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99])
     #gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
     #lr_schedule = "constant"
     # Uncomment to enable learning rate schedule
     lr_schedule = trial.suggest_categorical('lr_schedule', ['linear', 'constant'])
+    #activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu", "elu"])
     #ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
     #clip_range = trial.suggest_categorical("clip_range", [0.1, 0.2, 0.3, 0.4])
     n_epochs = trial.suggest_categorical("n_epochs", [1, 5, 10])
+    #n_epochs = trial.suggest_categorical("n_epochs", [1, 5, 10, 20])
+    #gae_lambda = trial.suggest_categorical("gae_lambda", [0.9, 0.95, 0.98, 0.99])
     #gae_lambda = trial.suggest_categorical("gae_lambda", [0.8, 0.9, 0.92, 0.95, 0.98, 0.99, 1.0])
     #max_grad_norm = trial.suggest_categorical("max_grad_norm", [0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 5])
+    #max_grad_norm = trial.suggest_categorical("max_grad_norm", [0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 5])
     #vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
-    alpha = trial.suggest_uniform("alpha", 0, 1)
     #net_arch = trial.suggest_categorical("net_arch", ["small", "medium"])
     # Uncomment for gSDE (continuous actions)
     # log_std_init = trial.suggest_uniform("log_std_init", -4, 1)
@@ -37,7 +43,6 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     ortho_init = False
     # ortho_init = trial.suggest_categorical('ortho_init', [False, True])
     # activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
-    #activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu"])
 
     # TODO: account when using multiple envs
     if batch_size > n_steps:
@@ -74,6 +79,7 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
         #    activation_fn=activation_fn,
         #    ortho_init=ortho_init,
         #),
+        # "sde_sample_freq": sde_sample_freq,
     }
 
 def sample_ppo_params(trial: optuna.Trial) -> Dict[str, Any]:
