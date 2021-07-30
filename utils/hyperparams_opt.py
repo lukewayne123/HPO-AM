@@ -17,7 +17,7 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     """
     alpha = trial.suggest_uniform("alpha", 0.1, 1)
     batch_size = trial.suggest_categorical("batch_size", [128, 256, 512])
-    n_steps = trial.suggest_categorical("n_steps", [64, 128, 256])
+    #n_steps = trial.suggest_categorical("n_steps", [64, 128, 256])
     #gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99])
     #gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
@@ -45,8 +45,8 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     # activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
 
     # TODO: account when using multiple envs
-    if batch_size > n_steps:
-        batch_size = n_steps
+    #if batch_size > n_steps:
+    #    batch_size = n_steps
 
     if lr_schedule == "linear":
         learning_rate = linear_schedule(learning_rate)
@@ -61,7 +61,7 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     #activation_fn = {"tanh": nn.Tanh, "relu": nn.ReLU, "elu": nn.ELU, "leaky_relu": nn.LeakyReLU}[activation_fn]
 
     return {
-        "n_steps": n_steps,
+        #"n_steps": n_steps,
         "batch_size": batch_size,
         #"gamma": gamma,
         "learning_rate": learning_rate,

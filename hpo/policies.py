@@ -269,9 +269,9 @@ class ActorCriticPolicy2(BasePolicy):
         :param deterministic: Whether to sample or use deterministic actions
         :return: action, value and log probability of the action
         """
-        # print("forward obs:",obs)
+        #print("forward obs:",obs)
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
-        # print("forward latent_pi:",latent_pi,"latent_sde",latent_sde)
+        #print("forward latent_pi:",latent_pi,"latent_sde",latent_sde)
         # Evaluate the values for the given observations
         # org version
         values = self.value_net(latent_vf)

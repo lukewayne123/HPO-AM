@@ -230,7 +230,7 @@ class HPO(OnPolicyAlgorithm):
                 #actions, values, log_probs = self.policy.forward(obs_tensor) # org
                 #print("collect rollout forward")
                 actions, _, log_probs = self.policy.forward(obs_tensor)
-            
+            #print(actions)
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
             # if exploration_rate > random.random():
             #     # print("random choose action")
@@ -449,7 +449,9 @@ class HPO(OnPolicyAlgorithm):
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
                 if self.classifier == "AM":
-                    x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
+                    cliped_prob = th.clamp(val_log_prob - rollout_data.old_log_prob.detach(), max=10)
+                    x1 = th.exp(cliped_prob) # ratio
+                    #x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                     x2 = th.ones_like(x1.clone().detach())
                 elif self.classifier == "AM-log":# log(pi) - log(mu)
                     x1 = val_log_prob
@@ -505,6 +507,7 @@ class HPO(OnPolicyAlgorithm):
                 # root: (pi/mu)^(1/2) - 1
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
                 policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
+                old_log_prob = rollout_data.old_log_prob.detach()
                 #policy_loss_data = []
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
@@ -517,8 +520,12 @@ class HPO(OnPolicyAlgorithm):
                         epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-square":
                         epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
+                    #print("val_log_prob, old_log_prob", val_log_prob[i], old_log_prob[i])
+                    #print("val_log_prob - old_log_prob", val_log_prob[i] - old_log_prob[i])
+                    #print("cliped val_log_prob - old_log_prob", cliped_prob[i])
+                    #print("exp(val_log_prob - old_log_prob)", th.exp(cliped_prob[i]))
                     policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
-                    # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
+                    #print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
                     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
                     #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
@@ -527,7 +534,7 @@ class HPO(OnPolicyAlgorithm):
                     policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
                 policy_loss /= self.batch_size
-                #print("Policy loss", policy_loss_data)
+                #print("Policy loss", policy_loss)
                 # debug 6
                 #policy_loss = th.mean(th.stack(policy_loss_data))
                 #policy_loss = th.mean(th.stack(policy_loss_data))
