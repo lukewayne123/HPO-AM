@@ -1,0 +1,1 @@
+python train.py --algo hpo --classifier AM --seed 123 --hyperparams device:1 --env BreakoutNoFrameskip-v4 -n 1000000 -optimize --n-trials 20 >> hpo1_testB_0729_1500.txt

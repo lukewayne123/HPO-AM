@@ -74,7 +74,9 @@ class ExperimentManager(object):
         verbose: int = 1,
         vec_env_type: str = "dummy",
         n_eval_envs: int = 1,
-        classifier: str="AM"
+        classifier: str="AM",
+        aece: str="WAE",
+        entropy_hpo: bool = False,
     ):
         super(ExperimentManager, self).__init__()
         self.algo = algo
@@ -129,6 +131,7 @@ class ExperimentManager(object):
         self.log_folder = log_folder
         self.tensorboard_log = None if tensorboard_log == "" else os.path.join(tensorboard_log, env_id)
         self.classifier = classifier
+        self.aece = aece
         # print("classifier in exp_manager",classifier) am log
         self.verbose = verbose
         self.args = args
@@ -172,6 +175,8 @@ class ExperimentManager(object):
                     seed=self.seed,
                     verbose=self.verbose,
                     classifier = self.classifier,
+                    aece = self.aece,
+                    entropy_hpo = self.entropy_hpo
                     **self._hyperparams,
                 )
             else:

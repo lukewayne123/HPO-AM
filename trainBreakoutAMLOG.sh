@@ -1,0 +1,1 @@
+python train.py --algo hpo --classifier AM-log --aece WAE --seed 123 --env BreakoutNoFrameskip-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:0

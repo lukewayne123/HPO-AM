@@ -1,0 +1,1 @@
+python train.py --algo hpo --classifier AM --seed 123 --env PongNoFrameskip-v4 -n 200000 -optimize --n-trials 20 >> testPong_0728_0900.txt

@@ -91,7 +91,6 @@ class HPO(OnPolicyAlgorithm):
         # classifier: int =0,
         classifier: str="AM",
         aece: str="WAE",
-        entropy_hpo: bool =False
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
@@ -152,7 +151,6 @@ class HPO(OnPolicyAlgorithm):
         self.classifier = classifier
         self.aece = aece
         self.alpha = alpha
-        self.entropy_hpo = entropy_hpo
         if _init_setup_model:
             self._setup_model()
         
@@ -572,7 +570,7 @@ class HPO(OnPolicyAlgorithm):
                 rollout_return.append(rollout_data.returns.detach().cpu().numpy())
 
                 # ?? SKIP entropy loss??
-                # entropy = None
+                entropy = None
                 # Entropy loss favor exploration
                 if entropy is None:
                     # Approximate entropy when no analytical form
@@ -583,10 +581,7 @@ class HPO(OnPolicyAlgorithm):
                 entropy_losses.append(entropy_loss.item())
 
                 # org version
-                if self.entropy_hpo == True:
-                    loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
-                else :
-                    loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
+                loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
                 # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
                 #loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss

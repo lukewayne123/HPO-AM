@@ -1,0 +1,29 @@
+========== BreakoutNoFrameskip-v4 ==========
+Seed: 3027900376
+OrderedDict([('alpha', 0.6049636649696563),
+             ('batch_size', 128),
+             ('clip_range', 'lin_0.1'),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 0.0023335186171724144),
+             ('n_envs', 8),
+             ('n_epochs', 1),
+             ('n_steps', 256),
+             ('n_timesteps', 2000000.0),
+             ('policy', 'CnnPolicy'),
+             ('policy_kwargs', 'dict(activation_fn=nn.ReLU)'),
+             ('vf_coef', 0.8184983701035169)])
+Using 8 environments
+Overwriting n_timesteps with n=1000000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  1
+Best trial:

@@ -1,0 +1,227 @@
+========== BreakoutNoFrameskip-v4 ==========
+Seed: 123
+OrderedDict([('batch_size', 256),
+             ('clip_range', 'lin_0.1'),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 'lin_2.5e-4'),
+             ('n_envs', 8),
+             ('n_epochs', 4),
+             ('n_steps', 128),
+             ('n_timesteps', 2000000.0),
+             ('policy', 'CnnPolicy'),
+             ('vf_coef', 0.5)])
+Using 8 environments
+Overwriting n_timesteps with n=1000000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  20
+Best trial:
+Value:  26.6
+Params: 
+    alpha: 0.9672889660003534
+    batch_size: 512
+    n_steps: 128
+    lr: 0.0006533535543809611
+    lr_schedule: constant
+    n_epochs: 1
+Writing report to logs/hpo/report_BreakoutNoFrameskip-v4_20-trials-1000000-tpe-median_1627751974.csv
+========== BreakoutNoFrameskip-v4 ==========
+Seed: 123
+OrderedDict([('alpha', 0.9672889660003534),
+             ('batch_size', 512),
+             ('clip_range', 'lin_0.1'),
+             ('device', 1),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 0.0006533535543809611),
+             ('n_envs', 8),
+             ('n_epochs', 1),
+             ('n_steps', 128),
+             ('n_timesteps', 10000000.0),
+             ('policy', 'CnnPolicy'),
+             ('policy_kwargs', 'dict(activation_fn=nn.ReLU, ortho_init=True)'),
+             ('vf_coef', 0.8184983701035169)])
+Using 8 environments
+Overwriting n_timesteps with n=1000000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  20
+Best trial:
+Value:  38.6
+Params: 
+    alpha: 0.2985868032208131
+    batch_size: 512
+    n_steps: 64
+    lr: 0.0014048065842882614
+    lr_schedule: constant
+    n_epochs: 1
+Writing report to logs/hpo/report_BreakoutNoFrameskip-v4_20-trials-1000000-tpe-median_1628014231.csv

@@ -21,6 +21,7 @@ if __name__ == "__main__":  # noqa: C901
     parser = argparse.ArgumentParser()
     parser.add_argument("--algo", help="RL Algorithm", default="ppo", type=str, required=False, choices=list(ALGOS.keys()))
     parser.add_argument("--classifier", help="HPO classifier", default="AM", type=str, required=False,)
+    parser.add_argument("--aece", help="HPO constant epsilon", default="WAE", type=str, required=False,)
     parser.add_argument("--env", type=str, default="CartPole-v1", help="environment ID")
     parser.add_argument("-tb", "--tensorboard-log", help="Tensorboard log dir", default="", type=str)
     parser.add_argument("-i", "--trained-agent", help="Path to a pretrained agent to continue training", default="", type=str)
@@ -90,6 +91,7 @@ if __name__ == "__main__":  # noqa: C901
         help="Overwrite hyperparameter (e.g. learning_rate:0.01 train_freq:10)",
     )
     parser.add_argument("-uuid", "--uuid", action="store_true", default=False, help="Ensure that the run has a unique ID")
+    parser.add_argument("--entropy-hpo", action="store_true", default=False, help="use entropy in hpo loss")
     args = parser.parse_args()
 
     # Going through custom gym packages to let them register in the global registory
@@ -161,7 +163,9 @@ if __name__ == "__main__":  # noqa: C901
         save_replay_buffer=args.save_replay_buffer,
         verbose=args.verbose,
         vec_env_type=args.vec_env,
-        classifier = args.classifier
+        classifier = args.classifier,
+        aece = args.aece,
+        entropy_hpo = args.entropy_hpo,
     )
 
     # Prepare experiment and launch hyperparameter optimization if needed

@@ -201,8 +201,8 @@ class Gridworld_RandReward_4x4_Env(gym.Env):
         reward = -1.2 + 2.2 * np.random.randint(0, 2)
         # reward = self.R[action,self.obs]
         done = True if next_obs == 0 else False
-        # next_obs = None if next_obs == 0 else next_obs    # Terminal state == None
-        next_obs = 0 if next_obs == 0 else next_obs    # Terminal state == None
+        next_obs = None if next_obs == 0 else next_obs    # Terminal state == None
+        # next_obs = 0 if next_obs == 0 else next_obs    # Terminal state == None
         self.obs = next_obs
         info = {}
         return next_obs, reward, done, info

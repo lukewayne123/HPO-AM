@@ -1,0 +1,73 @@
+========== PongNoFrameskip-v4 ==========
+Seed: 1094780046
+OrderedDict([('alpha', 0.6049636649696563),
+             ('batch_size', 128),
+             ('clip_range', 'lin_0.1'),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 0.0023335186171724144),
+             ('n_envs', 8),
+             ('n_epochs', 1),
+             ('n_steps', 256),
+             ('n_timesteps', 2000000.0),
+             ('policy', 'CnnPolicy'),
+             ('policy_kwargs', 'dict(activation_fn=nn.ReLU)'),
+             ('vf_coef', 0.8184983701035169)])
+Using 8 environments
+Overwriting n_timesteps with n=200000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  1
+Best trial:
+========== PongNoFrameskip-v4 ==========
+Seed: 2882094734
+OrderedDict([('alpha', 0.6049636649696563),
+             ('batch_size', 128),
+             ('clip_range', 'lin_0.1'),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 0.0023335186171724144),
+             ('n_envs', 8),
+             ('n_epochs', 1),
+             ('n_steps', 256),
+             ('n_timesteps', 2000000.0),
+             ('policy', 'CnnPolicy'),
+             ('policy_kwargs', 'dict(activation_fn=nn.ReLU)'),
+             ('vf_coef', 0.8184983701035169)])
+Using 8 environments
+Overwriting n_timesteps with n=200000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  2
+Best trial:
+Value:  -20.2
+Params: 
+    alpha: 0.8502910695602757
+    batch_size: 512
+    n_steps: 64
+    lr: 3.4442604476428906e-05
+    lr_schedule: linear
+    activation_fn: relu
+    n_epochs: 5
+    vf_coef: 0.7564529629816189
+Writing report to logs/hpo/report_PongNoFrameskip-v4_20-trials-200000-tpe-median_1627541220.csv
