@@ -132,6 +132,7 @@ class ExperimentManager(object):
         self.tensorboard_log = None if tensorboard_log == "" else os.path.join(tensorboard_log, env_id)
         self.classifier = classifier
         self.aece = aece
+        self.entropy_hpo = entropy_hpo
         # print("classifier in exp_manager",classifier) am log
         self.verbose = verbose
         self.args = args
@@ -176,7 +177,7 @@ class ExperimentManager(object):
                     verbose=self.verbose,
                     classifier = self.classifier,
                     aece = self.aece,
-                    entropy_hpo = self.entropy_hpo
+                    entropy_hpo = self.entropy_hpo,
                     **self._hyperparams,
                 )
             else:

@@ -1,1 +1,1 @@
-python train.py --algo hpo --classifier AM --aece WAE --seed 123 --env BreakoutNoFrameskip-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:1
+python train.py --entropy-hpo --algo hpo --classifier AM --aece WAE --seed 123 --env BreakoutNoFrameskip-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:1

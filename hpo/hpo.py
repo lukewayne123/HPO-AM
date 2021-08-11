@@ -91,7 +91,7 @@ class HPO(OnPolicyAlgorithm):
         # classifier: int =0,
         classifier: str="AM",
         aece: str="WAE",
-        entropy_hpo: bool =False
+        entropy_hpo: bool =False,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
