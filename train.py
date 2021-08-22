@@ -101,8 +101,11 @@ if __name__ == "__main__":  # noqa: C901
     env_id = args.env
     from gym.envs.registration import registry, register, make, spec
     register(id='gridworld_randR_env-v0',entry_point='gridworld_randR_env:Gridworld_RandReward_4x4_Env',reward_threshold=500.0,max_episode_steps=512,)
-    registered_envs = set(gym.envs.registry.env_specs.keys())  # pytype: disable=module-attr
+    
+    register(id='miniBreakout-v0',entry_point='miniAtariBreakout:miniBreakout',)
+    # miniAtariEnvbreakout.py
 
+    registered_envs = set(gym.envs.registry.env_specs.keys())  # pytype: disable=module-attr
     # If the environment is not found, suggest the closest match
     if env_id not in registered_envs:
         try:

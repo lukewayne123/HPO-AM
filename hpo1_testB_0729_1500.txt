@@ -225,3 +225,23 @@ Params:
     lr_schedule: constant
     n_epochs: 1
 Writing report to logs/hpo/report_BreakoutNoFrameskip-v4_20-trials-1000000-tpe-median_1628014231.csv
+========== BreakoutNoFrameskip-v4 ==========
+Seed: 123
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.atari:AtariEnv
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.atari:AtariEnv
+OrderedDict([('batch_size', 256),
+             ('clip_range', 'lin_0.1'),
+             ('device', 1),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 'lin_2.5e-4'),
+             ('n_envs', 8),
+             ('n_epochs', 4),
+             ('n_steps', 128),
+             ('n_timesteps', 10000000.0),
+             ('policy', 'CnnPolicy'),
+             ('vf_coef', 0.5)])
+Using 8 environments
+Overwriting n_timesteps with n=2000000
