@@ -27,3 +27,8 @@ try:
     import gym_donkeycar  # pytype: disable=import-error
 except ImportError:
     gym_donkeycar = None
+
+try:
+    import minatar   # pytype: disable=import-error
+except ImportError:
+    minatar  = None

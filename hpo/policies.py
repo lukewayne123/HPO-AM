@@ -44,6 +44,65 @@ from stable_baselines3.common.utils import get_device, is_vectorized_observation
 from stable_baselines3.common.policies import BaseModel, BasePolicy
 
 
+class MiniQNetwork(nn.Module):
+    #def __init__(self, in_channels, num_actions): # org
+    def __init__(self, observation_space: gym.spaces.Box, features_dim: int = 512):
+
+        super(MiniQNetwork, self).__init__()
+        assert features_dim > 0
+        self._observation_space = observation_space
+        self._features_dim = features_dim
+
+        n_input_channels = observation_space.shape[0]
+
+        # One hidden 2D convolution layer:
+        #   in_channels: variable
+        #   out_channels: 16
+        #   kernel_size: 3 of a 3x3 filter matrix
+        #   stride: 1
+        #self.conv = nn.Conv2d(in_channels, 16, kernel_size=3, stride=1) # org
+        self.conv = nn.Conv2d(n_input_channels, 16, kernel_size=3, stride=1)
+
+        ## Final fully connected hidden layer:
+        ##   the number of linear unit depends on the output of the conv
+        ##   the output consist 128 rectified units
+        #def size_linear_unit(size, kernel_size=3, stride=1):
+        #    return (size - (kernel_size - 1) - 1) // stride + 1
+        #num_linear_units = size_linear_unit(10) * size_linear_unit(10) * 16
+        #self.fc_hidden = nn.Linear(in_features=num_linear_units, out_features=128)
+        with th.no_grad():
+            n_flatten = (nn.Flatten()(self.conv(th.as_tensor(observation_space.sample()[None]).float()))).shape[1]
+
+        self.fc_hidden = nn.Linear(in_features=n_flatten, out_features=128)
+
+        # Output layer:
+        #self.output = nn.Linear(in_features=128, out_features=num_actions) # org
+        self.output = nn.Linear(in_features=128, out_features=features_dim)
+
+
+    @property
+    def features_dim(self) -> int:
+        return self._features_dim
+
+    # As per implementation instructions according to pytorch, the forward function should be overwritten by all
+    # subclasses
+    #def forward(self, x):
+    def forward(self, observations: th.Tensor) -> th.Tensor:
+        x = nn.Flatten()(nn.functional.relu(self.conv(observations)))
+        #print(x.shape)
+        x = nn.functional.relu(self.fc_hidden(x))
+        #print(x.shape)
+        #return self.output(nn.functional.relu(self.fc_hidden(nn.functional.relu(self.conv(observations)).view(observations.size(0), -1))))
+        #return self.output(nn.functional.relu(self.fc_hidden(nn.functional.relu(self.conv(observations)).view(observations.size(0), -1))))
+        return self.output(x)
+        ## Rectified output from the first conv layer
+        #x = f.relu(self.conv(x))
+
+        ## Rectified output from the final hidden layer
+        #x = f.relu(self.fc_hidden(x.view(x.size(0), -1)))
+
+        ## Returns the output from the fully-connected linear layer
+        #return self.output(x)
 
 
 class ActorCriticPolicy2(BasePolicy):
@@ -119,6 +178,8 @@ class ActorCriticPolicy2(BasePolicy):
         # Default network architecture, from stable-baselines
         if net_arch is None:
             if features_extractor_class == NatureCNN:
+                net_arch = []
+            elif features_extractor_class == MiniQNetwork:
                 net_arch = []
             else:
                 net_arch = [dict(pi=[64, 64], vf=[64, 64])]
