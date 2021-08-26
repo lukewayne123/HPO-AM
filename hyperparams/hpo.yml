@@ -98,25 +98,35 @@ mini-breakout-v4:
 #env_wrapper:
 #    - stable_baselines3.common.atari_wrappers.AtariWrapper
   frame_stack: 4
-  alpha: 0.9672889660003534
+  #alpha: 0.9672889660003534
+  alpha: 0.9
+  #alpha: 0.5 # HPO_23
+  #alpha: 0.1 # HPO_19, HPO_20
   policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 128
-  n_epochs: 1 # default
+  #n_steps: 128
+  #n_steps: 16 # HPO_21 try 16
+  #n_steps: 32 # with 128 batch size ok # 32 is better than 64
+  n_steps: 64 # with 256 batch size ok
+  n_epochs: 10 # default
   #n_epochs: 100
   #n_epochs: 10
   batch_size: 512
+  #batch_size: 256 # HPO_20
   #n_timesteps: !!float 1e3
-  n_timesteps: !!float 1e6
-  #n_timesteps: !!float 1e7
+  #n_timesteps: !!float 1e6
+  n_timesteps: !!float 5e6
   # n_timesteps: !!float 1e7
   # lr: 0.0023335186171724144
   # lr_schedule: constant
-  learning_rate: !!float 0.0006533535543809611
-  #learning_rate: !!float 2e-4
+  #learning_rate: !!float 0.0006533535543809611
+  #learning_rate: !!float 2.5e-4
+  learning_rate: lin_2.5e-4
   clip_range: lin_0.1
-  vf_coef: 0.8184983701035169
+  #vf_coef: 0.8184983701035169
+  vf_coef: 0.8
   ent_coef: 0.01
+  #policy_kwargs: "dict(ortho_init=True, features_extractor_class=MiniQNetwork)"
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
   #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
