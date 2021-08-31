@@ -22,6 +22,9 @@ from hpo.policies import ActorCriticPolicy2
 # from hpo.buffer import RolloutBuffer2
 from stable_baselines3.common.policies import BaseModel, BasePolicy
 import random
+
+import time
+
 class HPO(OnPolicyAlgorithm):
     """
     :param policy: The policy model to use (MlpPolicy, CnnPolicy, ...)
@@ -156,6 +159,9 @@ class HPO(OnPolicyAlgorithm):
         if _init_setup_model:
             self._setup_model()
         
+        # check time
+        #self.rollout_time = []
+        #self.computeV_time = []
 
     def _setup_model(self) -> None:
         super(HPO, self)._setup_model()
@@ -222,6 +228,10 @@ class HPO(OnPolicyAlgorithm):
         callback.on_rollout_start()
         # dones = False
         # self._last_obs = env.reset()
+        rollout_time = []
+        computeV_time = []
+
+        t_rollout_start = time.time()
         while n_steps < n_rollout_steps :
             # print("n_steps:",n_steps,"n_rollout_steps: ",n_rollout_steps)
             if self.use_sde and self.sde_sample_freq > 0 and n_steps % self.sde_sample_freq == 0:
@@ -252,6 +262,7 @@ class HPO(OnPolicyAlgorithm):
             # print("infos:",infos)
             # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
             # Compute value
+            t_computeV_start = time.time()
             values = th.Tensor(np.zeros_like(actions, dtype=float)).to(self.device)
             batch_actions = np.zeros_like(actions)
             with th.no_grad():
@@ -273,6 +284,8 @@ class HPO(OnPolicyAlgorithm):
                     # values += th.Tensor(rewards).to(self.device) + exp_q_values
                     values += exp_q_values
                     #print(values)
+            t_computeV_end = time.time()
+            computeV_time.append(t_computeV_end - t_computeV_start)
             #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
             #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
             #print(values.shape)
@@ -315,6 +328,12 @@ class HPO(OnPolicyAlgorithm):
                 exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
                 #print(exp_q_values)
                 values += exp_q_values
+        t_rollout_end = time.time()
+        rollout_time.append(t_rollout_end - t_rollout_start)
+        logger.record("Time/collect_rollout/Sum", np.sum(rollout_time))
+        logger.record("Time/collect_computeV/Sum", np.sum(computeV_time))
+        logger.record("Time/collect_rollout/Mean", np.mean(rollout_time))
+        logger.record("Time/collect_computeV/Mean", np.mean(computeV_time))
 
         rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
         # for step in reversed(range(rollout_buffer.buffer_size)):
@@ -354,6 +373,9 @@ class HPO(OnPolicyAlgorithm):
         ratio_p = []
         rollout_return = []
 
+        epoch_time = []
+        loss_time = []
+        computeV_time = []
         #alpha = 0.1
         # if args.algo == 'HPO':
         #     print("args.algo == 'HPO' can use in hpg.py")
@@ -364,6 +386,7 @@ class HPO(OnPolicyAlgorithm):
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
+        t_epoch_start = time.time()
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
@@ -411,6 +434,7 @@ class HPO(OnPolicyAlgorithm):
                 # print("train self.policy.evaluate_actions real actions")
                 # action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
                 action_q_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                t_computeV_start = time.time()
                 for a in range(self.action_space.n):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
@@ -429,6 +453,8 @@ class HPO(OnPolicyAlgorithm):
                     action_probs.append(p)
                     #action_log_probs.append(a_log_prob)
                     #print("val_values: ", val_values)
+                t_computeV_end = time.time()
+                computeV_time.append(t_computeV_end - t_computeV_start)
                     
                 # print("batch_values", batch_values)
                 # print("action_advantages",action_advantages)
@@ -511,6 +537,7 @@ class HPO(OnPolicyAlgorithm):
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
                 policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
                 #policy_loss_data = []
+                t_loss_start = time.time()
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
                         epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -534,6 +561,9 @@ class HPO(OnPolicyAlgorithm):
                     #policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
                     policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
+                t_loss_end = time.time()
+                loss_time.append(t_loss_end - t_loss_start)
+
                 policy_loss /= self.batch_size
                 #print("Policy loss", policy_loss_data)
                 # debug 6
@@ -616,6 +646,15 @@ class HPO(OnPolicyAlgorithm):
             #if np.mean(pg_losses) < 1e-4:
             #    print(f"Early stopping at step {epoch} due to reaching ploss: {np.mean(pg_losses):.2f}")
             #    break
+
+        t_epoch_end = time.time()
+        epoch_time.append(t_epoch_end - t_epoch_start)
+        logger.record("Time/train_loss/Sum", np.sum(loss_time))
+        logger.record("Time/train_computeV/Sum", np.sum(computeV_time))
+        logger.record("Time/train_epoch/Sum", np.sum(epoch_time))
+        logger.record("Time/train_loss/Mean", np.mean(loss_time))
+        logger.record("Time/train_computeV/Mean", np.mean(computeV_time))
+        logger.record("Time/train_epoch/Mean", np.mean(epoch_time))
 
         self._n_updates += self.n_epochs
         explained_var = explained_variance(self.rollout_buffer.values.flatten(), self.rollout_buffer.returns.flatten())
