@@ -137,15 +137,15 @@ mini-asterix-v4:
 #    - stable_baselines3.common.atari_wrappers.AtariWrapper
   frame_stack: 4
   #alpha: 0.9672889660003534
-  alpha: 0.9 # HPO_0
-  #alpha: 0.5 # 
+  #alpha: 0.9 # HPO_0
+  alpha: 0.5 # 
   #alpha: 0.1 # 
   policy: 'CnnPolicy'
   n_envs: 8
-  #n_steps: 128
+  n_steps: 128
   #n_steps: 16 # 
   #n_steps: 32 # 
-  n_steps: 64 # 
+  #n_steps: 64 # 
   #n_steps: 128 # 
   n_epochs: 10 # default
   #n_epochs: 100
@@ -165,8 +165,8 @@ mini-asterix-v4:
   learning_rate: lin_2.5e-4
   clip_range: lin_0.1
   #vf_coef: 0.8184983701035169
-  #vf_coef: 0.8
-  vf_coef: 0.1
+  vf_coef: 0.8
+  #vf_coef: 0.1
   #vf_coef: 0.5
   ent_coef: 0.01
   #policy_kwargs: "dict(ortho_init=True, features_extractor_class=MiniQNetwork)"
