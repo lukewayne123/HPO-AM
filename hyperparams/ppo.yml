@@ -1,3 +1,80 @@
+mini-breakout-v4:
+#  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
+#env_wrapper:
+#    - stable_baselines3.common.atari_wrappers.AtariWrapper
+  frame_stack: 4
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 128
+  n_epochs: 4 # default
+  #n_epochs: 100
+  #n_epochs: 10
+  batch_size: 512
+  #batch_size: 256
+  #n_timesteps: !!float 1e3
+  #n_timesteps: !!float 1e6
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  learning_rate: lin_2.5e-4
+  #learning_rate: !!float 2e-4
+  clip_range: lin_0.1
+  vf_coef: 0.5
+  ent_coef: 0.00
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+
+mini-asterix-v4:
+#  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
+#env_wrapper:
+#    - stable_baselines3.common.atari_wrappers.AtariWrapper
+  frame_stack: 4
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 128
+  n_epochs: 4 # default
+  #n_epochs: 100
+  #n_epochs: 10
+  batch_size: 512
+  #batch_size: 256
+  #n_timesteps: !!float 1e3
+  #n_timesteps: !!float 1e6
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  learning_rate: lin_2.5e-4
+  #learning_rate: !!float 2e-4
+  clip_range: lin_0.1
+  vf_coef: 0.5
+  ent_coef: 0.00
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+
+mini-space_invaders-v4:
+#  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
+#env_wrapper:
+#    - stable_baselines3.common.atari_wrappers.AtariWrapper
+  frame_stack: 4
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 128
+  n_epochs: 4 # default
+  #n_epochs: 100
+  #n_epochs: 10
+  batch_size: 512
+  #batch_size: 256
+  #n_timesteps: !!float 1e3
+  #n_timesteps: !!float 1e6
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  learning_rate: lin_2.5e-4
+  #learning_rate: !!float 2e-4
+  clip_range: lin_0.1
+  vf_coef: 0.5
+  ent_coef: 0.00
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 miniBreakout-v0:
   frame_stack: 4
   policy: 'MlpPolicy'
@@ -5,12 +82,12 @@ miniBreakout-v0:
   n_steps: 128
   n_epochs: 4
   batch_size: 256
-  n_timesteps: !!float 1e7
+  n_timesteps: !!float 5e6
   #n_timesteps: !!float 1e7
   learning_rate: lin_2.5e-4
   clip_range: lin_0.1
   vf_coef: 0.5
-  ent_coef: 0.01
+  ent_coef: 0.00
 atari:
   env_wrapper:
     - stable_baselines3.common.atari_wrappers.AtariWrapper
@@ -20,7 +97,7 @@ atari:
   n_steps: 128
   n_epochs: 4
   batch_size: 256
-  n_timesteps: !!float 1e6
+  n_timesteps: !!float 5e6
   #n_timesteps: !!float 1e7
   learning_rate: lin_2.5e-4
   clip_range: lin_0.1

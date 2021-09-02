@@ -104,7 +104,14 @@ if __name__ == "__main__":  # noqa: C901
     
     register(id='miniBreakout-v0',entry_point='miniAtariBreakout:miniBreakout',)
     # miniAtariEnvbreakout.py
+    for game in ["asterix", "breakout", "freeway", "seaquest", "space_invaders"]:
 
+        register(id='mini-{}-v4'.format(game), 
+                entry_point='minatar:Environment',
+                kwargs={
+                    "env_name": game,
+                    }
+                )
     registered_envs = set(gym.envs.registry.env_specs.keys())  # pytype: disable=module-attr
     # If the environment is not found, suggest the closest match
     if env_id not in registered_envs:

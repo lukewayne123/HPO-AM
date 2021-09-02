@@ -1,1 +1,1 @@
-python train.py --algo ppo --classifier AM --seed 123 --hyperparams device:1 --env BreakoutNoFrameskip-v4 -n 2000000 -optimize --n-trials 20 >> ppo1_MiniBreakout_0822_2200.txt
+python train.py --algo ppo --classifier AM --seed 123 --hyperparams device:1 --env miniBreakout-v0 -n 2000000 -optimize --n-trials 20 >> ppo1_MiniBreakout_0822_2200.txt
