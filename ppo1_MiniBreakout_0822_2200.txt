@@ -1,0 +1,131 @@
+========== BreakoutNoFrameskip-v4 ==========
+Seed: 123
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.atari:AtariEnv
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.atari:AtariEnv
+OrderedDict([('batch_size', 256),
+             ('clip_range', 'lin_0.1'),
+             ('device', 1),
+             ('ent_coef', 0.01),
+             ('env_wrapper',
+              ['stable_baselines3.common.atari_wrappers.AtariWrapper']),
+             ('frame_stack', 4),
+             ('learning_rate', 'lin_2.5e-4'),
+             ('n_envs', 8),
+             ('n_epochs', 4),
+             ('n_steps', 128),
+             ('n_timesteps', 1000000.0),
+             ('policy', 'CnnPolicy'),
+             ('vf_coef', 0.5)])
+Using 8 environments
+Overwriting n_timesteps with n=2000000
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Stacking 4 frames
+Wrapping into a VecTransposeImage
+Number of finished trials:  3
+Best trial:
+Value:  3.6
+Params: 
+    batch_size: 512
+    n_steps: 2048
+    gamma: 0.999
+    lr: 0.011353180782126503
+    ent_coef: 0.0011405220289202554
+    clip_range: 0.2
+    n_epochs: 1
+    gae_lambda: 0.99
+    max_grad_norm: 2
+    vf_coef: 0.6128945257629677
+    net_arch: medium
+    activation_fn: tanh
+Writing report to logs/ppo/report_BreakoutNoFrameskip-v4_20-trials-2000000-tpe-median_1629648534.csv
+========== miniBreakout-v0 ==========
+Seed: 123
+gym.envs.registry.env_specs[env_id].entry_point miniAtariBreakout:miniBreakout
+gym.envs.registry.env_specs[env_id].entry_point miniAtariBreakout:miniBreakout
+OrderedDict([('batch_size', 256),
+             ('clip_range', 'lin_0.1'),
+             ('device', 1),
+             ('ent_coef', 0.01),
+             ('frame_stack', 4),
+             ('learning_rate', 'lin_2.5e-4'),
+             ('n_envs', 8),
+             ('n_epochs', 4),
+             ('n_steps', 128),
+             ('n_timesteps', 10000000.0),
+             ('policy', 'MlpPolicy'),
+             ('vf_coef', 0.5)])
+Using 8 environments
+Overwriting n_timesteps with n=2000000
+Stacking 4 frames
+Optimizing hyperparameters
+Sampler: tpe - Pruner: median
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Stacking 4 frames
+Number of finished trials:  20
+Best trial:
+Value:  21.8
+Params: 
+    batch_size: 32
+    n_steps: 512
+    gamma: 0.995
+    lr: 0.0017265516796025223
+    ent_coef: 2.748882630572086e-06
+    clip_range: 0.2
+    n_epochs: 10
+    gae_lambda: 0.8
+    max_grad_norm: 0.6
+    vf_coef: 0.7781230500844883
+    net_arch: small
+    activation_fn: relu
+Writing report to logs/ppo/report_miniBreakout-v0_20-trials-2000000-tpe-median_1629932484.csv

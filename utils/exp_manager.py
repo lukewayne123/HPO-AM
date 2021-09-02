@@ -436,6 +436,7 @@ class ExperimentManager(object):
 
     @staticmethod
     def is_atari(env_id: str) -> bool:
+        print("gym.envs.registry.env_specs[env_id].entry_point",gym.envs.registry.env_specs[env_id].entry_point)
         return "AtariEnv" in gym.envs.registry.env_specs[env_id].entry_point
 
     @staticmethod

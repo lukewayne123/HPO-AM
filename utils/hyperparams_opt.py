@@ -27,7 +27,7 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     lr_schedule = trial.suggest_categorical('lr_schedule', ['linear', 'constant'])
     # activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu"])
     #activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu", "elu"])
-    #ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
+    ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
     #clip_range = trial.suggest_categorical("clip_range", [0.1, 0.2, 0.3, 0.4])
     n_epochs = trial.suggest_categorical("n_epochs", [1, 5, 10])
     #n_epochs = trial.suggest_categorical("n_epochs", [1, 5, 10, 20])
@@ -42,7 +42,7 @@ def sample_hpo_params(trial: optuna.Trial) -> Dict[str, Any]:
     # Uncomment for gSDE (continuous action)
     # sde_sample_freq = trial.suggest_categorical("sde_sample_freq", [-1, 8, 16, 32, 64, 128, 256])
     # Orthogonal initialization
-    ortho_init = False
+    ortho_init = True
     # ortho_init = trial.suggest_categorical('ortho_init', [False, True])
     # activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
 

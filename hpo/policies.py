@@ -43,7 +43,6 @@ from stable_baselines3.common.type_aliases import Schedule
 from stable_baselines3.common.utils import get_device, is_vectorized_observation, obs_as_tensor
 from stable_baselines3.common.policies import BaseModel, BasePolicy
 
-
 class MiniQNetwork(nn.Module):
     #def __init__(self, in_channels, num_actions): # org
     def __init__(self, observation_space: gym.spaces.Box, features_dim: int = 512):
