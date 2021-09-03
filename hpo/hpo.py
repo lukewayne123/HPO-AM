@@ -436,6 +436,7 @@ class HPO(OnPolicyAlgorithm):
                 gpu_negative_adv_prob = th.zeros_like(val_log_prob)
                 gpu_batch_values  = th.zeros_like(val_log_prob)
                 gpu_action_advantages = []
+                gpu_action_probs = []
                 for a in range(self.action_space.n):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
@@ -445,9 +446,9 @@ class HPO(OnPolicyAlgorithm):
                     #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     gpu_q =  q_values[:,a].flatten()
-                    q = gpu_q.cpu().detach()
+                    # q = gpu_q.cpu().detach()
                     gpu_p = th.exp(a_log_prob)
-
+                    gpu_action_probs.append(gpu_p)
                     
                     p = gpu_p.cpu().detach()
                     gpu_batch_values += gpu_q*gpu_p
@@ -474,8 +475,8 @@ class HPO(OnPolicyAlgorithm):
                     #print("Before A", action_advantages[i])
                     # action_advantages[a] -= batch_values
                     gpu_action_advantages[a] -= gpu_batch_values
-                    gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_p+gpu_positive_adv_prob,gpu_positive_adv_prob)
-                    gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_p+gpu_negative_adv_prob,gpu_negative_adv_prob)
+                    gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
+                    gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
                     
                     # action_advantages.append(gpu_action_advantages[a].cpu().clone().detach().numpy())
                     # print("gpu_action_advantages[a]",gpu_action_advantages[a])
