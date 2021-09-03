@@ -41,6 +41,7 @@ mini-space_invaders-v4:
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 
+<<<<<<< HEAD
 #mini-breakout-v4:
 #  frame_stack: 4
 #  alpha: 0.4837161762665274
@@ -64,6 +65,53 @@ mini-space_invaders-v4:
 #  #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
 #  #features_extractor: MiniQNetwork
 
+=======
+mini-breakout-v4:
+  frame_stack: 4
+  alpha: 0.5
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 128
+  n_epochs: 10
+  batch_size: 256
+  #n_timesteps: !!float 1e3
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  # learning_rate: !!float 0.0003858579113199061
+  learning_rate: lin_2.5e-4
+  clip_range: lin_0.1
+  vf_coef: 0.8
+  ent_coef: 0.0
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+  #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
+  #features_extractor: MiniQNetwork
+#lc 0902 backup
+# mini-breakout-v4:
+#   frame_stack: 4
+#   alpha: 0.4837161762665274
+#   policy: 'CnnPolicy'
+#   n_envs: 8
+#   n_steps: 128
+#   n_epochs: 10
+#   batch_size: 256
+#   #n_timesteps: !!float 1e3
+#   # n_timesteps: !!float 1e6
+#   n_timesteps: !!float 1e7
+#   # n_timesteps: !!float 1e7
+#   # lr: 0.0023335186171724144
+#   # lr_schedule: constant
+#   learning_rate: !!float 0.0003858579113199061
+#   #learning_rate: !!float 2e-4
+#   clip_range: lin_0.1
+#   vf_coef: 0.8184983701035169
+#   ent_coef: 0.05
+#   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+#   #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
+#   #features_extractor: MiniQNetwork
+>>>>>>> 0811entlc
 miniBreakout-v0:
   frame_stack: 4
   policy: 'MlpPolicy'
