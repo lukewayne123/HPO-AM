@@ -47,7 +47,8 @@ mini-asterix-v4:
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
   vf_coef: 0.5
-  ent_coef: 0.00
+  ent_coef: 0.01
+  #ent_coef: 0.00
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 
 mini-space_invaders-v4:
@@ -73,7 +74,7 @@ mini-space_invaders-v4:
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
   vf_coef: 0.5
-  ent_coef: 0.00
+  ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 miniBreakout-v0:
   frame_stack: 4

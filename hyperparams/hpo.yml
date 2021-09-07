@@ -18,12 +18,14 @@ gridworld_randR_env-v0:
   vf_coef: 1
   ent_coef: 0.01
 mini-space_invaders-v4:
-  frame_stack: 1
-  alpha: 0.4837161762665274
+  frame_stack: 4
+  #alpha: 0.4837161762665274
+  alpha: 0.5
   policy: 'MlpPolicy'
   # policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 128
+  #n_steps: 128
+  n_steps: 64
   n_epochs: 10
   batch_size: 256
   #n_timesteps: !!float 1e3
@@ -32,13 +34,15 @@ mini-space_invaders-v4:
   # n_timesteps: !!float 1e7
   # lr: 0.0023335186171724144
   # lr_schedule: constant
-  learning_rate: !!float 0.0003858579113199061
+  #learning_rate: !!float 0.0003858579113199061
+  learning_rate: lin_2.5e-4
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
-  vf_coef: 0.5
-  ent_coef: 0.01
-  # policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
-  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
+  #vf_coef: 0.5
+  vf_coef: 0.8
+  ent_coef: 0.0
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+  #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 
 mini-breakout-v4:
@@ -46,7 +50,8 @@ mini-breakout-v4:
   alpha: 0.5
   policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 128
+  #n_steps: 128
+  n_steps: 64
   n_epochs: 10
   batch_size: 256
   #n_timesteps: !!float 1e3
@@ -118,59 +123,21 @@ atari:
   ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
 
-mini-breakout-v4:
-#  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
-#env_wrapper:
-#    - stable_baselines3.common.atari_wrappers.AtariWrapper
-  frame_stack: 4
-  #alpha: 0.9672889660003534
-  #alpha: 0.9
-  alpha: 0.5 # HPO_23
-  #alpha: 0.1 # HPO_19, HPO_20
-  policy: 'CnnPolicy'
-  n_envs: 8
-  #n_steps: 128
-  #n_steps: 16 # HPO_21 try 16
-  #n_steps: 32 # with 128 batch size ok # 32 is better than 64
-  n_steps: 128 # with 256 batch size ok
-  n_epochs: 10 # default
-  #n_epochs: 100
-  #n_epochs: 10
-  batch_size: 256
-  #batch_size: 256 # HPO_20
-  #n_timesteps: !!float 1e3
-  #n_timesteps: !!float 1e6
-  n_timesteps: !!float 5e6
-  # n_timesteps: !!float 1e7
-  # lr: 0.0023335186171724144
-  # lr_schedule: constant
-  #learning_rate: !!float 0.0006533535543809611
-  #learning_rate: !!float 2.5e-4
-  learning_rate: lin_2.5e-4
-  clip_range: lin_0.1
-  #vf_coef: 0.8184983701035169
-  vf_coef: 0.8
-  ent_coef: 0.01
-  #policy_kwargs: "dict(ortho_init=True, features_extractor_class=MiniQNetwork)"
-  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
-  #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
-  #features_extractor: MiniQNetwork
-
 mini-asterix-v4:
 #  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
 #env_wrapper:
 #    - stable_baselines3.common.atari_wrappers.AtariWrapper
   frame_stack: 4
   #alpha: 0.9672889660003534
-  #alpha: 0.9 # HPO_0
-  alpha: 0.5 # 
+  alpha: 0.9 # HPO_0
+  #alpha: 0.5 # Best?
   #alpha: 0.1 # 
   policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 128
+  #n_steps: 128
   #n_steps: 16 # 
   #n_steps: 32 # 
-  #n_steps: 64 # 
+  n_steps: 64 # 
   #n_steps: 128 # 
   n_epochs: 10 # default
   #n_epochs: 100
@@ -196,6 +163,25 @@ mini-asterix-v4:
   ent_coef: 0.01
   #policy_kwargs: "dict(ortho_init=True, features_extractor_class=MiniQNetwork)"
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+
+mini-freeway-v4:
+  frame_stack: 4
+  #alpha: 0.9 # HPO_0
+  alpha: 0.5 # Best?
+  #alpha: 0.1 # 
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 64 # 
+  n_epochs: 10 # default
+  batch_size: 256 # 
+  n_timesteps: !!float 5e6
+  learning_rate: lin_2.5e-4
+  clip_range: lin_0.1
+  vf_coef: 0.8
+  ent_coef: 0
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+
+
 Pendulum-v0:
   n_envs: 8
   n_timesteps: !!float 2e6
