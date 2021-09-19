@@ -105,7 +105,7 @@ atari:
   vf_coef: 0.5
   ent_coef: 0.01
 
-mini-breakout-v4:
+mini-seaquest-v4:
 #  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
 #env_wrapper:
 #    - stable_baselines3.common.atari_wrappers.AtariWrapper

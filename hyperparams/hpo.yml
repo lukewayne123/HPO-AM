@@ -164,6 +164,23 @@ mini-asterix-v4:
   #policy_kwargs: "dict(ortho_init=True, features_extractor_class=MiniQNetwork)"
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 
+mini-seaquest-v4:
+  frame_stack: 4
+  #alpha: 0.9 # HPO_0
+  alpha: 0.5 # Best?
+  #alpha: 0.1 # 
+  policy: 'CnnPolicy'
+  n_envs: 8
+  n_steps: 64 # 
+  n_epochs: 10 # default
+  batch_size: 256 # 
+  n_timesteps: !!float 5e6
+  learning_rate: lin_2.5e-4
+  clip_range: lin_0.1
+  vf_coef: 0.8
+  ent_coef: 0
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+
 mini-freeway-v4:
   frame_stack: 4
   #alpha: 0.9 # HPO_0
