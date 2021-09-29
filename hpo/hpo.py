@@ -500,7 +500,7 @@ class HPO(OnPolicyAlgorithm):
                 # print("action_advantages",action_advantages)
                 # action_advantages[:] = gpu_action_advantages[:].cpu().clone().detach().numpy()
                 for j in range(self.batch_size):
-                    val_q_values[j] = action_q_values[j][ actions[j] ]
+                    val_q_values[j] = action_q_values[j][ actions[j] ].clone()
                     advantages[j] = gpu_action_advantages[ actions[j] ][j]
                 # val_q_values = action_q_values
                 t_action_adv_end = time.time()

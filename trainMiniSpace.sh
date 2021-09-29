@@ -1,1 +1,1 @@
-python train.py --algo hpo  --classifier AM --aece WAE --seed 123 --env mini-space_invaders-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:0
+python train.py --algo hpo  --classifier AM --aece WAE --seed 666 --env mini-space_invaders-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:0

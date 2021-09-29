@@ -1,3 +1,20 @@
+mini-breakout-v4:
+  frame_stack: 4
+  # alpha: 0.5
+  policy: 'CnnPolicy'
+  batch_size: 256
+  #n_timesteps: !!float 1e3
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  # learning_rate: !!float 0.0003858579113199061
+  learning_rate: lin_2.5e-4
+  exploration_fraction: 0.025  # explore 250k steps = 10M * 0.025
+  optimize_memory_usage: True
+  policy_kwargs: "dict(activation_fn=nn.ReLU, features_extractor_class=MiniQNetwork)"
+
 atari:
   env_wrapper:
     - stable_baselines3.common.atari_wrappers.AtariWrapper
