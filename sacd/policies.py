@@ -117,24 +117,24 @@ class Actor(BasePolicy):
         #    self.mu = nn.Linear(last_layer_dim, action_dim)
         #    self.log_std = nn.Linear(last_layer_dim, action_dim)
 
-    #def _get_constructor_parameters(self) -> Dict[str, Any]:
-    #    data = super()._get_constructor_parameters()
+    def _get_constructor_parameters(self) -> Dict[str, Any]:
+        data = super()._get_constructor_parameters()
 
-    #    data.update(
-    #        dict(
-    #            net_arch=self.net_arch,
-    #            features_dim=self.features_dim,
-    #            activation_fn=self.activation_fn,
-    #            use_sde=self.use_sde,
-    #            log_std_init=self.log_std_init,
-    #            full_std=self.full_std,
-    #            sde_net_arch=self.sde_net_arch,
-    #            use_expln=self.use_expln,
-    #            features_extractor=self.features_extractor,
-    #            clip_mean=self.clip_mean,
-    #        )
-    #    )
-    #    return data
+        data.update(
+            dict(
+                net_arch=self.net_arch,
+                features_dim=self.features_dim,
+                activation_fn=self.activation_fn,
+                use_sde=self.use_sde,
+                log_std_init=self.log_std_init,
+                full_std=self.full_std,
+                sde_net_arch=self.sde_net_arch,
+                use_expln=self.use_expln,
+                features_extractor=self.features_extractor,
+                clip_mean=self.clip_mean,
+            )
+        )
+        return data
 
     def get_std(self) -> th.Tensor:
         # Not use for discrete
@@ -196,9 +196,9 @@ class Actor(BasePolicy):
         ## Note: the action is squashed
         #return self.action_dist.actions_from_params(mean_actions, log_std, deterministic=deterministic, **kwargs)
 
-    def action_log_prob(self, obs: th.Tensor, deterministic: bool = False) -> Tuple[th.Tensor, th.Tensor]:
+    def action_log_prob(self, obs: th.Tensor) -> Tuple[th.Tensor, th.Tensor]:
         distribution = self.get_action_dist_params(obs)
-        actions = distribution.get_actions(deterministic=deterministic)
+        actions = distribution.get_actions(deterministic=True)
         log_prob = distribution.log_prob(actions)
         return actions, log_prob
 

@@ -43,9 +43,10 @@ mini-freeway-v4:
 CartPole-v1:
   n_timesteps: !!float 5e5
   policy: 'MlpPolicy'
-  buffer_size: 50000
-  #buffer_size: 100000 # dqn
-  batch_size: 32
+  #buffer_size: 50000
+  buffer_size: 100000 # dqn
+  #batch_size: 32
+  batch_size: 64
   #batch_size: 256 # not large than train freq
   ent_coef: 'auto'
   #ent_coef: 0
@@ -54,12 +55,12 @@ CartPole-v1:
   learning_rate: !!float 1e-3
   #learning_rate: lin_0.001
   #learning_rate: !!float 3e-4
-  train_freq: 32
-  #train_freq: 256
-  #gradient_steps: 128
-  #target_update_interval: 2
+  #train_freq: 32
+  train_freq: 256
+  gradient_steps: 128
+  target_update_interval: 10
   #train_freq: 64 # with 32 bs failed
-  #gradient_steps: 32
+  #gradient_steps: 
   #target_update_interval: 64
   #learning_starts: 1000
   #train_freq: [1, "episode"]
