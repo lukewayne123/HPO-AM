@@ -195,7 +195,8 @@ mini-freeway-v4:
   learning_rate: lin_2.5e-4
   clip_range: lin_0.1
   vf_coef: 0.8
-  ent_coef: 0
+  #ent_coef: 0
+  ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 
 

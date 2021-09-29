@@ -22,6 +22,7 @@ from torch import nn as nn  # noqa: F401 pylint: disable=unused-import
 from hpo import HPO
 from hpoac import HPOAC
 from ppo_time import PPOT
+from sacd import SACD
 
 ALGOS = {
     "a2c": A2C,
@@ -39,6 +40,7 @@ ALGOS = {
     "hpo": HPO,
     "hpoac": HPOAC,
     "ppo_time": PPOT,
+    "sacd": SACD
 }
 
 
