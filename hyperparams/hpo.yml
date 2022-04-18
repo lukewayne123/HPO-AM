@@ -1,3 +1,45 @@
+mini-asterix-v4:
+  frame_stack: 1
+  alpha: 0.1
+  # policy: 'CnnPolicy'
+  policy: 'MlpPolicy'
+  n_envs: 8
+  n_steps: 256
+  n_epochs: 10
+  batch_size: 1024
+  #n_timesteps: !!float 1e3
+  n_timesteps: !!float 5e6
+  # n_timesteps: !!float 1e7
+  # n_timesteps: !!float 1e7
+  # lr: 0.0023335186171724144
+  # lr_schedule: constant
+  # learning_rate: !!float 0.0003858579113199061
+  learning_rate: lin_2.5e-4
+  clip_range: lin_0.1
+  vf_coef: 0.5
+  ent_coef: 0.01
+  policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+# mini-asterix-v4:
+#   frame_stack: 4
+#   alpha: 0.1
+#   policy: 'CnnPolicy'
+#   n_envs: 8
+#   n_steps: 128
+#   n_epochs: 10
+#   batch_size: 256
+#   #n_timesteps: !!float 1e3
+#   n_timesteps: !!float 5e6
+#   # n_timesteps: !!float 1e7
+#   # n_timesteps: !!float 1e7
+#   # lr: 0.0023335186171724144
+#   # lr_schedule: constant
+#   # learning_rate: !!float 0.0003858579113199061
+#   learning_rate: lin_2.5e-4
+#   # learning_rate: lin_2.5e-2
+#   clip_range: lin_0.1
+#   vf_coef: 0.5
+#   ent_coef: 0.0
+#   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 mini-seaquest-v4:
   frame_stack: 4
   alpha: 0.5

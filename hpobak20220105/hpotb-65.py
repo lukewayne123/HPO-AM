@@ -6,8 +6,7 @@ import torch as th
 from gym import spaces
 import gym
 from torch.nn import functional as F
-import torch.optim as optim
-import torch.nn as nn
+
 from stable_baselines3.common import logger
 from stable_baselines3.common.on_policy_algorithm import OnPolicyAlgorithm
 from stable_baselines3.common.policies import ActorCriticPolicy
@@ -16,16 +15,13 @@ from stable_baselines3.common.utils import explained_variance, get_schedule_fn, 
 from stable_baselines3.common.vec_env import VecEnv
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.buffers import DictRolloutBuffer, RolloutBuffer
-from stable_baselines3.common.utils import obs_as_tensor, safe_mean
+
 import math
 
 from hpo.policies import ActorCriticPolicy2
-from hpo.buffer import RolloutBuffer2
+# from hpo.buffer import RolloutBuffer2
 from stable_baselines3.common.policies import BaseModel, BasePolicy
 import random
-import time
-
-
 class HPO(OnPolicyAlgorithm):
     """
     :param policy: The policy model to use (MlpPolicy, CnnPolicy, ...)
@@ -95,13 +91,10 @@ class HPO(OnPolicyAlgorithm):
         # classifier: int =0,
         classifier: str="AM",
         aece: str="WAE",
-        entropy_hpo: bool =False,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
         alpha: float = 0.1,
-        env_id: str="mini-asterix-v4",
-        env2 = Union[GymEnv, str],
     ):
 
         super(HPO, self).__init__(
@@ -158,45 +151,12 @@ class HPO(OnPolicyAlgorithm):
         self.classifier = classifier
         self.aece = aece
         self.alpha = alpha
-        self.entropy_hpo = entropy_hpo
-        self.robust_delta_y = self.ROBUSTDELTAY(self.batch_size).to(self.device)
-        self.robust_optimizer = optim.Adam(self.robust_delta_y.parameters(), lr=0.0002  )
-        self._num_timesteps_at_start = 0
-        self.env_id = env_id
-        self.env2 = env2
         if _init_setup_model:
             self._setup_model()
         
-    class ROBUSTDELTAY(nn.Module):
-        def __init__(self,batch_size):
-            # super(ROBUSTDELTAY, self).__init__()
-            super().__init__()
-            # batch_size = 64
-            self.gamma = 3
-            self.affine1 = nn.Linear( 1 , 32)
-            self.affine2 = nn.Linear(32, 32)
-            self.affine3 = nn.Linear(64, 32)
-            self.batch_size = batch_size
-            self.deltaY_head = nn.Linear(32, self.batch_size)
-        def forward(self, x):
-            x = self.affine1(x)
-            x = self.affine2(x)
-            deltaY = F.softmax(self.deltaY_head(x), dim=-1) * self.gamma
-            return deltaY
-    
+
     def _setup_model(self) -> None:
         super(HPO, self)._setup_model()
-        # buffer_cls = DictRolloutBuffer if isinstance(self.observation_space, gym.spaces.Dict) else RolloutBuffer2
-        buffer_cls = RolloutBuffer2
-        self.rollout_buffer = buffer_cls(
-            self.n_steps,
-            self.observation_space,
-            self.action_space,
-            device=self.device,
-            gamma=self.gamma,
-            gae_lambda=self.gae_lambda,
-            n_envs=self.n_envs,
-        )
         # self.target_policy = self.policy_class(  # pytype:disable=not-instantiable
         #     self.observation_space,
         #     self.action_space,
@@ -232,8 +192,7 @@ class HPO(OnPolicyAlgorithm):
         self,
         env: VecEnv,
         callback: BaseCallback,
-        # rollout_buffer: RolloutBuffer,
-        rollout_buffer: RolloutBuffer2,
+        rollout_buffer: RolloutBuffer,
         # rollout_buffer: ReplayBuffer,
         n_rollout_steps: int,
     ) -> bool:
@@ -261,10 +220,6 @@ class HPO(OnPolicyAlgorithm):
         callback.on_rollout_start()
         # dones = False
         # self._last_obs = env.reset()
-        rollout_time = []
-        computeV_time = []
-
-        t_rollout_start = time.time()
         while n_steps < n_rollout_steps :
             # print("n_steps:",n_steps,"n_rollout_steps: ",n_rollout_steps)
             if self.use_sde and self.sde_sample_freq > 0 and n_steps % self.sde_sample_freq == 0:
@@ -273,12 +228,9 @@ class HPO(OnPolicyAlgorithm):
 
             with th.no_grad():
                 # Convert to pytorch tensor or to TensorDict
-                # print("self._last_obs",self._last_obs)
-                # print("collect rollout forward",self._last_obs[0])
                 obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 #actions, values, log_probs = self.policy.forward(obs_tensor) # org
                 #print("collect rollout forward")
-                # print("collect rollout forward",obs_tensor[0])
                 actions, _, log_probs = self.policy.forward(obs_tensor)
             
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
@@ -293,16 +245,11 @@ class HPO(OnPolicyAlgorithm):
             # Clip the actions to avoid out of bound error
             if isinstance(self.action_space, gym.spaces.Box):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
-            # print("clipped_actions",clipped_actions)
-            saved_state = env.env_method('save_state') #it work, it will save 8 envs' state in a list with 8 dicts
-            # print("saved_state type", saved_state  ) #dicts in a list
-            # saved_state_np = np.array(saved_state)
+            
             new_obs, rewards, dones, infos = env.step(clipped_actions)
             # print("infos:",infos)
-            # print("new_obs",new_obs)#stacked obs
             # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
             # Compute value
-            t_computeV_start = time.time()
             values = th.Tensor(np.zeros_like(actions, dtype=float)).to(self.device)
             batch_actions = np.zeros_like(actions)
             with th.no_grad():
@@ -327,8 +274,7 @@ class HPO(OnPolicyAlgorithm):
             #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
             #values = th.Tensor(rewards).to(self.device) + (th.exp(next_log_probs) * next_q_values)
             #print(values.shape)
-            t_computeV_end = time.time()
-            computeV_time.append(t_computeV_end - t_computeV_start)
+
             self.num_timesteps += env.num_envs
 
             # Give access to local variables
@@ -347,8 +293,7 @@ class HPO(OnPolicyAlgorithm):
             #     new_obs = env.reset()
             #     print("env reset")
                 # continue
-            # rollout_buffer.add(self._last_obs, actions, rewards, self._last_episode_starts, values, log_probs)
-            rollout_buffer.add(self._last_obs, actions, rewards, self._last_episode_starts, values, log_probs, saved_state)
+            rollout_buffer.add(self._last_obs, actions, rewards, self._last_episode_starts, values, log_probs)
             self._last_obs = new_obs
             self._last_episode_starts = dones
 
@@ -368,12 +313,7 @@ class HPO(OnPolicyAlgorithm):
                 exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
                 #print(exp_q_values)
                 values += exp_q_values
-        t_rollout_end = time.time()
-        rollout_time.append(t_rollout_end - t_rollout_start)
-        logger.record("Time/collect_rollout/Sum", np.sum(rollout_time))
-        logger.record("Time/collect_computeV/Sum", np.sum(computeV_time))
-        logger.record("Time/collect_rollout/Mean", np.mean(rollout_time))
-        logger.record("Time/collect_computeV/Mean", np.mean(computeV_time))
+
         rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
         # for step in reversed(range(rollout_buffer.buffer_size)):
         #     if step == rollout_buffer.buffer_size - 1:
@@ -386,102 +326,6 @@ class HPO(OnPolicyAlgorithm):
         callback.on_rollout_end()
         # print("collect rollout self.ep_info_buffer",self.ep_info_buffer)
         return True
-    def compute_monte_carlo_values( self, saved_states, rlactions, rollout_obs, mc_results, mc_advantage ) -> None:
-        # rollout_data.saved_states, rollout_data.actions ,mc_values , mc_advantage
-        mc_episodes = 2
-        # env_mc = gym.make(self.env_id)
-        rlaction_returns = np.zeros(  self.batch_size  , dtype=np.float32)
-        # actions = rollout_data.actions
-        if isinstance(self.action_space, spaces.Discrete):
-            # Convert discrete action from float to long
-            rlactions = rlactions.long().flatten()
-        for ssi in range(len(saved_states)):#ssi saved states index
-            for _ in range(mc_episodes):
-                # env_mc.reset()
-                self.env2.reset()
-                # print("saved_states[ssi]",saved_states[ssi][0]) [{"key1":value...}]
-                # env_mc.load_state(saved_states[ssi][0])
-                self.env2.env_method("load_state",saved_states[ssi][0],indices = [0] )
-                # new_obs = env_mc.state()
-                new_obs = rollout_obs[ssi]
-                returns = 0.0
-                discounted_factor = 1.0
-                with th.no_grad():
-                    while True:
-                        # Convert to pytorch tensor or to TensorDict
-                        
-                        # obs_tensor = obs_as_tensor(new_obs, self.device)
-                        if isinstance(new_obs,np.ndarray):
-                            new_obs = obs_as_tensor(new_obs, self.device)
-                            # print("new_obs",new_obs)
-                            actions, _, log_probs = self.policy.forward(  new_obs , 0  )
-                        else :
-                            # print("new_obs",new_obs)
-                            actions, _, log_probs = self.policy.forward( th.unsqueeze(new_obs , 0) )
-                        # actions, _, log_probs = self.policy.forward(obs_tensor)
-                        
-                        actions = actions.cpu().numpy()
-                        clipped_actions = actions
-                        # Clip the actions to avoid out of bound error
-                        if isinstance(self.action_space, gym.spaces.Box):
-                            clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
-                        # new_obs, rewards, dones, infos = env_mc.step(clipped_actions)
-                        # print("clipped_actions",clipped_actions)
-                        new_obs, rewards, dones, infos = self.env2.step(clipped_actions)
-                        # print("dones",dones)
-                        returns = returns+discounted_factor*rewards
-                        discounted_factor = discounted_factor*self.gamma
-                        if dones == True:
-                            print("returns",returns)
-                            mc_results[ssi] = mc_results[ssi] + ( returns / mc_episodes )
-                            break
-            for _ in range( int(mc_episodes/2) ):# true action monte carlo
-                # env_mc.reset()
-                self.env2.reset()
-                # env_mc.load_state(saved_states[ssi][0])
-                self.env2.env_method("load_state",saved_states[ssi][0],indices = [0] )
-                # new_obs = env_mc.state()
-                new_obs = rollout_obs[ssi]
-                returns = 0.0
-                discounted_factor = 1.0
-                clipped_actions = th.unsqueeze( rlactions[ssi] , 0)
-                if isinstance(self.action_space, gym.spaces.Box):
-                    clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
-                # new_obs, rewards, dones, infos = env_mc.step(clipped_actions)
-                # print("clipped_actions",clipped_actions)
-                clipped_actions = clipped_actions.cpu().numpy()
-                new_obs, rewards, dones, infos = self.env2.step( clipped_actions )
-                returns = returns+discounted_factor*rewards
-                discounted_factor = discounted_factor*self.gamma
-                if dones == True:
-                    rlaction_returns[ssi] = rlaction_returns[ssi] + ( returns / mc_episodes )
-                    continue    
-                with th.no_grad():
-                    while True:
-                        # Convert to pytorch tensor or to TensorDict
-                        if isinstance(new_obs,np.ndarray):
-                            new_obs = obs_as_tensor(new_obs, self.device)
-                            # print("new_obs",new_obs)
-                            actions, _, log_probs = self.policy.forward(  new_obs , 0  )
-                        else :
-                            # print("new_obs",new_obs)
-                            actions, _, log_probs = self.policy.forward( th.unsqueeze(new_obs , 0) )
-                        # actions, _, log_probs = self.policy.forward(obs_tensor)
-                        actions = actions.cpu().numpy()
-                        clipped_actions = actions
-                        # Clip the actions to avoid out of bound error
-                        if isinstance(self.action_space, gym.spaces.Box):
-                            clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
-                        # new_obs, rewards, dones, infos = env_mc.step(clipped_actions)
-                        new_obs, rewards, dones, infos = self.env2.step(clipped_actions)
-                        returns = returns+discounted_factor*rewards
-                        discounted_factor = discounted_factor*self.gamma
-                        if dones == True:
-                            rlaction_returns[ssi] = rlaction_returns[ssi] + ( returns / mc_episodes )
-                            break
-
-        mc_advantage = mc_results - rlaction_returns
-
 
     def train(self) -> None:
         """
@@ -508,11 +352,6 @@ class HPO(OnPolicyAlgorithm):
         ratio_p = []
         rollout_return = []
 
-        epoch_time = []
-        loss_time = []
-        computeV_time = []
-        mc_time = []
-        t_action_adv_time = []
         #alpha = 0.1
         # if args.algo == 'HPO':
         #     print("args.algo == 'HPO' can use in hpg.py")
@@ -523,8 +362,6 @@ class HPO(OnPolicyAlgorithm):
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
-        t_epoch_start = time.time()
-        # print("env",self.env.get_attr())
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
@@ -532,18 +369,7 @@ class HPO(OnPolicyAlgorithm):
             #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
             for rollout_data in self.rollout_buffer.get(self.batch_size):
                 # print("len(rollout_data): ",len(rollout_data))
-                # print("rollout_data.observations[0]:",rollout_data.observations[0])
-                # print("rollout_data.saved_states",rollout_data.saved_states[0])
-                t_mc_start = time.time()
-                mc_values = np.zeros(  self.batch_size  , dtype=np.float32)
-                mc_advantage = np.zeros(  self.batch_size  , dtype=np.float32)
                 
-                
-                # print("rollout_data.observations",rollout_data.observations[0])
-                self.compute_monte_carlo_values(rollout_data.saved_states, rollout_data.actions,rollout_data.observations ,mc_values , mc_advantage)
-                t_mc_end = time.time()
-                print("t_mc_end-t_mc_start", t_mc_end-t_mc_start)
-                mc_time.append(t_mc_end-t_mc_start)
                 actions = rollout_data.actions
                 # print("actions: ",actions)
                 if isinstance(self.action_space, spaces.Discrete):
@@ -583,14 +409,6 @@ class HPO(OnPolicyAlgorithm):
                 # print("train self.policy.evaluate_actions real actions")
                 # action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
                 action_q_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                t_computeV_start = time.time()
-                minMu = th.zeros_like(val_log_prob).cpu().detach()
-                gpu_zero_batchsize =  th.zeros_like(val_log_prob)
-                gpu_positive_adv_prob = th.zeros_like(val_log_prob)
-                gpu_negative_adv_prob = th.zeros_like(val_log_prob)
-                gpu_batch_values  = th.zeros_like(val_log_prob)
-                gpu_action_advantages = []
-                gpu_action_probs = []
                 for a in range(self.action_space.n):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
@@ -599,66 +417,38 @@ class HPO(OnPolicyAlgorithm):
                     #q_values, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
-                    gpu_q =  q_values[:,a].flatten()
-                    # q = gpu_q.cpu().detach()
-                    gpu_p = th.exp(a_log_prob)
-                    gpu_action_probs.append(gpu_p)
-                    
-                    p = gpu_p.cpu().detach()
-                    gpu_batch_values += gpu_q*gpu_p
-                    # batch_values += (p*q).numpy()
-                    minMu = th.minimum(p,minMu)
+                    q = q_values[:,a].flatten().cpu().detach()
+                    p = th.exp(a_log_prob).cpu().detach()
+                    batch_values += (p*q).numpy()
+
                     # action_advantages.append(advantages.cpu())
-                    gpu_action_advantages.append(gpu_q)
-                    # action_advantages.append(q)
-                    # action_q_values.append(q)
-                    # action_probs.append(p)
+                    action_advantages.append(q)
+                    #action_q_values.append(q)
+                    action_probs.append(p)
                     #action_log_probs.append(a_log_prob)
                     #print("val_values: ", val_values)
-                t_computeV_end = time.time()
-                computeV_time.append(t_computeV_end - t_computeV_start)   
+                    
                 # print("batch_values", batch_values)
                 # print("action_advantages",action_advantages)
                 # action_advantages = action_advantages.cpu()
-                t_action_adv_start = time.time()
-                # for j in range(self.batch_size):
-                #     minMu[j]  = th.min(action_probs,dim=0)
-                
                 for a in range(self.action_space.n):
                     # print("action_advantages shape",action_advantages[i].shape)
                     #print("Before A", action_advantages[i])
-                    # action_advantages[a] -= batch_values
-                    gpu_action_advantages[a] -= gpu_batch_values
-                    gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
-                    gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
-                    
-                    # action_advantages.append(gpu_action_advantages[a].cpu().clone().detach().numpy())
-                    # print("gpu_action_advantages[a]",gpu_action_advantages[a])
-                    
+                    action_advantages[a] -= batch_values
                     #print("After A", action_advantages[i])
-                    # for j in range(self.batch_size):
-                    #     # minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
-                    #     # minMu[j] = min(action_probs[a][j],minMu[j])
-                    #     if action_advantages[a][j] > 0:
-                    #         positive_adv_prob[j] += action_probs[a][j] 
-                    #     elif action_advantages[a][j] < 0:
-                    #         negative_adv_prob[j] += action_probs[a][j] 
-                        # if a == actions[j]:
-                        #     #val_log_prob[j] = action_log_probs[i][j]
-                        #     #val_q_values[j] = action_advantages[i][j] + batch_values[j]
-                        #     val_q_values[j] = action_q_values[j][a] 
-                        #     advantages[j] = action_advantages[a][j]
+                    for j in range(self.batch_size):
+                        minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
+                        if action_advantages[a][j] > 0:
+                            positive_adv_prob[j] += action_probs[a][j].float()
+                        if action_advantages[a][j] < 0:
+                            negative_adv_prob[j] += action_probs[a][j].float()
+                        if a == actions[j]:
+                            #val_log_prob[j] = action_log_probs[i][j]
+                            #val_q_values[j] = action_advantages[i][j] + batch_values[j]
+                            val_q_values[j] = action_q_values[j][a].clone()
+                            advantages[j] = action_advantages[a][j]
                     #print("val_log_prob: ", val_log_prob)
-                positive_adv_prob = gpu_positive_adv_prob.cpu().clone().detach().numpy()
-                negative_adv_prob = gpu_negative_adv_prob.cpu().clone().detach().numpy()
-                # print("action_advantages",action_advantages)
-                # action_advantages[:] = gpu_action_advantages[:].cpu().clone().detach().numpy()
-                for j in range(self.batch_size):
-                    val_q_values[j] = action_q_values[j][ actions[j] ].clone()
-                    advantages[j] = gpu_action_advantages[ actions[j] ][j]
-                # val_q_values = action_q_values
-                t_action_adv_end = time.time()
-                t_action_adv_time.append(t_action_adv_end - t_action_adv_start) 
+                
                 # HPO: max(0, epsilon - weight_a (ratio - 1))
                 #      max(0, margin - y * (x1 - x2))
                 if self.classifier == "AM":
@@ -680,9 +470,7 @@ class HPO(OnPolicyAlgorithm):
                 #print("advantages",advantages)
                 #abs_adv = np.abs(advantages.cpu())
                 advantages = advantages.detach()
-                th_mc_advantage = th.from_numpy(mc_advantage).to(self.device)
-                # y = th.sign(advantages)
-                y = th.sign(th_mc_advantage)
+                y = th.sign(advantages)
                 abs_adv = y*advantages
                 # abs_adv = th.abs(advantages)
                 # y = advantages / abs_adv
@@ -719,11 +507,8 @@ class HPO(OnPolicyAlgorithm):
                 #epsilon = math.log(1 + alpha * min(1, prob_ratio))
                 # root: (pi/mu)^(1/2) - 1
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
-                
                 policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
-                
                 #policy_loss_data = []
-                t_loss_start = time.time()
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
                         epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -735,52 +520,18 @@ class HPO(OnPolicyAlgorithm):
                         epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
                     elif self.classifier == "AM-square":
                         epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
-                    # if self.aece == "WAE":
-                    #     policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
-                    # elif self.aece == "WCE":
-                    #     policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
+                    if self.aece == "WAE":
+                        policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
+                    elif self.aece == "WCE":
+                        policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
                     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
                     # th.tensor([x1[i]])
                     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
                     #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
                     # policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
                     #policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
-                    # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
-                    # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaY[i].clone().detach() ) ) .unsqueeze(0) )
-                    # robust_loss -= abs_adv[i] * policy_loss_fn( x1[i].clone().detach().unsqueeze(0) , x2[i].clone().detach().unsqueeze(0) , (y[i]*(1-2*deltaY[i] ) ) .unsqueeze(0) )
+                    policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
-                fixed_noise = th.randn(1 , device=self.device)
-                # for robust_epoch in range(self.n_epochs):
-                'choose deltaY step'
-                for robust_epoch in range(3):
-                    robust_loss = th.tensor([0.], requires_grad=True).to(self.device)
-                    # self.robust_delta_y.zero_grad()# ??? found at 2022/02/28
-                    self.robust_optimizer.zero_grad()
-                    deltaY = self.robust_delta_y(fixed_noise)
-                    for i in range(self.batch_size):
-                        if self.aece == "WAE" or self.aece == "AE":
-                            policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
-                        elif self.aece == "WCE"or self.aece == "CE":
-                            policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
-                        if self.aece == "WAE" or self.aece == "WCE":
-                            robust_loss -= abs_adv[i] * policy_loss_fn( x1[i].clone().detach().unsqueeze(0) , x2[i].clone().detach().unsqueeze(0) , (y[i]*(1-2*deltaY[i] ) ) .unsqueeze(0) )
-                        else:
-                            robust_loss -= policy_loss_fn( x1[i].clone().detach().unsqueeze(0) , x2[i].clone().detach().unsqueeze(0) , (y[i]*(1-2*deltaY[i] ) ) .unsqueeze(0) )
-                    robust_loss /= self.batch_size
-                    robust_loss.backward()
-                    self.robust_optimizer.step()
-
-                for i in range(self.batch_size):
-                    if self.aece == "WAE" or self.aece == "AE":
-                            policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
-                    elif self.aece == "WCE"or self.aece == "CE":
-                        policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
-                    if self.aece == "WAE" or self.aece == "WCE":
-                        policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaY[i].clone().detach() ) ) .unsqueeze(0) )
-                    else:
-                        policy_loss += policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaY[i].clone().detach() ) ) .unsqueeze(0) )
-                t_loss_end = time.time()
-                loss_time.append(t_loss_end - t_loss_start)
                 policy_loss /= self.batch_size
                 #print("Policy loss", policy_loss_data)
                 # debug 6
@@ -819,7 +570,7 @@ class HPO(OnPolicyAlgorithm):
                 rollout_return.append(rollout_data.returns.detach().cpu().numpy())
 
                 # ?? SKIP entropy loss??
-                # entropy = None
+                entropy = None
                 # Entropy loss favor exploration
                 if entropy is None:
                     # Approximate entropy when no analytical form
@@ -830,10 +581,7 @@ class HPO(OnPolicyAlgorithm):
                 entropy_losses.append(entropy_loss.item())
 
                 # org version
-                if self.entropy_hpo == True:
-                    loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
-                else :
-                    loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
+                loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
                 # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
                 #loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
@@ -864,19 +612,6 @@ class HPO(OnPolicyAlgorithm):
             #    print(f"Early stopping at step {epoch} due to reaching ploss: {np.mean(pg_losses):.2f}")
             #    break
 
-        t_epoch_end = time.time()
-        epoch_time.append(t_epoch_end - t_epoch_start)
-        logger.record("Time/train_loss/Sum", np.sum(loss_time))
-        logger.record("Time/train_computeV/Sum", np.sum(computeV_time))
-        logger.record("Time/train_epoch/Sum", np.sum(epoch_time))
-        logger.record("Time/train_action_adv/Sum", np.sum(t_action_adv_time))
-        logger.record("Time/train_mc_time/Sum", np.sum(mc_time))
-        logger.record("Time/train_loss/Mean", np.mean(loss_time))
-        logger.record("Time/train_computeV/Mean", np.mean(computeV_time))
-        logger.record("Time/train_epoch/Mean", np.mean(epoch_time))
-        logger.record("Time/train_action_adv/Mean", np.mean(t_action_adv_time))
-        logger.record("Time/train_mc_time/Mean", np.mean(mc_time))
-        
         self._n_updates += self.n_epochs
         explained_var = explained_variance(self.rollout_buffer.values.flatten(), self.rollout_buffer.returns.flatten())
 
@@ -918,57 +653,15 @@ class HPO(OnPolicyAlgorithm):
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
     ) -> "HPO":
-        iteration = 0
-
-        total_timesteps, callback = self._setup_learn(
-            total_timesteps, eval_env, callback, eval_freq, n_eval_episodes, eval_log_path, reset_num_timesteps, tb_log_name
+        
+        return super(HPO, self).learn(
+            total_timesteps=total_timesteps,
+            callback=callback,
+            log_interval=log_interval,
+            eval_env=eval_env,
+            eval_freq=eval_freq,
+            n_eval_episodes=n_eval_episodes,
+            tb_log_name=tb_log_name,
+            eval_log_path=eval_log_path,
+            reset_num_timesteps=reset_num_timesteps,
         )
-
-        callback.on_training_start(locals(), globals())
-
-        while self.num_timesteps < total_timesteps:
-
-            continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
-
-            if continue_training is False:
-                break
-
-            iteration += 1
-            self._update_current_progress_remaining(self.num_timesteps, total_timesteps)
-
-            # Display training infos
-            if log_interval is not None and iteration % log_interval == 0:
-                fps = int((self.num_timesteps - self._num_timesteps_at_start) / (time.time() - self.start_time))
-                # self.logger.record("time/iterations", iteration, exclude="tensorboard")
-                logger.record("time/iterations", iteration, exclude="tensorboard")
-                if len(self.ep_info_buffer) > 0 and len(self.ep_info_buffer[0]) > 0:
-                    # self.logger.record("rollout/ep_rew_mean", safe_mean([ep_info["r"] for ep_info in self.ep_info_buffer]))
-                    logger.record("rollout/ep_rew_mean", safe_mean([ep_info["r"] for ep_info in self.ep_info_buffer]))
-                    logger.record("rollout/ep_len_mean", safe_mean([ep_info["l"] for ep_info in self.ep_info_buffer]))
-                    # self.logger.record("rollout/ep_len_mean", safe_mean([ep_info["l"] for ep_info in self.ep_info_buffer]))
-                # self.logger.record("time/fps", fps)
-                logger.record("time/fps", fps)
-                # self.logger.record("time/time_elapsed", int(time.time() - self.start_time), exclude="tensorboard")
-                logger.record("time/time_elapsed", int(time.time() - self.start_time), exclude="tensorboard")
-                # self.logger.record("time/total_timesteps", self.num_timesteps, exclude="tensorboard")
-                logger.record("time/total_timesteps", self.num_timesteps, exclude="tensorboard")
-                # self.logger.dump(step=self.num_timesteps)
-                logger.dump(step=self.num_timesteps)
-
-
-            self.train()
-
-        callback.on_training_end()
-
-        return self
-        # return super(HPO, self).learn(
-        #     total_timesteps=total_timesteps,
-        #     callback=callback,
-        #     log_interval=log_interval,
-        #     eval_env=eval_env,
-        #     eval_freq=eval_freq,
-        #     n_eval_episodes=n_eval_episodes,
-        #     tb_log_name=tb_log_name,
-        #     eval_log_path=eval_log_path,
-        #     reset_num_timesteps=reset_num_timesteps,
-        # )

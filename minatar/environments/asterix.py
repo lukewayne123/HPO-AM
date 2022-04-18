@@ -134,7 +134,32 @@ class Env:
                 if(back_x>=0 and back_x<=9):
                     state[x[1], back_x, self.channels['trail']] = 1
         return state
-
+    def save_state(self):
+        dict_state = dict()
+        dict_state['player_x'] = self.player_x
+        dict_state['player_y'] = self.player_y
+        dict_state['entities'] = self.entities
+        dict_state['shot_timer'] = self.shot_timer
+        dict_state['spawn_speed'] = self.spawn_speed
+        dict_state['spawn_timer'] = self.spawn_timer
+        dict_state['move_speed'] = self.move_speed
+        dict_state['move_timer'] = self.move_timer
+        dict_state['ramp_timer'] = self.ramp_timer
+        dict_state['ramp_index'] = self.ramp_index
+        dict_state['terminal'] = self.terminal
+        return dict_state
+    def load_state(self,dict_state):
+        self.player_x = dict_state['player_x']
+        self.player_y = dict_state['player_y']
+        self.entities = dict_state['entities']
+        self.shot_timer = dict_state['shot_timer']
+        self.spawn_speed = dict_state['spawn_speed']
+        self.spawn_timer = dict_state['spawn_timer']
+        self.move_speed = dict_state['move_speed']
+        self.move_timer = dict_state['move_timer']
+        self.ramp_timer = dict_state['ramp_timer']
+        self.ramp_index = dict_state['ramp_index']
+        self.terminal = dict_state['terminal']
     # Reset to start state for new episode
     def reset(self):
         self.player_x = 5

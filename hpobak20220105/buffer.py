@@ -14,17 +14,6 @@ from stable_baselines3.common.type_aliases import (
     RolloutBufferSamples,
 )
 from stable_baselines3.common.vec_env import VecNormalize
-from stable_baselines3.common.buffers import DictRolloutBuffer, RolloutBuffer
-from typing import Any, Callable, Dict, List, NamedTuple, Tuple, Union
-class RolloutBufferSamples2(NamedTuple):
-    observations: th.Tensor
-    actions: th.Tensor
-    old_values: th.Tensor
-    old_log_prob: th.Tensor
-    advantages: th.Tensor
-    returns: th.Tensor
-    saved_states: th.Tensor
-
 
 try:
     # Check memory used by replay buffer when possible
@@ -68,7 +57,6 @@ class RolloutBuffer2(RolloutBuffer):
         self.gamma = gamma
         self.observations, self.actions, self.rewards, self.advantages = None, None, None, None
         self.returns, self.episode_starts, self.values, self.log_probs = None, None, None, None
-        self.saved_states = None
         self.generator_ready = False
         self.reset()
 
@@ -82,8 +70,6 @@ class RolloutBuffer2(RolloutBuffer):
         self.values = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.log_probs = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.advantages = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
-        self.saved_states = np.zeros((self.buffer_size, self.n_envs), dtype= object )
-        # self.saved_states = np.array([])
         self.generator_ready = False
         super(RolloutBuffer, self).reset()
 
@@ -128,7 +114,6 @@ class RolloutBuffer2(RolloutBuffer):
         episode_start: np.ndarray,
         value: th.Tensor,
         log_prob: th.Tensor,
-        saved_state_np,
     ) -> None:
         """
         :param obs: Observation
@@ -155,14 +140,11 @@ class RolloutBuffer2(RolloutBuffer):
         self.episode_starts[self.pos] = np.array(episode_start).copy()
         self.values[self.pos] = value.clone().cpu().numpy().flatten()
         self.log_probs[self.pos] = log_prob.clone().cpu().numpy()
-        self.saved_states[self.pos] = np.array(saved_state_np).copy()
-        # self.saved_states = np.append(self.saved_states, [saved_state_np.copy()]  ) 
-        # print("self.saved_states",len(self.saved_states ))
         self.pos += 1
         if self.pos == self.buffer_size:
             self.full = True
 
-    def get(self, batch_size: Optional[int] = None) -> Generator[RolloutBufferSamples2, None, None]:
+    def get(self, batch_size: Optional[int] = None) -> Generator[RolloutBufferSamples, None, None]:
         assert self.full, ""
         indices = np.random.permutation(self.buffer_size * self.n_envs)
         # Prepare the data
@@ -175,7 +157,6 @@ class RolloutBuffer2(RolloutBuffer):
                 "log_probs",
                 "advantages",
                 "returns",
-                "saved_states",
             ]
 
             for tensor in _tensor_names:
@@ -191,7 +172,7 @@ class RolloutBuffer2(RolloutBuffer):
             yield self._get_samples(indices[start_idx : start_idx + batch_size])
             start_idx += batch_size
 
-    def _get_samples(self, batch_inds: np.ndarray, env: Optional[VecNormalize] = None) -> RolloutBufferSamples2:
+    def _get_samples(self, batch_inds: np.ndarray, env: Optional[VecNormalize] = None) -> RolloutBufferSamples:
         data = (
             self.observations[batch_inds],
             self.actions[batch_inds],
@@ -199,6 +180,5 @@ class RolloutBuffer2(RolloutBuffer):
             self.log_probs[batch_inds].flatten(),
             self.advantages[batch_inds].flatten(),
             self.returns[batch_inds].flatten(),
-            # self.saved_states[batch_inds],
         )
-        return RolloutBufferSamples2(*tuple(map(self.to_torch, data)) ,self.saved_states[batch_inds])
+        return RolloutBufferSamples(*tuple(map(self.to_torch, data)))

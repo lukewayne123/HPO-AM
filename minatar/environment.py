@@ -114,12 +114,16 @@ class Environment:
         return torch.tensor(s).permute(2, 0, 1).float()
         #return torch.tensor(s).permute(2, 0, 1).unsqueeze(0).float()
         #return (torch.tensor(s, device=device).permute(2, 0, 1)).unsqueeze(0).float()
-
+    def save_state(self):
+        return self.env.save_state()
+    def load_state(self,s):
+        self.env.load_state(s)
+        return True
     def step(self, action):
         reward, done = self.act(action)
         #next_state = self.get_state(self.state())
         next_state = self.state()
-
+        
         #return next_state, torch.tensor([[reward]], device=device).float(), torch.tensor([[done]], device=device), {}
         #return next_state, torch.tensor([[reward]]).float(), torch.tensor([[done]]), {}
         return next_state, reward, done, {}

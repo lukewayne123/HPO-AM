@@ -160,7 +160,7 @@ class ExperimentManager(object):
 
         # Create env to have access to action space for action noise
         env = self.create_envs(self.n_envs, no_log=False)
-
+        env2 = self.create_envs(1, no_log=False)
         self._hyperparams = self._preprocess_action_noise(hyperparams, saved_hyperparams, env)
         # print("self._hyperparams",self._hyperparams)
         if self.continue_training:
@@ -178,6 +178,8 @@ class ExperimentManager(object):
                     classifier = self.classifier,
                     aece = self.aece,
                     entropy_hpo = self.entropy_hpo,
+                    env_id = self.env_id,
+                    env2 = env2,
                     **self._hyperparams,
                 )
             else:
