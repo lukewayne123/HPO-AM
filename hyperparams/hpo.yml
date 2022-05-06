@@ -19,6 +19,7 @@ mini-asterix-v4:
   vf_coef: 0.5
   ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+  rgamma: 0.05
 # mini-asterix-v4:
 #   frame_stack: 4
 #   alpha: 0.1
@@ -124,6 +125,7 @@ mini-breakout-v4:
   vf_coef: 0.8
   ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+  rgamma: 0.05
   #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 #lc 0902 backup

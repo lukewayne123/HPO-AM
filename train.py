@@ -128,7 +128,7 @@ if __name__ == "__main__":  # noqa: C901
         args.seed = np.random.randint(2 ** 32 - 1, dtype="int64").item()
 
     set_random_seed(args.seed)
-
+    # th.cuda.empty_cache()
     # Setting num threads to 1 makes things run faster on cpu
     if args.num_threads > 0:
         if args.verbose > 1:

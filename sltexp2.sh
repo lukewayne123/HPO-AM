@@ -1,0 +1,4 @@
+# python train.py --algo hpo --classifier AM --aece WAE --seed 285 --env mini-breakout-v4 --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWAEslt285rgamma005 --hyperparams rgamma:0.05
+# python train.py --algo hpo --classifier AM --aece WAE --seed 285 --env mini-breakout-v4 --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWAEslt285rgamma010 --hyperparams rgamma:0.1
+# python train.py --algo hpo --classifier AM --aece WAE --seed 285 --env mini-breakout-v4 --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWAEslt285rgamma020 --hyperparams rgamma:0.2
+python train.py --algo hpo --classifier AM --aece WAE --seed 123 --env mini-breakout-v4 --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWAEslt123rgamma020 --hyperparams rgamma:0.2
