@@ -100,7 +100,6 @@ class HPO(OnPolicyAlgorithm):
         _init_setup_model: bool = True,
         alpha: float = 0.1,
         rgamma: float = 0.0,
-        vs_gamma: float = 1.0
     ):
 
         super(HPO, self).__init__(
@@ -158,7 +157,6 @@ class HPO(OnPolicyAlgorithm):
         self.aece = aece
         self.alpha = alpha
         self.rgamma = rgamma
-        self.vs_gamma = vs_gamma
         self.entropy_hpo = entropy_hpo
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
@@ -403,7 +401,6 @@ class HPO(OnPolicyAlgorithm):
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
-        pl_losses_for_average = []
         t_epoch_start = time.time()
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
@@ -599,7 +596,6 @@ class HPO(OnPolicyAlgorithm):
                 # policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
                 # policy_loss = th.tensor([0.] ).to(self.device)
                 policy_losses = []
-                # pl_losses_for_average = []
                 from collections import OrderedDict
                 od = OrderedDict()
                 #policy_loss_data = []
@@ -619,35 +615,32 @@ class HPO(OnPolicyAlgorithm):
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
                     elif self.aece == "WCE" or self.aece == "CE":
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
-                    pltemp = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #without weight
+                    # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
+                    # th.tensor([x1[i]])
+                    #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                    #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                    # policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
+                    #policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
+                    # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
                     policy_losses.append( abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) )
+                    # pltemp = abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #with weight
+                    pltemp = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #without weight
                     # 'if using slt'
-                    pl_losses_for_average.append( (abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )).item() )
                     od[ i ] = pltemp.item()
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
-                pl_average = np.mean(pl_losses_for_average)
-                """Variable v_star function for self-paced curriculum learning (linear).
-                    v: [batch_size, 1] weight vector.
-                """
-                plosses_stack = th.stack( policy_losses )
-                # self.vs_gamma = 1
-                loss_diff = plosses_stack -  pl_average *th.ones_like(plosses_stack)
-                loss_diff = loss_diff.clone().detach().numpy()
-                v = -1.0 / self.vs_gamma * loss_diff + 1
-                v = np.maximum(np.minimum(v, 1), 0)
-                # od = sorted(od.items(), key = lambda item: (item[1] ,random.random() ) ,reverse = True )
-                # deltaYnum = int(self.batch_size* self.rgamma ) 
-                # # print("self.rgamma",self.rgamma)
-                # deltaYs = [0]*self.batch_size
-                # deltaYcounter = 0
-                # # print("deltaYnum",deltaYnum)
+                od = sorted(od.items(), key = lambda item: (item[1] ,random.random() ) ,reverse = True )
+                deltaYnum = int(self.batch_size* self.rgamma ) 
+                # print("self.rgamma",self.rgamma)
+                deltaYs = [0]*self.batch_size
+                deltaYcounter = 0
+                # print("deltaYnum",deltaYnum)
                 policy_losses2 = []
-                # for key ,value in od:
-                #     # print("k,v",key,value)
-                #     if deltaYcounter>= deltaYnum:
-                #         break
-                #     deltaYs[key] = 1
-                #     deltaYcounter+=1
+                for key ,value in od:
+                    # print("k,v",key,value)
+                    if deltaYcounter>= deltaYnum:
+                        break
+                    deltaYs[key] = 1
+                    deltaYcounter+=1
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
                         epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -664,7 +657,7 @@ class HPO(OnPolicyAlgorithm):
                     elif self.aece == "WCE" or self.aece == "CE":
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
                     # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
-                    policy_losses2.append( v[i] *abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                    policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
                 t_loss_end = time.time()
                 loss_time.append(t_loss_end - t_loss_start)
                 # policy_loss /= self.batch_size
