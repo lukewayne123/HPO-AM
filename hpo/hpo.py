@@ -526,7 +526,7 @@ class HPO(OnPolicyAlgorithm):
                 # action_advantages[:] = gpu_action_advantages[:].cpu().clone().detach().numpy()
                 for j in range(self.batch_size):
                     # val_q_values[j] = action_q_values[j][ actions[j] ].clone()
-                    val_q_values.append(action_q_values[j][ actions[j] ])
+                    val_q_values.append(action_q_values[j][ actions[j] ].to(self.device))
                     advantages[j] = gpu_action_advantages[ actions[j] ][j]
                 # val_q_values = action_q_values
                 t_action_adv_end = time.time()
@@ -620,7 +620,7 @@ class HPO(OnPolicyAlgorithm):
                     elif self.aece == "WCE" or self.aece == "CE":
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
                     pltemp = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #without weight
-                    policy_losses.append( abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) )
+                    policy_losses.append( abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) .to(self.device) )
                     # 'if using slt'
                     pl_losses_for_average.append( (abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )).item() )
                     od[ i ] = pltemp.item()
@@ -632,7 +632,7 @@ class HPO(OnPolicyAlgorithm):
                 plosses_stack = th.stack( policy_losses )
                 # self.vs_gamma = 1
                 loss_diff = plosses_stack -  pl_average *th.ones_like(plosses_stack)
-                loss_diff = loss_diff.clone().detach().numpy()
+                loss_diff = loss_diff.cpu().clone().detach().numpy()
                 v = -1.0 / self.vs_gamma * loss_diff + 1
                 v = np.maximum(np.minimum(v, 1), 0)
                 # od = sorted(od.items(), key = lambda item: (item[1] ,random.random() ) ,reverse = True )
