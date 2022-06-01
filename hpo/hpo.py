@@ -100,7 +100,8 @@ class HPO(OnPolicyAlgorithm):
         _init_setup_model: bool = True,
         alpha: float = 0.1,
         rgamma: float = 0.0,
-        vs_gamma: float = 1.0
+        vs_gamma: float = 1.0,
+        reweight_scheme: str="Hard_example_mining"
     ):
 
         super(HPO, self).__init__(
@@ -160,6 +161,8 @@ class HPO(OnPolicyAlgorithm):
         self.rgamma = rgamma
         self.vs_gamma = vs_gamma
         self.entropy_hpo = entropy_hpo
+        self.pl_average_for_curriculum = -123.0
+        self.reweight_scheme = reweight_scheme
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -369,6 +372,7 @@ class HPO(OnPolicyAlgorithm):
         """
         # print("train self.ep_info_buffer",self.ep_info_buffer)
         # Update optimizer learning rate
+        print("self.reweight_scheme",self.reweight_scheme)
         self._update_learning_rate(self.policy.optimizer)
         # Compute current clip range
         clip_range = self.clip_range(self._current_progress_remaining)
@@ -626,15 +630,27 @@ class HPO(OnPolicyAlgorithm):
                     od[ i ] = pltemp.item()
                     # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
                 pl_average = np.mean(pl_losses_for_average)
+                if self.pl_average_for_curriculum==-123.0:
+                    self.pl_average_for_curriculum = pl_average
+                else:
+                    self.pl_average_for_curriculum = 0.9*self.pl_average_for_curriculum + 0.1 *pl_average
                 """Variable v_star function for self-paced curriculum learning (linear).
                     v: [batch_size, 1] weight vector.
                 """
                 plosses_stack = th.stack( policy_losses )
                 # self.vs_gamma = 1
-                loss_diff = plosses_stack -  pl_average *th.ones_like(plosses_stack)
+                loss_diff = plosses_stack -  self.pl_average_for_curriculum *th.ones_like(plosses_stack)
                 loss_diff = loss_diff.cpu().clone().detach().numpy()
-                v = -1.0 / self.vs_gamma * loss_diff + 1
-                v = np.maximum(np.minimum(v, 1), 0)
+                if self.reweight_scheme == "SPCL_linear":
+                    # loss_diff = plosses_stack -  pl_average *th.ones_like(plosses_stack)
+                    
+                    v = -1.0 / self.vs_gamma * loss_diff + 1
+                    v = np.maximum(np.minimum(v, 1), 0)
+                elif self.reweight_scheme == "Hard_example_mining":
+                    v = np.copy(loss_diff)
+                    v[np.where(loss_diff >= 0)] = 1
+                    v[np.where(loss_diff < 0)] = 0
+
                 # od = sorted(od.items(), key = lambda item: (item[1] ,random.random() ) ,reverse = True )
                 # deltaYnum = int(self.batch_size* self.rgamma ) 
                 # # print("self.rgamma",self.rgamma)
