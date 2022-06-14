@@ -126,7 +126,7 @@ mini-breakout-v4:
   ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
   rgamma: 0.05
-  vs_gamma: 1.0
+  # vs_gamma: 1.0
   #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 #lc 0902 backup
