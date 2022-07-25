@@ -1,0 +1,11 @@
+python train.py --algo nhpo --classifier $2 --aece CE --seed 123 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 666 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 987 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 285 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 517 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 456 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 222 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 234 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 861 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+python train.py --algo nhpo --classifier $2 --aece CE --seed 369 --env LunarLander-v2 --tensorboard-log $PWD/tensorboard-$2 --hyperparams device:$1
+#python train.py --algo $1 --classifier $2 --aece WAE --seed $3 --env mini-breakout-v4 --tensorboard-log $PWD/tensorboard --hyperparams device:1

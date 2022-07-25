@@ -24,6 +24,8 @@ from hpoac import HPOAC
 from ppo_time import PPOT
 from sacd import SACD
 
+from nhpo import NeuralHPO
+
 ALGOS = {
     "a2c": A2C,
     "ddpg": DDPG,
@@ -40,7 +42,8 @@ ALGOS = {
     "hpo": HPO,
     "hpoac": HPOAC,
     "ppo_time": PPOT,
-    "sacd": SACD
+    "sacd": SACD,
+    "nhpo": NeuralHPO,
 }
 
 

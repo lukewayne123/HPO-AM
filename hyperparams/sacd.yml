@@ -52,17 +52,17 @@ CartPole-v1:
   #ent_coef: 0
   gamma: 0.95
   tau: 1.0
-  learning_rate: !!float 1e-3
+  #learning_rate: !!float 1e-3
   #learning_rate: lin_0.001
-  #learning_rate: !!float 3e-4
-  #train_freq: 32
-  train_freq: 256
-  gradient_steps: 128
-  target_update_interval: 10
+  learning_rate: !!float 3e-4
+  train_freq: 32
+  #train_freq: 128
+  gradient_steps: 32
+  target_update_interval: 32
   #train_freq: 64 # with 32 bs failed
   #gradient_steps: 
   #target_update_interval: 64
-  #learning_starts: 1000
+  #learning_starts: 1500
   #train_freq: [1, "episode"]
   #train_freq: 1
   #gradient_steps: -1

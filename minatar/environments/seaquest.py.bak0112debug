@@ -59,17 +59,10 @@ class Env:
             self.random = np.random.RandomState()
         else:
             self.random = random_state
-        self.steps = 0
-        self.iter = 0
         self.reset()
 
     # Update environment according to agent action
     def act(self, a):
-        self.steps += 1
-        #print("[Iter{}] step: {}".format(self.iter, self.steps))
-        #print(self.state())
-        #print("({}, {}); oxygen: {}; action: {}".format(self.sub_x, self.sub_y, self.oxygen, a))
-        #print("Surface: {}; drivers: {}".format(self.surface, self.diver_count))
         r = 0
         if(self.terminal):
             return r, self.terminal
@@ -212,9 +205,6 @@ class Env:
                     self.terminal = True
                 else:
                     r+=self._surface()
-            # @0112 for terminal
-            if(self.diver_count == 0):
-                self.terminal = True
         return r, self.terminal
 
     # Called when player hits surface (top row) if they have no divers, this ends the game, 
@@ -315,9 +305,6 @@ class Env:
         self.shot_timer = 0
         self.surface = True
         self.terminal = False
-        
-        self.steps = 0
-        self.iter += 1
 
     # Dimensionality of the game-state (10x10xn)
     def state_shape(self):

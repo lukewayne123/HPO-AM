@@ -362,7 +362,7 @@ class SACDPolicy(BasePolicy):
 
         if self.share_features_extractor:
             self.critic = self.make_critic(features_extractor=self.actor.features_extractor)
-            self.critic_target = self.make_critic(features_extractor=self.actor.features_extractor)
+            #self.critic_target = self.make_critic(features_extractor=self.actor.features_extractor)
             # Do not optimize the shared features extractor with the critic loss
             # otherwise, there are gradient computation issues
             critic_parameters = [param for name, param in self.critic.named_parameters() if "features_extractor" not in name]
@@ -370,10 +370,10 @@ class SACDPolicy(BasePolicy):
             # Create a separate features extractor for the critic
             # this requires more memory and computation
             self.critic = self.make_critic(features_extractor=None)
-            self.critic_target = self.make_critic(features_extractor=None)
             critic_parameters = self.critic.parameters()
 
         # Critic target should not share the features extractor with critic
+        self.critic_target = self.make_critic(features_extractor=None)
         self.critic_target.load_state_dict(self.critic.state_dict())
 
         self.critic.optimizer = self.optimizer_class(critic_parameters, lr=lr_schedule(1), **self.optimizer_kwargs)

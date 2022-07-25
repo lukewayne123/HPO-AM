@@ -35,6 +35,7 @@ from utils.hyperparams_opt import HYPERPARAMS_SAMPLER
 from utils.utils import ALGOS, get_callback_list, get_latest_run_id, get_wrapper_class, linear_schedule
 
 from hpo.policies import MiniQNetwork
+from nhpo.policies import MiniQNetwork
 
 class ExperimentManager(object):
     """
@@ -76,7 +77,8 @@ class ExperimentManager(object):
         vec_env_type: str = "dummy",
         n_eval_envs: int = 1,
         classifier: str="AM",
-        aece: str="WAE",
+        aece: str="CE",
+        #aece: str="WAE",
         entropy_hpo: bool = False,
     ):
         super(ExperimentManager, self).__init__()
@@ -170,7 +172,7 @@ class ExperimentManager(object):
             return None
         else:
             # Train an agent from scratch
-            if self.algo=='hpo':
+            if self.algo=='hpo' or self.algo=='nhpo':
                 model = ALGOS[self.algo](
                     env=env,
                     tensorboard_log=self.tensorboard_log,

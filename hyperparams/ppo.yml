@@ -28,14 +28,19 @@ mini-asterix-v4:
 #  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
 #env_wrapper:
 #    - stable_baselines3.common.atari_wrappers.AtariWrapper
-  frame_stack: 4
-  policy: 'CnnPolicy'
+#frame_stack: 4
+  frame_stack: 1
+  #policy: 'CnnPolicy'
+  policy: 'MlpPolicy'
   n_envs: 8
-  n_steps: 128
-  n_epochs: 4 # default
+  #n_steps: 128
+  n_steps: 256
+  #n_epochs: 4 # default
+  n_epochs: 8 # default
   #n_epochs: 100
   #n_epochs: 10
-  batch_size: 512
+  #batch_size: 512
+  batch_size: 1024
   #batch_size: 256
   #n_timesteps: !!float 1e3
   #n_timesteps: !!float 1e6
@@ -47,7 +52,7 @@ mini-asterix-v4:
   #learning_rate: !!float 2e-4
   clip_range: lin_0.1
   vf_coef: 0.5
-  ent_coef: 0.01
+  ent_coef: 0.00
   #ent_coef: 0.00
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
 

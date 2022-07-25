@@ -48,27 +48,47 @@ mini-space_invaders-v4:
 
 mini-breakout-v4:
   frame_stack: 4
-  alpha: 0.5
+  #alpha: 0.5
   policy: 'CnnPolicy'
   n_envs: 8
-  #n_steps: 128
+  #n_steps: 128 # 7 HPO22
   n_steps: 64
   n_epochs: 10
   batch_size: 256
-  #n_timesteps: !!float 1e3
-  n_timesteps: !!float 5e6
+  n_timesteps: !!float 5e5
+  #n_timesteps: !!float 1e6 # try
+  #n_timesteps: !!float 5e6 # real case
   # n_timesteps: !!float 1e7
   # n_timesteps: !!float 1e7
   # lr: 0.0023335186171724144
   # lr_schedule: constant
   # learning_rate: !!float 0.0003858579113199061
   learning_rate: lin_2.5e-4
+  #learning_rate: lin_5e-5 # 6 HPO21
   clip_range: lin_0.1
-  vf_coef: 0.8
   ent_coef: 0.0
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
   #policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
+  #max_grad_norm: 100.0 #
+  #max_grad_norm: 100.0 # HPO 7, 8
+  #max_grad_norm: 100.0 # HPO 
+  #max_grad_norm: 0.1 # 7 HPO13 22 1.6 EMDA=1
+  #max_grad_norm: 1.0 # 6 HPO14 18.4 1.2 EMDA=1
+  max_grad_norm: 2.0 # 6 HPO15 14.8 0.8 good
+  #max_grad_norm: 5.0 # 7 HPO18 EMDA=1
+  EMDAstep: 1 # 6 HPO 19
+  #EMDAstep: 0.5 # 6 HPO 17 8 0.2
+  #EMDAstep: 10 # 6 HPO7 11
+  #EMDAstep: 5 # 7 HPO8 9.9
+  #EMDAstep: 10 # 7 HPO16 
+  alpha: 0.75 # HPO
+  #alpha: 0.5 # HPO10 6 not ok; 6 HPO19 not good
+  #alpha: 0.3 # HPO9 6 not ok; 7 HPO20 not good
+  #vf_coef: 0.75 # default
+  #vf_coef: 0.5 # 6 HPO11 11 EMDA=1?
+  vf_coef: 0.25 # 7 HPO12 20 EMDA=1?
+
 #lc 0902 backup
 # mini-breakout-v4:
 #   frame_stack: 4
@@ -102,11 +122,17 @@ miniBreakout-v0:
   n_timesteps: !!float 1e7
   #n_timesteps: !!float 1e7
   # learning_rate: lin_2.5e-4
-  learning_rate: !!float 0.0003858579113199061
+  #learning_rate: !!float 0.0003858579113199061
+  learning_rate: lin_0.0003
   clip_range: lin_0.1
-  vf_coef: 0.5
-  ent_coef: 0.01
-  alpha: 0.4837161762665274
+  #ent_coef: 0.01
+  #alpha: 0.4837161762665274
+  EMDAstep: 10 #
+  max_grad_norm: 2.0 #
+  alpha: 0.75 # 
+  vf_coef: 0.75 # 
+  #vf_coef: 0.5
+
 atari:
   env_wrapper:
     - stable_baselines3.common.atari_wrappers.AtariWrapper
@@ -188,48 +214,114 @@ mini-seaquest-v4:
 mini-freeway-v4:
   frame_stack: 4
   #alpha: 0.9 # HPO_0
-  alpha: 0.5 # Best?
+  #alpha: 0.5 # Best?
   #alpha: 0.1 # 
   policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 64 # 
-  n_epochs: 10 # default
-  batch_size: 256 # 
-  n_timesteps: !!float 5e6
-  learning_rate: lin_2.5e-4
+  n_steps: 64 # trail21
+  n_epochs: 10 # default trail21
+  #batch_size: 256 # 
+  batch_size: 128 # trail21
+  n_timesteps: !!float 1e6
+  #n_timesteps: !!float 5e6
+  #learning_rate: lin_2.5e-4
+  learning_rate: lin_5e-5 # trail21
   clip_range: lin_0.1
-  vf_coef: 0.8
-  #ent_coef: 0
-  ent_coef: 0.01
+  ent_coef: 0
+  #ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+  #max_grad_norm: 2.0 #
+  max_grad_norm: 0.1 # trail21
+  #EMDAstep: 10 # log
+  EMDAstep: 0.5 # trail21
+  alpha: 0.7 # trail21
+  #alpha: 0.75 # HPO, root
+  vf_coef: 0.75 # trail21
 
 
-Pendulum-v0:
+Pendulum-v1:
   n_envs: 8
   n_timesteps: !!float 2e6
   policy: 'MlpPolicy'
   n_steps: 2048
   batch_size: 64
-  gae_lambda: 0.95
-  gamma: 0.99
   n_epochs: 10
   ent_coef: 0.0
   learning_rate: !!float 3e-4
   clip_range: 0.2
+  max_grad_norm: 2.0 #
+  EMDAstep: 10 # log
+  alpha: 0.75 # HPO, root
+  vf_coef: 0.75 # log
 
 # Tuned
 CartPole-v1:
   n_envs: 1
   n_timesteps: !!float 1e5
   policy: 'MlpPolicy'
-  n_steps: 256
-  batch_size: 256
-  gae_lambda: 0.8
-  gamma: 0.98
-  n_epochs: 20
+  #n_steps: 256
+  #n_steps: 64 # log
+  n_steps: 128
+  #batch_size: 256
+  #batch_size: 64 # log
+  batch_size: 128 #
+  #batch_size: 256 #
+  #gae_lambda: 0.8
+  #gamma: 0.98
+  #n_epochs: 20
+  n_epochs: 10 # HPO
+  #n_epochs: 5 # AM-log, root
   ent_coef: 0.0
-  learning_rate: lin_0.001
+  #learning_rate: lin_0.001
+  #learning_rate: lin_2.5e-4
+  #learning_rate: lin_2e-3 #8 log
+  #learning_rate: lin_1e-4
+  #learning_rate: !!float 0.0045 # root
+  #learning_rate: !!float 0.00015 # 
+  #learning_rate: !!float 2.0e-3
+  #learning_rate: !!float 3.5e-4
+  #learning_rate: lin_0.1
+  #learning_rate: lin_0.0003
+  #learning_rate: lin_0.0017 # HPO
+  #learning_rate: lin_0.001 # AM-log
+  learning_rate: lin_0.0015 # 
   clip_range: lin_0.2
+  #max_grad_norm: 2.0 # AM-log, HPO
+  #max_grad_norm: 1.0 # 
+  #max_grad_norm: 10.0 # 
+  #max_grad_norm: 0.1 # log
+  max_grad_norm: 2.0 #
+  #max_grad_norm: 0.5 # root
+  #vf_coef: 0.8
+  #EMDAstep: 0.1 # 24, 27
+  EMDAstep: 10 # log
+  #EMDAstep: 20 # HPO
+  #EMDAstep: 30 # 24, 27
+  #EMDAstep: 5 # 24, 27
+  #EMDAstep: 50 # AM-log, root
+  #EMDAstep: 0.5 # 25
+  #EMDAstep: 0.01 # 26
+  #K: 1
+  #alpha: 0.8
+  #alpha: 0.2
+  #alpha: 0.3 # HPO, root
+  alpha: 0.75 # HPO, root
+  vf_coef: 0.75 # log
+  #alpha: 0.35 # 5
+  #alpha: 0.28 # 8
+  #alpha: 0.5 
+  #alpha: 0.14 #
+  #alpha: 0.3 #AM-log
+  #alpha: 0.85
+  #alpha: 0.25
+  #alpha: 0.05
+
+# HPO  
+#alpha: 0.3 #AM-log
+#EMDAstep: 20 # 24, 27
+#max_grad_norm: 2.0 # AM-log
+#learning_rate: lin_0.0017
+#n_epochs: 10
 
 MountainCar-v0:
   normalize: true
@@ -237,10 +329,13 @@ MountainCar-v0:
   n_timesteps: !!float 1e6
   policy: 'MlpPolicy'
   n_steps: 16
-  gae_lambda: 0.98
-  gamma: 0.99
   n_epochs: 4
   ent_coef: 0.0
+  clip_range: 0.2
+  max_grad_norm: 2.0 #
+  EMDAstep: 10 # log
+  alpha: 0.75 # HPO, root
+  vf_coef: 0.75 # log
 
 # Tuned
 MountainCarContinuous-v0:
