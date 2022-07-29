@@ -104,8 +104,9 @@ mini-space_invaders-v4:
   vf_coef: 0.5
   ent_coef: 0.01
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
-  rgamma: 0.05
-  # rgamma: 0.2
+  # rgamma: 0.05
+  rgamma: 0.2
+  reward_error_rate: 0.2
   # policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 
