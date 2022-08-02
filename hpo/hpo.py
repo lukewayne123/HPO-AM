@@ -278,10 +278,12 @@ class HPO(OnPolicyAlgorithm):
             new_obs, rewards, dones, infos = env.step(clipped_actions)
             ''' wrong advantage from flipped rewards?'''
             # print("rewards.size()",rewards )
-            if self.reward_error_rate >0.0:
-                flipped_array = np.random.choice( [1,-1], len(rewards), p=[1-self.reward_error_rate, self.reward_error_rate ])  
-                rewards =  rewards *flipped_array
+            # if self.reward_error_rate >0.0:
+            #     flipped_array = np.random.choice( [1,-1], len(rewards), p=[1-self.reward_error_rate, self.reward_error_rate ])  
+            #     rewards =  rewards *flipped_array
             ''' wrong advantage from flipped rewards?'''
+            rnoise = np.random.normal(loc=0.0, scale=0.5, size= len(rewards) )
+            rewards =  rewards  + rnoise
             # print("rewards.size()",rewards )
             # print("infos:",infos)
             # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
