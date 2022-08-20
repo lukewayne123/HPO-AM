@@ -1,0 +1,4 @@
+python train.py --algo hpo --classifier AM --aece WCE --seed 123 --env Acrobot-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/explorationRate010AMWCEslt123rgamma050RnoiseStd050  --hyperparams rgamma:0.5  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 517 --env Acrobot-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/explorationRate010AMWCEslt517rgamma050RnoiseStd050  --hyperparams rgamma:0.5  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 789 --env Acrobot-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/explorationRate010AMWCEslt789rgamma050RnoiseStd050  --hyperparams rgamma:0.5  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 666 --env Acrobot-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/explorationRate010AMWCEslt666rgamma050RnoiseStd050  --hyperparams rgamma:0.5  device:0

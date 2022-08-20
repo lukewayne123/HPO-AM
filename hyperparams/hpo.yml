@@ -81,17 +81,52 @@ gridworld_randR_env-v0:
   clip_range: lin_0.1
   vf_coef: 1
   ent_coef: 0.01
-mini-space_invaders-v4:
+
+# “original params failed at noisy reward”
+# mini-space_invaders-v4:
+#   # frame_stack: 1
+#   frame_stack: 4
+#   # alpha: 0.4837161762665274
+#   alpha: 0.1
+#   policy: 'MlpPolicy'
+#   # policy: 'CnnPolicy'
+#   n_envs: 8
+#   n_steps: 64
+#   n_epochs: 10
+#   batch_size: 256
+#   #n_timesteps: !!float 1e3
+#   n_timesteps: !!float 5e6
+#   # n_timesteps: !!float 1e7
+#   # n_timesteps: !!float 1e7
+#   # lr: 0.0023335186171724144
+#   # lr_schedule: constant
+#   # learning_rate: !!float 0.0003858579113199061
+#   learning_rate: lin_2.5e-4
+#   clip_range: lin_0.1
+#   vf_coef: 0.5
+#   ent_coef: 0.01
+#   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
+#   # rgamma: 0.05
+#   rgamma: 0.2
+#   reward_error_rate: 0.2
+#   # policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
+#   #features_extractor: MiniQNetwork
+
+# "ppo time hyperparam"
+mini-space_invaders-v4: 
   # frame_stack: 1
   frame_stack: 4
   # alpha: 0.4837161762665274
   alpha: 0.1
-  policy: 'MlpPolicy'
-  # policy: 'CnnPolicy'
+  # policy: 'MlpPolicy'
+  policy: 'CnnPolicy'
   n_envs: 8
-  n_steps: 64
-  n_epochs: 10
-  batch_size: 256
+  # n_steps: 64
+  n_steps: 128
+  # n_epochs: 10
+  n_epochs: 4
+  # batch_size: 256
+  batch_size: 512
   #n_timesteps: !!float 1e3
   n_timesteps: !!float 5e6
   # n_timesteps: !!float 1e7
@@ -106,7 +141,7 @@ mini-space_invaders-v4:
   policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True, features_extractor_class=MiniQNetwork)"
   # rgamma: 0.05
   rgamma: 0.2
-  reward_error_rate: 0.2
+  # reward_error_rate: 0.2
   # policy_kwargs: "dict(activation_fn=nn.ReLU, ortho_init=True)"
   #features_extractor: MiniQNetwork
 
@@ -254,6 +289,9 @@ Acrobot-v1:
   gamma: 0.99
   n_epochs: 4
   ent_coef: 0.0
+  # use_sde: True
+  # sde_sample_freq: 4
+  # ent_coef: 0.01
 
 BipedalWalker-v3:
   normalize: true

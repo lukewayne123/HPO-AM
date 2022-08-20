@@ -223,7 +223,9 @@ class PPOT(OnPolicyAlgorithm):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
 
             new_obs, rewards, dones, infos = env.step(clipped_actions)
-
+            print("reward noise TEST")
+            rnoise = np.random.normal(loc=0.0, scale= 5, size= len(rewards) )
+            rewards =  rewards  + rnoise
             self.num_timesteps += env.num_envs
 
             # Give access to local variables

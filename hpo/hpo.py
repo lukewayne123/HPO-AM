@@ -6,7 +6,7 @@ import torch as th
 from gym import spaces
 import gym
 from torch.nn import functional as F
-import torch.nn as nn
+
 from stable_baselines3.common import logger
 from stable_baselines3.common.on_policy_algorithm import OnPolicyAlgorithm
 from stable_baselines3.common.policies import ActorCriticPolicy
@@ -23,7 +23,7 @@ from hpo.policies import ActorCriticPolicy2
 from stable_baselines3.common.policies import BaseModel, BasePolicy
 import random
 import time
-from gurobipy import *
+
 
 class HPO(OnPolicyAlgorithm):
     """
@@ -99,8 +99,8 @@ class HPO(OnPolicyAlgorithm):
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
         alpha: float = 0.1,
-        rgamma: float = 0.0,
-        reward_error_rate: float = 0.0,
+        rgamma: float = 0.75,
+        exploration_rate: float = 0.1
     ):
 
         super(HPO, self).__init__(
@@ -159,26 +159,13 @@ class HPO(OnPolicyAlgorithm):
         self.alpha = alpha
         self.rgamma = rgamma
         self.entropy_hpo = entropy_hpo
-        self.reward_error_rate = reward_error_rate
+        self.spt_clipped_prob = rgamma
+        self.exploration_rate = exploration_rate
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
         
-    # class ROBUSTDELTAY(nn.Module):
-    #     def __init__(self):
-    #         super(ROBUSTDELTAY, self).__init__()
-    #         # batch_size = 64
-    #         gamma = 10
-    #         self.affine1 = nn.Linear( 1 , 32)
-    #         self.affine2 = nn.Linear(32, 32)
-    #         self.affine3 = nn.Linear(64, 32)
-    #         self.deltaY_head = nn.Linear(32, batch_size)
-    #     def forward(self, x):
-    #         x = self.affine1(x)
-    #         x = self.affine2(x)
-    #         deltaY = F.softmax(self.deltaY_head(x), dim=-1) * gamma
-    #         return deltaY
-    
+     
     def _setup_model(self) -> None:
         super(HPO, self)._setup_model()
         
@@ -236,7 +223,8 @@ class HPO(OnPolicyAlgorithm):
         assert self._last_obs is not None, "No previous observation was provided"
         # print("envname",env)
         n_steps = 0
-        # exploration_rate = 0.1
+
+        
         rollout_buffer.reset()
         # Sample new weights for the state dependent exploration
         if self.use_sde:
@@ -263,12 +251,16 @@ class HPO(OnPolicyAlgorithm):
                 actions, _, log_probs = self.policy.forward(obs_tensor)
             
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
-            # if exploration_rate > random.random():
-            #     # print("random choose action")
-            #     actions = np.array([self.action_space.sample()])
-            # else:
-                # actions = actions.cpu().numpy()
             actions = actions.cpu().numpy()
+            # print("actions",actions)
+            if self.exploration_rate > random.random():
+                # print("random choose action")
+                # actions = np.array([self.action_space.sample()])
+                actions = np.array([ self.action_space.sample() for psx in range(len(actions)) ])
+                # print("random choose action",actions)
+            # else:
+                
+            # actions = actions.cpu().numpy()
             # Rescale and perform action
             clipped_actions = actions
             # Clip the actions to avoid out of bound error
@@ -276,15 +268,11 @@ class HPO(OnPolicyAlgorithm):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
             
             new_obs, rewards, dones, infos = env.step(clipped_actions)
-            ''' wrong advantage from flipped rewards?'''
-            # print("rewards.size()",rewards )
             # if self.reward_error_rate >0.0:
-            #     flipped_array = np.random.choice( [1,-1], len(rewards), p=[1-self.reward_error_rate, self.reward_error_rate ])  
-            #     rewards =  rewards *flipped_array
-            ''' wrong advantage from flipped rewards?'''
-            rnoise = np.random.normal(loc=0.0, scale=0.5, size= len(rewards) )
+                # flipped_array = np.random.choice( [1,-1], len(rewards), p=[1-self.reward_error_rate, self.reward_error_rate ])  
+                # rewards =  rewards *flipped_array
+            rnoise = np.random.normal(loc=0.0, scale= 0.5, size= len(rewards) )
             rewards =  rewards  + rnoise
-            # print("rewards.size()",rewards )
             # print("infos:",infos)
             # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
             # Compute value
@@ -603,32 +591,56 @@ class HPO(OnPolicyAlgorithm):
                 #epsilon = math.log(1 + alpha * min(1, prob_ratio))
                 # root: (pi/mu)^(1/2) - 1
                 # epsilon = math.sqrt(1 + alpha * min(1, prob_ratio)) - 1
+                
+                # policy_loss = th.tensor([0.], requires_grad=True).to(self.device)
+                # policy_loss = th.tensor([0.] ).to(self.device)
+                policy_losses = []
+                from collections import OrderedDict
+                od = OrderedDict()
+                #policy_loss_data = []
                 t_loss_start = time.time()
-                deltaYnum = int(self.batch_size* self.rgamma ) 
+                # for i in range(self.batch_size):
+                #     if self.classifier == "AM":
+                #         epsilon[i] = self.alpha * min(1, prob_ratio[i])
+                #     elif self.classifier == "AM-log":
+                #         epsilon[i] = math.log(1 + self.alpha * min(1, prob_ratio[i]))
+                #     elif self.classifier == "AM-root":
+                #         epsilon[i] = math.sqrt(1 + self.alpha * min(1, prob_ratio[i])) - 1
+                #     elif self.classifier == "AM-sub":
+                #         epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
+                #     elif self.classifier == "AM-square":
+                #         epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
+                #     if self.aece == "WAE" or self.aece == "AE":
+                #         policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
+                #     elif self.aece == "WCE" or self.aece == "CE":
+                #         policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
+                #     # print("th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])",th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]))
+                #     # th.tensor([x1[i]])
+                #     #policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                #     #policy_loss += abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]]) )
+                #     # policy_loss_data.append(abs_adv[i] * policy_loss_fn( th.tensor([x1[i]]) , th.tensor([x2[i]]) , th.tensor([y[i]])))
+                #     #policy_loss_data.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ))
+                #     # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) )
+                #     policy_losses.append( abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) )
+                #     # pltemp = abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #with weight
+                #     pltemp = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , y[i].unsqueeze(0) ) #without weight
+                #     # 'if using slt'
+                #     od[ i ] = pltemp.item()
+                    # policy_loss = policy_loss + abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(1) , x2[i].unsqueeze(1) , y[i].unsqueeze(1) )
+                # od = sorted(od.items(), key = lambda item: (item[1] ,random.random() ) ,reverse = True )
+                # deltaYnum = int(self.batch_size* self.rgamma ) 
+                # # print("self.rgamma",self.rgamma)
+                # deltaYs = [0]*self.batch_size
+                # deltaYcounter = 0
                 # print("deltaYnum",deltaYnum)
                 policy_losses2 = []
-                # for key ,value in od:
-                #     # print("k,v",key,value)
-                #     if deltaYcounter>= deltaYnum:
-                #         break
-                #     deltaYs[key] = 1
-                #     deltaYcounter+=1
-                SVM = Model("robust_hpo")
-                NUM_DATA = self.batch_size
-                M = 1000000000
-                ksi = SVM.addVars(range(NUM_DATA), vtype=GRB.CONTINUOUS)
-                phi = SVM.addVars(range(NUM_DATA), vtype=GRB.CONTINUOUS)
-                q = SVM.addVar(vtype=GRB.CONTINUOUS, lb=0.0)
-                r = SVM.addVars(range(NUM_DATA), vtype=GRB.CONTINUOUS)
-                s = SVM.addVars(range(NUM_DATA), vtype=GRB.BINARY )
-                t = SVM.addVars(range(NUM_DATA), vtype=GRB.BINARY )
-                pitheta = SVM.addVars(range(NUM_DATA), vtype=GRB.CONTINUOUS,lb=0.0,ub=1.0)
-                SVM.modelSense = GRB.MINIMIZE
-                SVM.Params.outputFlag = 0
-                SVM.addConstr(q >=0 )
-                # gamma = int(NUM_DATA*args.rgamma )
-                old_probs = th.exp(rollout_data.old_log_prob).cpu().clone().detach().numpy()
-                ys_grb = y.cpu().clone().detach().numpy()
+                not_0_loss_counter = 0 
+                for key ,value in od:
+                    # print("k,v",key,value)
+                    if deltaYcounter>= deltaYnum:
+                        break
+                    deltaYs[key] = 1
+                    deltaYcounter+=1
                 for i in range(self.batch_size):
                     if self.classifier == "AM":
                         epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -642,99 +654,87 @@ class HPO(OnPolicyAlgorithm):
                         epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
                     if self.aece == "WAE" or self.aece == "AE":
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
-                        epsilon_for_gurobi = epsilon[i]
                     elif self.aece == "WCE" or self.aece == "CE":
                         policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
-                        epsilon_for_gurobi = self.alpha
                     # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                    if th.exp(val_log_prob[i]).item() <= self.spt_clipped_prob:
+                        policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        not_0_loss_counter+=1
+                    else:
+                        # policy_losses2.append(th.tensor([0.] ).to(self.device) )
+                        policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                     # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
-                    index = i
-                    SVM.addConstr(q+r[index]>=phi[index]-ksi[index])
-                    
-                    if self.classifier == "AM":
-                        SVM.addConstr(ksi[index] >= epsilon_for_gurobi - ys_grb[index]* ( pitheta[index]/(old_probs[i]+1e-8) - 1) )
-                        SVM.addConstr(ksi[index] <= epsilon_for_gurobi - ys_grb[index]* ( pitheta[index]/(old_probs[i]+1e-8) - 1) +M*(1-s[index]))
-                        SVM.addConstr(ksi[index] <= M*(s[index]) )
-                        SVM.addConstr(phi[index] >= epsilon_for_gurobi + ys_grb[index]* ( pitheta[index]/(old_probs[i]+1e-8) - 1) )
-                        SVM.addConstr(phi[index] <= epsilon_for_gurobi + ys_grb[index]* ( pitheta[index]/(old_probs[i]+1e-8) - 1) +M*(1-t[index]))
-                        SVM.addConstr(phi[index] <= M*(t[index]) )
-                        SVM.addConstr(r[index] >=0 )
-                        SVM.addConstr(ksi[index] >=0 )
-                        SVM.addConstr(phi[index] >=0 )
-                        SVM.addConstr(pitheta[index] >=0 )
-                
-                SVM.setObjective( quicksum(ksi[i] for i in range(NUM_DATA) ) + deltaYnum*q + quicksum(r[i] for i in range(NUM_DATA) ) )
-                SVM.optimize()
-                if SVM.status != GRB.OPTIMAL:
-                    print("SVM is not optimal")
+                t_loss_end = time.time()
+                loss_time.append(t_loss_end - t_loss_start)
+                # policy_loss /= self.batch_size
+                # policy_loss = th.stack(policy_losses2).sum() /self.batch_size
+                if not_0_loss_counter ==0 :
+                    not_0_loss_counter = 1
+                policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
+                #print("Policy loss", policy_loss_data)
+                # debug 6
+                #policy_loss = th.mean(th.stack(policy_loss_data))
+                #policy_loss = th.mean(th.stack(policy_loss_data))
+                #print("Policy loss", policy_loss.item())
+                #for i in range(self.batch_size):
+                #    epsilon[i] = alpha * min(1, prob_ratio[i])
+                margins.append(epsilon)
+                # policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon)
+                # policy_loss = th.mean(abs_adv * policy_loss_fn(x1, x2, y))
+
+                # Logging
+                pg_losses.append(policy_loss.item())
+                #pg_losses.append(policy_loss)
+                #clip_fraction = th.mean((th.abs(ratio - 1) > clip_range).float()).item()
+                #clip_fractions.append(clip_fraction)
+                # print("val_q_values:",val_q_values.requires_grad)
+                val_q_values = th.stack(val_q_values)
+                if self.clip_range_vf is None:
+                    # No clipping
+                    #values_pred = val_values # org version
+                    values_pred = val_q_values # org version
+                    #values_pred = th.exp(val_log_prob) * val_values
                 else:
-                    
-                    for inner_epoch in range( 10 ):
-                        mimic_losses = []
-                        action_q_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
-                        for i in range(self.batch_size):
-                            ''' mse loss between th.exp(val_log_prob) - pitheta[index].x with 100 gd '''
-                            mloss = th.nn.MSELoss()
-                            # print("th.exp(val_log_prob[i])",th.exp(val_log_prob[i]))
-                            # print("pitheta[i].x",pitheta[i].x)
-                            # mimic_loss = mloss(th.exp(val_log_prob[i]), th.tensor(pitheta[i].x ).to(self.device)  )
-                            mimic_loss = mloss( val_log_prob[i] , th.tensor( math.log(pitheta[i].x) ).to(self.device)  )
-                            mimic_losses.append( mimic_loss )
-                        # self.policy.optimizer.zero_grad()
-                        policy_loss = th.stack(mimic_losses).sum() /self.batch_size
-                        # policy_loss.backward()
-                        # self.policy.optimizer.step()
-                        if inner_epoch == 0 :
-                            margins.append(epsilon)
-                            
-                            val_q_values = th.stack(val_q_values)
-                            if self.clip_range_vf is None:
-                                # No clipping
-                                #values_pred = val_values # org version
-                                values_pred = val_q_values # org version
-                                #values_pred = th.exp(val_log_prob) * val_values
-                            else:
-                                # Clip the different between old and new value
-                                # NOTE: this depends on the reward scaling
-                                values_pred = rollout_data.old_values + th.clamp(
-                                    val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf # org version
-                                    #th.exp(val_log_probs) * val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf
-                                )
-                            
-                            value_loss = F.mse_loss(rollout_data.returns, values_pred )
-                            value_losses.append(value_loss.item())
+                    # Clip the different between old and new value
+                    # NOTE: this depends on the reward scaling
+                    values_pred = rollout_data.old_values + th.clamp(
+                        val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf # org version
+                        #th.exp(val_log_probs) * val_values - rollout_data.old_values, -clip_range_vf, clip_range_vf
+                    )
+                # Value loss using the TD(gae_lambda) target
+                #value_loss = F.mse_loss(rollout_data.returns.unsqueeze(1), values_pred )
+                value_loss = F.mse_loss(rollout_data.returns, values_pred )
+                value_losses.append(value_loss.item())
 
-                            rollout_return.append(rollout_data.returns.detach().cpu().numpy())
-                        # entropy = None
-                        # Entropy loss favor exploration
-                        if entropy is None:
-                            # Approximate entropy when no analytical form
-                            entropy_loss = -th.mean(-val_log_prob)
-                        else:
-                            entropy_loss = -th.mean(entropy)
+                rollout_return.append(rollout_data.returns.detach().cpu().numpy())
 
-                        entropy_losses.append(entropy_loss.item())
+                # ?? SKIP entropy loss??
+                # entropy = None
+                # Entropy loss favor exploration
+                if entropy is None:
+                    # Approximate entropy when no analytical form
+                    entropy_loss = -th.mean(-val_log_prob)
+                else:
+                    entropy_loss = -th.mean(entropy)
 
-                        # org version
-                        # print("policy_loss.requires_grad:",policy_loss.requires_grad)
-                        if self.entropy_hpo == True and inner_epoch == 0 :
-                            loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
-                        elif self.entropy_hpo == False and inner_epoch == 0 :
-                            loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
-                        else:
-                            loss =  policy_loss
-                        # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
-                        #loss = policy_loss
-                        #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
+                entropy_losses.append(entropy_loss.item())
 
-                        ## Optimization step
-                        self.policy.optimizer.zero_grad()
-                        loss.backward()
-                        ## Clip grad norm
-                        th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
-                        self.policy.optimizer.step()
-                    t_loss_end = time.time()
-                    loss_time.append(t_loss_end - t_loss_start)
+                # org version
+                # print("policy_loss.requires_grad:",policy_loss.requires_grad)
+                if self.entropy_hpo == True:
+                    loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
+                else :
+                    loss = policy_loss + self.vf_coef * value_loss + self.ent_coef * entropy_loss ##08070 final HPO-63 with 304
+                # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
+                #loss = policy_loss
+                #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
+
+                ## Optimization step
+                self.policy.optimizer.zero_grad()
+                loss.backward()
+                ## Clip grad norm
+                th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
+                self.policy.optimizer.step()
                 #approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
                 approx_kl_divs.append(th.mean(rollout_data.old_log_prob.detach() - val_log_prob).detach().cpu().numpy())
                 
@@ -754,7 +754,7 @@ class HPO(OnPolicyAlgorithm):
             #if np.mean(pg_losses) < 1e-4:
             #    print(f"Early stopping at step {epoch} due to reaching ploss: {np.mean(pg_losses):.2f}")
             #    break
-            # th.cuda.empty_cache()
+        # th.cuda.empty_cache()
         t_epoch_end = time.time()
         epoch_time.append(t_epoch_end - t_epoch_start)
         logger.record("Time/train_loss/Sum", np.sum(loss_time))
