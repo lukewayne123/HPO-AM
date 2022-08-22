@@ -1,6 +1,6 @@
 import warnings
-from typing import Any, Dict, Optional, Type, Union
-
+# from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, Type
 import numpy as np
 import torch as th
 from gym import spaces
@@ -100,7 +100,8 @@ class HPO(OnPolicyAlgorithm):
         _init_setup_model: bool = True,
         alpha: float = 0.1,
         rgamma: float = 0.75,
-        exploration_rate: float = 0.1
+        exploration_rate: float = 0.0,
+        reward_noise_std: float = 0.0,
     ):
 
         super(HPO, self).__init__(
@@ -161,6 +162,7 @@ class HPO(OnPolicyAlgorithm):
         self.entropy_hpo = entropy_hpo
         self.spt_clipped_prob = rgamma
         self.exploration_rate = exploration_rate
+        self.reward_noise_std = reward_noise_std
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -223,7 +225,7 @@ class HPO(OnPolicyAlgorithm):
         assert self._last_obs is not None, "No previous observation was provided"
         # print("envname",env)
         n_steps = 0
-
+        print("reward_noise_std",self.reward_noise_std)
         
         rollout_buffer.reset()
         # Sample new weights for the state dependent exploration
@@ -253,11 +255,11 @@ class HPO(OnPolicyAlgorithm):
             # print("n_steps: ",n_steps,"n_rollout_steps: ",n_rollout_steps)
             actions = actions.cpu().numpy()
             # print("actions",actions)
-            if self.exploration_rate > random.random():
-                # print("random choose action")
-                # actions = np.array([self.action_space.sample()])
-                actions = np.array([ self.action_space.sample() for psx in range(len(actions)) ])
-                # print("random choose action",actions)
+            # if self.exploration_rate > random.random():
+            #     # print("random choose action")
+            #     # actions = np.array([self.action_space.sample()])
+            #     actions = np.array([ self.action_space.sample() for psx in range(len(actions)) ])
+            #     print("random choose action",actions)
             # else:
                 
             # actions = actions.cpu().numpy()
@@ -268,11 +270,13 @@ class HPO(OnPolicyAlgorithm):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
             
             new_obs, rewards, dones, infos = env.step(clipped_actions)
+            # env.render()
             # if self.reward_error_rate >0.0:
                 # flipped_array = np.random.choice( [1,-1], len(rewards), p=[1-self.reward_error_rate, self.reward_error_rate ])  
                 # rewards =  rewards *flipped_array
-            rnoise = np.random.normal(loc=0.0, scale= 0.5, size= len(rewards) )
-            rewards =  rewards  + rnoise
+            # if self.reward_noise_std>0:
+            #     rnoise = np.random.normal(loc=0.0, scale= self.reward_noise_std, size= len(rewards) )
+            #     rewards =  rewards  + rnoise
             # print("infos:",infos)
             # print("state: ",self._last_obs," next state: ",new_obs," rewards: ",rewards," dones: ",dones,"actions",clipped_actions)
             # Compute value
@@ -795,6 +799,8 @@ class HPO(OnPolicyAlgorithm):
         logger.record("HPO/prob_ratio", np.mean(ratio_p))
         logger.record("HPO/rollout_return", np.mean(rollout_return))
 
+    
+
     def learn(
         self,
         total_timesteps: int,
@@ -802,12 +808,13 @@ class HPO(OnPolicyAlgorithm):
         log_interval: int = 1,
         eval_env: Optional[GymEnv] = None,
         eval_freq: int = -1,
-        n_eval_episodes: int = 5,
+        # n_eval_episodes: int = 5,
+        n_eval_episodes: int = 100,
         tb_log_name: str = "HPO",
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
     ) -> "HPO":
-        
+        print("n_eval_episodes",n_eval_episodes)
         return super(HPO, self).learn(
             total_timesteps=total_timesteps,
             callback=callback,

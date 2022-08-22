@@ -112,6 +112,16 @@ if __name__ == "__main__":  # noqa: C901
                     "env_name": game,
                     }
                 )
+    # noisy_reward_threshold = [-100,]
+    noisy_max_episode_steps= [500,500,200,200,1000]
+    gameidx = 0
+    for game in ["AcrobotEnv", "CartPoleEnv", "MountainCarEnv", "PendulumEnv","LunarLander" ]:
+        
+        register(id='noisy-{}-v1'.format(game), 
+                entry_point='noisyGymClassicControl:'+game,
+                max_episode_steps=noisy_max_episode_steps[gameidx]
+                )
+        gameidx +=1
     registered_envs = set(gym.envs.registry.env_specs.keys())  # pytype: disable=module-attr
     # If the environment is not found, suggest the closest match
     if env_id not in registered_envs:
