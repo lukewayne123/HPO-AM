@@ -1,0 +1,5 @@
+python train.py --algo hpo --classifier AM --aece WCE --seed 123 --env noisy-LunarLander-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEreweight1minuspRnoiseStd050r  --hyperparams rgamma:0.8  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 456 --env noisy-LunarLander-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEreweight1minuspRnoiseStd050r  --hyperparams rgamma:0.8  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 666 --env noisy-LunarLander-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEreweight1minuspRnoiseStd050r  --hyperparams rgamma:0.8  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 789 --env noisy-LunarLander-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEreweight1minuspRnoiseStd050r  --hyperparams rgamma:0.8  device:0
+python train.py --algo hpo --classifier AM --aece WCE --seed 517 --env noisy-LunarLander-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEreweight1minuspRnoiseStd050r  --hyperparams rgamma:0.8  device:0

@@ -7,7 +7,10 @@ import csv
 import matplotlib.ticker as ticker
 
 # Folder = 'NNslt40flippedduration0'
-gamename = 'cartpole'
+# gamename = 'cartpole'
+# gamename = 'mountaincar'
+# gamename = 'acrobot'
+gamename = 'lunarlander'
 folder_list = [gamename+'vanilla',gamename+'spt080']
 # folder_list = ['NNslt40flippedduration0','NNrc40flippedduration0','NN0flippedduration0']
 # folder_list = ['NNsadependent_slt','NNsadependent_rc','NNsadependent_vanilla']
@@ -126,5 +129,5 @@ plt.yticks(fontsize=20)
 plt.ylabel('average returns of 100 eval ', fontsize=25)
 plt.xlabel('timesteps ', fontsize=25)
 # plt.title('NN policy + uniform flipping of advantage signs', fontsize=25)
-plt.title('Cartpole with rewards with std= 0.5|reward| noise ', fontsize=25)
+plt.title(gamename+' with rewards with std= 0.5|reward| noise ', fontsize=25)
 plt.show()
