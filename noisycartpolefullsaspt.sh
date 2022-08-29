@@ -1,0 +1,5 @@
+python train.py --algo hpo --classifier AM --aece WCE --seed 123 --env noisy-CartPoleEnv-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaRnoiseStd050rSpt080  --hyperparams rgamma:0.8  device:2
+python train.py --algo hpo --classifier AM --aece WCE --seed 456 --env noisy-CartPoleEnv-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaRnoiseStd050rSpt080  --hyperparams rgamma:0.8  device:2
+python train.py --algo hpo --classifier AM --aece WCE --seed 666 --env noisy-CartPoleEnv-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaRnoiseStd050rSpt080  --hyperparams rgamma:0.8  device:2
+python train.py --algo hpo --classifier AM --aece WCE --seed 789 --env noisy-CartPoleEnv-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaRnoiseStd050rSpt080  --hyperparams rgamma:0.8  device:2
+python train.py --algo hpo --classifier AM --aece WCE --seed 517 --env noisy-CartPoleEnv-v1  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaRnoiseStd050rSpt080  --hyperparams rgamma:0.8  device:2

@@ -17,7 +17,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.buffers import DictRolloutBuffer, RolloutBuffer
 
 import math
-
+import pdb 
 from hpo.policies import ActorCriticPolicy2
 # from hpo.buffer import RolloutBuffer2
 from stable_baselines3.common.policies import BaseModel, BasePolicy
@@ -163,6 +163,7 @@ class HPO(OnPolicyAlgorithm):
         self.spt_clipped_prob = rgamma
         self.exploration_rate = exploration_rate
         self.reward_noise_std = reward_noise_std
+        self.seed = seed
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -499,7 +500,8 @@ class HPO(OnPolicyAlgorithm):
                 t_action_adv_start = time.time()
                 # for j in range(self.batch_size):
                 #     minMu[j]  = th.min(action_probs,dim=0)
-                
+                if  self.seed == 1234:
+                    pdb.set_trace()
                 for a in range(self.action_space.n):
                     # print("action_advantages shape",action_advantages[i].shape)
                     #print("Before A", action_advantages[i])
@@ -545,6 +547,7 @@ class HPO(OnPolicyAlgorithm):
                 prob_ratio = negative_adv_prob / (positive_adv_prob + 1e-8)
                 #print("Prob Ratio", prob_ratio)
                 ratio_p.append(prob_ratio)
+                not_0_loss_counter = 0 
                 for a in range(self.action_space.n):
                     if self.classifier == "AM":
                         # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
@@ -582,7 +585,7 @@ class HPO(OnPolicyAlgorithm):
                     #policy_loss_data = []
                     t_loss_start = time.time()
                     
-                    not_0_loss_counter = 0 
+                    
                     for key ,value in od:
                         # print("k,v",key,value)
                         if deltaYcounter>= deltaYnum:
@@ -605,14 +608,15 @@ class HPO(OnPolicyAlgorithm):
                         elif self.aece == "WCE" or self.aece == "CE":
                             policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
                         # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
-                    # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
-                    # if th.exp(val_log_prob[i]).item() <= self.spt_clipped_prob:
-                    #     policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
-                    #     not_0_loss_counter+=1
-                    # else:
-                    #     # policy_losses2.append(th.tensor([0.] ).to(self.device) )
-                    #     policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
-                    # # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
+                        # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                        if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                            not_0_loss_counter+=1
+                        else:
+                            # policy_losses2.append(th.tensor([0.] ).to(self.device) )
+                            policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
                 t_loss_end = time.time()
                 loss_time.append(t_loss_end - t_loss_start)
                 # policy_loss /= self.batch_size
