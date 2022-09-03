@@ -1,0 +1,5 @@
+python train.py --algo hpo --classifier AM --aece WCE --seed 123 --env MountainCar-v0  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaAdvantageFlippedRate040Spt060  --hyperparams rgamma:0.6  advantage_flipped_rate:0.4
+python train.py --algo hpo --classifier AM --aece WCE --seed 456 --env MountainCar-v0  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaAdvantageFlippedRate040Spt060  --hyperparams rgamma:0.6  advantage_flipped_rate:0.4
+python train.py --algo hpo --classifier AM --aece WCE --seed 666 --env MountainCar-v0  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaAdvantageFlippedRate040Spt060  --hyperparams rgamma:0.6  advantage_flipped_rate:0.4
+python train.py --algo hpo --classifier AM --aece WCE --seed 789 --env MountainCar-v0  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaAdvantageFlippedRate040Spt060  --hyperparams rgamma:0.6  advantage_flipped_rate:0.4
+python train.py --algo hpo --classifier AM --aece WCE --seed 517 --env MountainCar-v0  --tensorboard-log /home/lcouy/HDD/HPO-AM/tensorboard/AMWCEfullsaAdvantageFlippedRate040Spt060  --hyperparams rgamma:0.6  advantage_flipped_rate:0.4

@@ -407,6 +407,10 @@ class HPO(OnPolicyAlgorithm):
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
         t_epoch_start = time.time()
+        # flipped_adv = th.randint(0, 2, (self.batch_size,)) #then mul this to advantages
+        # tempa = 0.4*th.ones(self.batch_size) # 0.4 it the flipped rate
+        # tempb = th.bernoulli(tempa)
+        # flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( 0.4*th.ones(self.batch_size) ) )
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
@@ -554,12 +558,12 @@ class HPO(OnPolicyAlgorithm):
                         x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
                         # x1 = gpu_action_probs[a]/gpu_action_probs[a].detach() full_sa_log_prob[a]
                         x2 = th.ones_like(x1.clone().detach())
-                    # elif self.classifier == "AM-log":# log(pi) - log(mu)
-                    #     x1 = val_log_prob
-                    #     x2 = rollout_data.old_log_prob
-                    # elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                    #     x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
-                    #     x2 = th.ones_like(x1.clone().detach())
+                    elif self.classifier == "AM-log":# log(pi) - log(mu)
+                        x1 = full_sa_log_prob[a]
+                        x2 = target_full_sa_log_prob[a].detach()
+                    elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
+                        x1 = th.sqrt(th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach())) # ratio
+                        x2 = th.ones_like(x1.clone().detach())
                     # elif self.classifier == "AM-sub":
                     #     x1 = th.exp(val_log_prob )
                     #     x2 = th.exp(rollout_data.old_log_prob)

@@ -102,6 +102,7 @@ class HPO(OnPolicyAlgorithm):
         rgamma: float = 0.75,
         exploration_rate: float = 0.0,
         reward_noise_std: float = 0.0,
+        advantage_flipped_rate: float = 0.0,
     ):
 
         super(HPO, self).__init__(
@@ -164,6 +165,7 @@ class HPO(OnPolicyAlgorithm):
         self.exploration_rate = exploration_rate
         self.reward_noise_std = reward_noise_std
         self.seed = seed
+        self.advantage_flipped_rate = advantage_flipped_rate
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -407,6 +409,10 @@ class HPO(OnPolicyAlgorithm):
         # print("self.batch_size: ",self.batch_size)
         # train for n_epochs epochs
         t_epoch_start = time.time()
+        # flipped_adv = th.randint(0, 2, (self.batch_size,)) #then mul this to advantages
+        # tempa = 0.4*th.ones(self.batch_size) # 0.4 it the flipped rate
+        # tempb = th.bernoulli(tempa)
+        flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
@@ -554,12 +560,12 @@ class HPO(OnPolicyAlgorithm):
                         x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
                         # x1 = gpu_action_probs[a]/gpu_action_probs[a].detach() full_sa_log_prob[a]
                         x2 = th.ones_like(x1.clone().detach())
-                    # elif self.classifier == "AM-log":# log(pi) - log(mu)
-                    #     x1 = val_log_prob
-                    #     x2 = rollout_data.old_log_prob
-                    # elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
-                    #     x1 = th.sqrt(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
-                    #     x2 = th.ones_like(x1.clone().detach())
+                    elif self.classifier == "AM-log":# log(pi) - log(mu)
+                        x1 = full_sa_log_prob[a]
+                        x2 = target_full_sa_log_prob[a].detach()
+                    elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
+                        x1 = th.sqrt(th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach())) # ratio
+                        x2 = th.ones_like(x1.clone().detach())
                     # elif self.classifier == "AM-sub":
                     #     x1 = th.exp(val_log_prob )
                     #     x2 = th.exp(rollout_data.old_log_prob)
@@ -571,6 +577,9 @@ class HPO(OnPolicyAlgorithm):
                     #abs_adv = np.abs(advantages.cpu())
                     # advantages = advantages.detach()
                     advantages = gpu_action_advantages[a].detach()
+                    ''' flipped advantages noise'''
+                    advantages = advantages*flipped_adv
+                    ''' flipped advantages noise'''
                     y = th.sign(advantages)
                     if self.aece == "WAE" or self.aece == "WCE":
                         # y = advantages

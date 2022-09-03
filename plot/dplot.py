@@ -7,6 +7,7 @@ import csv
 import matplotlib.ticker as ticker
 
 # Folder = 'NNslt40flippedduration0'
+root_folder ='sptfullsa040advFlip'
 # gamename = 'cartpole'
 # gamename = 'mountaincar'
 # gamename = 'acrobot'
@@ -86,7 +87,7 @@ legend_colors = bmap.mpl_colors
 
 human_color = bmap2.mpl_colors[1]
 
-fig = figure(figsize=(14,20))  # no frame
+fig = figure(figsize=(14,9))  # no frame
 ax = fig.add_subplot(111)
 
 
@@ -96,7 +97,7 @@ for idx in range( len(folder_list) ):
     Folder =  folder_list[idx]
     samples = []
     for x in range( len(seed_list) ):
-        samples.append(load_csv("csvs/{0}/{1}.csv".format( Folder, seed_list[x] ), x_scale=1))
+        samples.append(load_csv("{0}/{1}/{2}.csv".format(root_folder ,Folder, seed_list[x] ), x_scale=1))
     print( len(samples) )
     print( len(samples[0]) )
     print( len(samples[0][0]) )
@@ -129,5 +130,7 @@ plt.yticks(fontsize=20)
 plt.ylabel('average returns of 100 eval ', fontsize=25)
 plt.xlabel('timesteps ', fontsize=25)
 # plt.title('NN policy + uniform flipping of advantage signs', fontsize=25)
-plt.title(gamename+' with rewards with std= 0.5|reward| noise ', fontsize=25)
-plt.show()
+plt.title(gamename+' full sa with 0.4 uniform flipping of advantage signs  ', fontsize=25)
+# plt.set_size_inches(1400,890)
+# plt.show()
+plt.savefig('./full_sa_spt080_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
