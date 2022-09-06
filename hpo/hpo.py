@@ -412,13 +412,17 @@ class HPO(OnPolicyAlgorithm):
         # flipped_adv = th.randint(0, 2, (self.batch_size,)) #then mul this to advantages
         # tempa = 0.4*th.ones(self.batch_size) # 0.4 it the flipped rate
         # tempb = th.bernoulli(tempa)
-        flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
-        for epoch in range(self.n_epochs):
-            approx_kl_divs = []
-            # Do a complete pass on the rollout buffer
-            # Hard update for target policy - 9
-            #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
-            for rollout_data in self.rollout_buffer.get(self.batch_size):
+        flipped_adv_list = []
+        
+        for rollout_data in self.rollout_buffer.get(self.batch_size):
+            for _ in range(self.action_space.n):
+                flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
+                flipped_adv_list.append(flipped_adv)
+            for epoch in range(self.n_epochs):
+                approx_kl_divs = []
+                # Do a complete pass on the rollout buffer
+                # Hard update for target policy - 9
+                #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
                 # print("len(rollout_data): ",len(rollout_data))
                 
                 actions = rollout_data.actions
