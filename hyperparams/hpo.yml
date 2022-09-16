@@ -270,7 +270,8 @@ CartPole-v1:
   batch_size: 256
   gae_lambda: 0.8
   gamma: 0.98
-  n_epochs: 20
+  # n_epochs: 20
+  n_epochs: 40
   ent_coef: 0.0
   learning_rate: lin_0.001
   clip_range: lin_0.2
@@ -294,7 +295,8 @@ MountainCar-v0:
   n_steps: 16
   gae_lambda: 0.98
   gamma: 0.99
-  n_epochs: 4
+  # n_epochs: 4
+  n_epochs: 20
   ent_coef: 0.0
 
 # Tuned
@@ -338,7 +340,8 @@ Acrobot-v1:
   n_steps: 256
   gae_lambda: 0.94
   gamma: 0.99
-  n_epochs: 4
+  # n_epochs: 4
+  n_epochs: 20
   ent_coef: 0.0
   # use_sde: True
   # sde_sample_freq: 4
@@ -391,7 +394,8 @@ LunarLander-v2:
   batch_size: 64
   gae_lambda: 0.98
   gamma: 0.999
-  n_epochs: 4
+  # n_epochs: 4
+  n_epochs: 20
   ent_coef: 0.01
 
 LunarLanderContinuous-v2:
@@ -652,7 +656,33 @@ CarRacing-v0:
   max_grad_norm: 0.5
   vf_coef: 0.5
   learning_rate: !!float 3e-5
-  use_sde: True
+  # use_sde: True
+  clip_range: 0.4
+  policy_kwargs: "dict(log_std_init=-2,
+                       ortho_init=False,
+                       )"
+
+CarRacing-v1:
+  env_wrapper:
+    - gym.wrappers.resize_observation.ResizeObservation:
+        shape: 64
+    - gym.wrappers.gray_scale_observation.GrayScaleObservation:
+        keep_dim: true
+  frame_stack: 4
+  n_envs: 8
+  n_timesteps: !!float 1e6
+  policy: 'CnnPolicy'
+  batch_size: 128
+  n_steps: 512
+  gamma: 0.99
+  gae_lambda: 0.9
+  n_epochs: 20
+  ent_coef: 0.0
+  sde_sample_freq: 4
+  max_grad_norm: 0.5
+  vf_coef: 0.5
+  learning_rate: !!float 3e-5
+  # use_sde: True
   clip_range: 0.4
   policy_kwargs: "dict(log_std_init=-2,
                        ortho_init=False,

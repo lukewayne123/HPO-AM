@@ -582,7 +582,7 @@ class HPO(OnPolicyAlgorithm):
                     # advantages = advantages.detach()
                     advantages = gpu_action_advantages[a].detach()
                     ''' flipped advantages noise'''
-                    advantages = advantages*flipped_adv
+                    advantages = advantages*flipped_adv_list[a]
                     ''' flipped advantages noise'''
                     y = th.sign(advantages)
                     if self.aece == "WAE" or self.aece == "WCE":
