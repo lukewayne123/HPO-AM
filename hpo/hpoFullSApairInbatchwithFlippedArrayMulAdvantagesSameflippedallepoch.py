@@ -103,8 +103,6 @@ class HPO(OnPolicyAlgorithm):
         exploration_rate: float = 0.0,
         reward_noise_std: float = 0.0,
         advantage_flipped_rate: float = 0.0,
-        actor_delay: int = 20 ,
-        pf_coef: float = 20.0,
     ):
 
         super(HPO, self).__init__(
@@ -168,8 +166,6 @@ class HPO(OnPolicyAlgorithm):
         self.reward_noise_std = reward_noise_std
         self.seed = seed
         self.advantage_flipped_rate = advantage_flipped_rate
-        self.actor_delay = actor_delay
-        self.pf_coef = pf_coef
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -391,7 +387,7 @@ class HPO(OnPolicyAlgorithm):
         margins = []
         #positive_a = []
         #negative_a = []
-        episode_counter = self._n_updates/self.n_epochs
+
         positive_p = []
         negative_p = []
         ratio_p = []
@@ -562,11 +558,7 @@ class HPO(OnPolicyAlgorithm):
                 #print("Prob Ratio", prob_ratio)
                 ratio_p.append(prob_ratio)
                 not_0_loss_counter = 0 
-                policy_loss = th.tensor(0)
-                if episode_counter % self.actor_delay == 0:
-                    # for a in range(self.action_space.n):
-                    a =  int((episode_counter/self.actor_delay) %  self.action_space.n )
-                    print("episode: ",episode_counter,"a: ",a)
+                for a in range(self.action_space.n):
                     if self.classifier == "AM":
                         # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                         x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
@@ -638,13 +630,13 @@ class HPO(OnPolicyAlgorithm):
                             # policy_losses2.append(th.tensor([0.] ).to(self.device) )
                             policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                         # # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
-                    t_loss_end = time.time()
-                    loss_time.append(t_loss_end - t_loss_start)
-                    # policy_loss /= self.batch_size
-                    # policy_loss = th.stack(policy_losses2).sum() /self.batch_size
-                    if not_0_loss_counter ==0 :
-                        not_0_loss_counter = 1
-                    policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
+                t_loss_end = time.time()
+                loss_time.append(t_loss_end - t_loss_start)
+                # policy_loss /= self.batch_size
+                # policy_loss = th.stack(policy_losses2).sum() /self.batch_size
+                if not_0_loss_counter ==0 :
+                    not_0_loss_counter = 1
+                policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
                 #print("Policy loss", policy_loss_data)
                 # debug 6
                 #policy_loss = th.mean(th.stack(policy_loss_data))
@@ -692,16 +684,13 @@ class HPO(OnPolicyAlgorithm):
                     entropy_loss = -th.mean(entropy)
 
                 entropy_losses.append(entropy_loss.item())
-                
+
                 # org version
                 # print("policy_loss.requires_grad:",policy_loss.requires_grad)
                 if self.entropy_hpo == True:
                     loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
                 else :
-                    if episode_counter % self.actor_delay == 0:
-                        loss = self.pf_coef * policy_loss + self.vf_coef * value_loss + self.ent_coef * entropy_loss ##08070 final HPO-63 with 304
-                    else :
-                        loss = self.vf_coef * value_loss
+                    loss = policy_loss + self.vf_coef * value_loss + self.ent_coef * entropy_loss ##08070 final HPO-63 with 304
                 # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
                 #loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
@@ -758,8 +747,7 @@ class HPO(OnPolicyAlgorithm):
         if hasattr(self.policy, "log_std"):
             logger.record("train/std", th.exp(self.policy.log_std).mean().item())
 
-        # logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
-        logger.record("train/n_updates", self._n_updates)
+        logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         logger.record("train/clip_range", clip_range)
         if self.clip_range_vf is not None:
             logger.record("train/clip_range_vf", clip_range_vf)

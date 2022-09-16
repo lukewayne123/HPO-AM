@@ -7,15 +7,15 @@ import csv
 import matplotlib.ticker as ticker
 
 # Folder = 'NNslt40flippedduration0'
-# root_folder ='sptfullsa040advFlip'
+root_folder ='sptfullsa040advFlip'
 # root_folder ='sptfullsa040advFlipSAindependentAndMoreEpoch'
-root_folder ='sptfullsa045advFlipSAindependentAndMoreEpoch'
+# root_folder ='sptfullsa045advFlipSAindependentAndMoreEpoch'
 # gamename = 'cartpole'
 # gamename = 'mountaincar'
-# gamename = 'acrobot'
-gamename = 'lunarlander'
-# folder_list = [gamename+'vanilla',gamename+'spt080',gamename+'slt010dY050']
-folder_list = [gamename+'vanilla',gamename+'spt060']
+gamename = 'acrobot'
+# gamename = 'lunarlander'
+folder_list = [gamename+'vanilla',gamename+'spt080',gamename+'slt010dY050']
+# folder_list = [gamename+'vanilla',gamename+'spt060']
 # folder_list = ['NNslt40flippedduration0','NNrc40flippedduration0','NN0flippedduration0']
 # folder_list = ['NNsadependent_slt','NNsadependent_rc','NNsadependent_vanilla']
 # seed_list = ['289','666','517','789']
@@ -123,9 +123,9 @@ for i in range(len(data_sets)):
     # ax.scatter(data_sets[0][i][2], data_sets[0][i][3], s=200, color=colors[idx])
 # ax.legend(['small loss trick', 'robust classification','vanilla HPO'], fontsize=25)
 # ax.legend(['SPT ignore pi(s,a)>80%', 'vanilla SPT HPO'], fontsize=25)
-ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.6 state action pair'], fontsize=12,loc = 'lower right')
+# ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.6 state action pair'], fontsize=12,loc = 'lower right')
 # ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.8 state action pair'], fontsize=12,loc = 'lower right')
-# ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.8 state action pair','WCE HPO with SLT 10% deltaY=0.5'], fontsize=12,loc = 'lower right')
+ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.8 state action pair','WCE HPO with SLT 10% deltaY=0.5'], fontsize=12,loc = 'lower right')
 scale = 1
 ticks = ticker.FuncFormatter(lambda x, pos: '{0:g} '.format(x*scale))
 ax.xaxis.set_major_formatter(ticks)
@@ -135,11 +135,11 @@ plt.yticks(fontsize=20)
 plt.ylabel('average returns of 100 eval ', fontsize=25)
 plt.xlabel('timesteps ', fontsize=25)
 # plt.title('NN policy + uniform flipping of advantage signs', fontsize=25)
-# plt.title(gamename+' full sa with 0.4 uniform flipping of advantage signs  ', fontsize=25)
-plt.title(gamename+' full sa with 0.45 uniform flipping of advantage signs  ', fontsize=25)
+plt.title(gamename+' full sa with 0.4 uniform flipping of advantage signs  ', fontsize=25)
+# plt.title(gamename+' full sa with 0.45 uniform flipping of advantage signs  ', fontsize=25)
 # plt.set_size_inches(1400,890)
 # plt.show()
-# plt.savefig('./full_sa_spt080_slt010_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
+plt.savefig('./full_sa_spt080_slt010_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt060_adv040flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
-plt.savefig('./full_sa_spt060_adv045flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
+# plt.savefig('./full_sa_spt060_adv045flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt080_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
