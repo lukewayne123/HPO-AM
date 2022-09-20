@@ -105,6 +105,7 @@ class HPO(OnPolicyAlgorithm):
         advantage_flipped_rate: float = 0.0,
         actor_delay: int = 20 ,
         pf_coef: float = 20.0,
+        policy_update_scheme: int = 0,
     ):
 
         super(HPO, self).__init__(
@@ -170,6 +171,7 @@ class HPO(OnPolicyAlgorithm):
         self.advantage_flipped_rate = advantage_flipped_rate
         self.actor_delay = actor_delay
         self.pf_coef = pf_coef
+        self.policy_update_scheme = policy_update_scheme
         # self.robust_delta_y = self.ROBUSTDELTAY()
         if _init_setup_model:
             self._setup_model()
@@ -563,10 +565,96 @@ class HPO(OnPolicyAlgorithm):
                 ratio_p.append(prob_ratio)
                 not_0_loss_counter = 0 
                 policy_loss = th.tensor(0)
-                if episode_counter % self.actor_delay == 0:
-                    # for a in range(self.action_space.n):
+                if episode_counter % self.actor_delay == 0 and self.policy_update_scheme == 0:
+                # if if episode_counter % self.actor_delay < self.action_space.n :
+                    # a  =  int((episode_counter ) % self.actor_delay )
+                    # for a in range(self.action_space.n) :
                     a =  int((episode_counter/self.actor_delay) %  self.action_space.n )
-                    print("episode: ",episode_counter,"a: ",a)
+                    # print("episode: ",episode_counter,"a: ",a)
+                    if self.classifier == "AM":
+                        # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
+                        x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
+                        # x1 = gpu_action_probs[a]/gpu_action_probs[a].detach() full_sa_log_prob[a]
+                        x2 = th.ones_like(x1.clone().detach())
+                    elif self.classifier == "AM-log":# log(pi) - log(mu)
+                        x1 = full_sa_log_prob[a]
+                        x2 = target_full_sa_log_prob[a].detach()
+                    elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
+                        x1 = th.sqrt(th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach())) # ratio
+                        x2 = th.ones_like(x1.clone().detach())
+                    # elif self.classifier == "AM-sub":
+                    #     x1 = th.exp(val_log_prob )
+                    #     x2 = th.exp(rollout_data.old_log_prob)
+                    # elif self.classifier == "AM-square":
+                    #     x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
+                    #     x2 = th.ones_like(x1.clone().detach())
+                    #advantages = rollout_data.advantages.cpu().detach()
+                    #print("advantages",advantages)
+                    #abs_adv = np.abs(advantages.cpu())
+                    # advantages = advantages.detach()
+                    advantages = gpu_action_advantages[a].detach()
+                    ''' flipped advantages noise'''
+                    advantages = advantages*flipped_adv_list[a]
+                    ''' flipped advantages noise'''
+                    y = th.sign(advantages)
+                    if self.aece == "WAE" or self.aece == "WCE":
+                        # y = advantages
+                        abs_adv = th.abs(advantages)
+                    else:
+                        abs_adv = th.abs(y)
+                    
+                    
+                    policy_losses = []
+                    from collections import OrderedDict
+                    od = OrderedDict()
+                    #policy_loss_data = []
+                    t_loss_start = time.time()
+                    
+                    
+                    for key ,value in od:
+                        # print("k,v",key,value)
+                        if deltaYcounter>= deltaYnum:
+                            break
+                        deltaYs[key] = 1
+                        deltaYcounter+=1
+                    for i in range(self.batch_size):
+                        if self.classifier == "AM":
+                            epsilon[i] = self.alpha * min(1, prob_ratio[i])
+                        elif self.classifier == "AM-log":
+                            epsilon[i] = math.log(1 + self.alpha * min(1, prob_ratio[i]))
+                        elif self.classifier == "AM-root":
+                            epsilon[i] = math.sqrt(1 + self.alpha * min(1, prob_ratio[i])) - 1
+                        elif self.classifier == "AM-sub":
+                            epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
+                        elif self.classifier == "AM-square":
+                            epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
+                        if self.aece == "WAE" or self.aece == "AE":
+                            policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
+                        elif self.aece == "WCE" or self.aece == "CE":
+                            policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
+                        # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                        if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                            not_0_loss_counter+=1
+                        else:
+                            # policy_losses2.append(th.tensor([0.] ).to(self.device) )
+                            policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
+                    t_loss_end = time.time()
+                    loss_time.append(t_loss_end - t_loss_start)
+                    # policy_loss /= self.batch_size
+                    # policy_loss = th.stack(policy_losses2).sum() /self.batch_size
+                    if not_0_loss_counter ==0 :
+                        not_0_loss_counter = 1
+                    policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
+                
+                if self.policy_update_scheme == 1 and (episode_counter % self.actor_delay) < self.action_space.n:
+                    a  =  int((episode_counter ) % self.actor_delay )
+                    # for a in range(self.action_space.n) :
+                    # a =  int((episode_counter/self.actor_delay) %  self.action_space.n )
+                    # print("episode: ",episode_counter,"a: ",a)
                     if self.classifier == "AM":
                         # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                         x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
