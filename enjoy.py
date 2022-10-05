@@ -168,6 +168,9 @@ def main():  # noqa: C901
     successes = []
     try:
         for _ in range(args.n_timesteps):
+            # print("obs",obs)
+            actions, values, log_prob = model.policy.forward(th.tensor(obs).to(model.device))
+            print("s,pi[s,a]",obs,actions, th.exp(log_prob) )
             action, state = model.predict(obs, state=state, deterministic=deterministic)
             obs, reward, done, infos = env.step(action)
             if not args.no_render:

@@ -410,6 +410,8 @@ class HPO(OnPolicyAlgorithm):
         # print("in hpg.py def train: self .classifier",self.classifier)
         print("in hpg.py def train: self .aece",self.aece)
         print("self.rgamma",self.rgamma)
+        print("actor_delay",self.actor_delay)
+        print("self.policy.optimizer",self.policy.optimizer)
         # Hard update for target policy -6~8
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
@@ -419,7 +421,7 @@ class HPO(OnPolicyAlgorithm):
         # tempa = 0.4*th.ones(self.batch_size) # 0.4 it the flipped rate
         # tempb = th.bernoulli(tempa)
         flipped_adv_list = []
-        
+        active_example_counter = 0 
         for rollout_data in self.rollout_buffer.get(self.batch_size):
             for _ in range(self.action_space.n):
                 flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
@@ -632,12 +634,19 @@ class HPO(OnPolicyAlgorithm):
                             policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
                         elif self.aece == "WCE" or self.aece == "CE":
                             policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
+                        
+                        # unclip_loss = epsilon[i] - y[i]*(x1[i]-x2[i])
+                        
                         # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                         # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                         # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                        if epoch == 0 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            # print("th.exp(full_sa_log_prob[a][i]).item()",th.exp(full_sa_log_prob[a][i]).item())
+                            active_example_counter+=1
                         if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                             not_0_loss_counter+=1
+                            
                         else:
                             # policy_losses2.append(th.tensor([0.] ).to(self.device) )
                             policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
@@ -719,6 +728,96 @@ class HPO(OnPolicyAlgorithm):
                         # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                         # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                         # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                        if epoch == 0 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            active_example_counter+=1
+                            # print("th.exp(full_sa_log_prob[a][i]).item()",th.exp(full_sa_log_prob[a][i]).item())
+                        if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                            not_0_loss_counter+=1
+                        else:
+                            # policy_losses2.append(th.tensor([0.] ).to(self.device) )
+                            policy_losses2.append(0*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # # policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) ))
+                    t_loss_end = time.time()
+                    loss_time.append(t_loss_end - t_loss_start)
+                    # policy_loss /= self.batch_size
+                    # policy_loss = th.stack(policy_losses2).sum() /self.batch_size
+                    if not_0_loss_counter ==0 :
+                        not_0_loss_counter = 1
+                    policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
+                
+                if self.policy_update_scheme == 2:
+                    a  =  int((episode_counter ) % self.actor_delay )
+                    # for a in range(self.action_space.n) :
+                    # a =  int((episode_counter/self.actor_delay) %  self.action_space.n )
+                    # print("episode: ",episode_counter,"a: ",a)
+                    if self.classifier == "AM":
+                        # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
+                        x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
+                        # x1 = gpu_action_probs[a]/gpu_action_probs[a].detach() full_sa_log_prob[a]
+                        x2 = th.ones_like(x1.clone().detach())
+                    elif self.classifier == "AM-log":# log(pi) - log(mu)
+                        x1 = full_sa_log_prob[a]
+                        x2 = target_full_sa_log_prob[a].detach()
+                    elif self.classifier == "AM-root":# root: (pi/mu)^(1/2) - 1
+                        x1 = th.sqrt(th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach())) # ratio
+                        x2 = th.ones_like(x1.clone().detach())
+                    # elif self.classifier == "AM-sub":
+                    #     x1 = th.exp(val_log_prob )
+                    #     x2 = th.exp(rollout_data.old_log_prob)
+                    # elif self.classifier == "AM-square":
+                    #     x1 = th.square(th.exp(val_log_prob - rollout_data.old_log_prob.detach())) # ratio
+                    #     x2 = th.ones_like(x1.clone().detach())
+                    #advantages = rollout_data.advantages.cpu().detach()
+                    #print("advantages",advantages)
+                    #abs_adv = np.abs(advantages.cpu())
+                    # advantages = advantages.detach()
+                    advantages = gpu_action_advantages[a].detach()
+                    ''' flipped advantages noise'''
+                    advantages = advantages*flipped_adv_list[a]
+                    ''' flipped advantages noise'''
+                    y = th.sign(advantages)
+                    if self.aece == "WAE" or self.aece == "WCE":
+                        # y = advantages
+                        abs_adv = th.abs(advantages)
+                    else:
+                        abs_adv = th.abs(y)
+                    
+                    
+                    policy_losses = []
+                    from collections import OrderedDict
+                    od = OrderedDict()
+                    #policy_loss_data = []
+                    t_loss_start = time.time()
+                    
+                    
+                    for key ,value in od:
+                        # print("k,v",key,value)
+                        if deltaYcounter>= deltaYnum:
+                            break
+                        deltaYs[key] = 1
+                        deltaYcounter+=1
+                    for i in range(self.batch_size):
+                        if self.classifier == "AM":
+                            epsilon[i] = self.alpha * min(1, prob_ratio[i])
+                        elif self.classifier == "AM-log":
+                            epsilon[i] = math.log(1 + self.alpha * min(1, prob_ratio[i]))
+                        elif self.classifier == "AM-root":
+                            epsilon[i] = math.sqrt(1 + self.alpha * min(1, prob_ratio[i])) - 1
+                        elif self.classifier == "AM-sub":
+                            epsilon[i] = minMu[i] * self.alpha * min(1, prob_ratio[i])
+                        elif self.classifier == "AM-square":
+                            epsilon[i] = ( 1 + self.alpha * min(1, prob_ratio[i]) )** 2
+                        if self.aece == "WAE" or self.aece == "AE":
+                            policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon[i])
+                        elif self.aece == "WCE" or self.aece == "CE":
+                            policy_loss_fn = th.nn.MarginRankingLoss(margin=self.alpha)
+                        # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        # policy_losses2.append((1-th.exp(val_log_prob[i]).item())*abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
+                        unclip_loss = epsilon[i] - y[i]*(x1[i].unsqueeze(0)-x2[i].unsqueeze(0))
+                        # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
+                        if epoch == 0 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
+                            active_example_counter+=1
                         if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                             not_0_loss_counter+=1
@@ -735,17 +834,11 @@ class HPO(OnPolicyAlgorithm):
                     policy_loss = th.stack(policy_losses2).sum() / not_0_loss_counter
                 #print("Policy loss", policy_loss_data)
                 # debug 6
-                #policy_loss = th.mean(th.stack(policy_loss_data))
-                #policy_loss = th.mean(th.stack(policy_loss_data))
-                #print("Policy loss", policy_loss.item())
-                #for i in range(self.batch_size):
-                #    epsilon[i] = alpha * min(1, prob_ratio[i])
                 margins.append(epsilon)
-                # policy_loss_fn = th.nn.MarginRankingLoss(margin=epsilon)
-                # policy_loss = th.mean(abs_adv * policy_loss_fn(x1, x2, y))
 
                 # Logging
-                pg_losses.append(policy_loss.item())
+                if epoch == self.n_epochs-1:
+                    pg_losses.append(policy_loss.item())
                 #pg_losses.append(policy_loss)
                 #clip_fraction = th.mean((th.abs(ratio - 1) > clip_range).float()).item()
                 #clip_fractions.append(clip_fraction)
@@ -837,6 +930,7 @@ class HPO(OnPolicyAlgorithm):
 
 
         # Logs
+        logger.record("train/active_example", active_example_counter)
         logger.record("train/entropy_loss", np.mean(entropy_losses))
         logger.record("train/policy_gradient_loss", np.mean(pg_losses))
         logger.record("train/value_loss", np.mean(value_losses))

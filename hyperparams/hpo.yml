@@ -274,9 +274,10 @@ CartPole-v1:
   n_epochs: 40
   ent_coef: 0.0
   # learning_rate: lin_0.001
-  learning_rate: 0.001
+  learning_rate: 0.005
   # clip_range: lin_0.2
   clip_range: 0.2
+  # policy_kwargs: "dict(optimizer_class=th.optim.SGD)"
 
 noisy-MountainCarEnv-v1:
   normalize: true

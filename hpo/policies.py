@@ -397,6 +397,9 @@ class ActorCriticPolicy2(BasePolicy):
         """
         latent_pi, _, latent_sde = self._get_latent(observation)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde)
+        # print("distribution",vars(distribution['distribution']))
+        # print("distribution", distribution[distribution] )
+        # print("log_prob_from_params",distribution.log_prob_from_params(distribution))
         return distribution.get_actions(deterministic=deterministic)
 
     def evaluate_actions(self, obs: th.Tensor, actions: th.Tensor) -> Tuple[th.Tensor, th.Tensor, th.Tensor]:
