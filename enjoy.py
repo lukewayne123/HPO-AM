@@ -159,7 +159,7 @@ def main():  # noqa: C901
     # Deterministic by default except for atari games
     stochastic = args.stochastic or is_atari and not args.deterministic
     deterministic = not stochastic
-
+    print("deterministic",deterministic)
     state = None
     episode_reward = 0.0
     episode_rewards, episode_lengths = [], []
@@ -170,7 +170,7 @@ def main():  # noqa: C901
         for _ in range(args.n_timesteps):
             # print("obs",obs)
             actions, values, log_prob = model.policy.forward(th.tensor(obs).to(model.device))
-            print("s,pi[s,a]",obs,actions, th.exp(log_prob) )
+            print("s,pi[s,a]",obs,actions.item(), th.exp(log_prob).item() )
             action, state = model.predict(obs, state=state, deterministic=deterministic)
             obs, reward, done, infos = env.step(action)
             if not args.no_render:

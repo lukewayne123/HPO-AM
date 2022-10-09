@@ -106,6 +106,8 @@ class HPO(OnPolicyAlgorithm):
         actor_delay: int = 20 ,
         pf_coef: float = 20.0,
         policy_update_scheme: int = 0,
+        n_envs: int = 1,
+        independent_value_net: bool= False,
     ):
 
         super(HPO, self).__init__(
@@ -172,14 +174,21 @@ class HPO(OnPolicyAlgorithm):
         self.actor_delay = actor_delay
         self.pf_coef = pf_coef
         self.policy_update_scheme = policy_update_scheme
+        self.n_envs = n_envs
+        self.independent_value_net = independent_value_net
+        print("self.n_envs 177",self.n_envs)
+        # pdb.set_trace()
         # self.robust_delta_y = self.ROBUSTDELTAY()
+        
         if _init_setup_model:
             self._setup_model()
         
      
     def _setup_model(self) -> None:
+        print("setup model true")
         super(HPO, self)._setup_model()
-        
+        # self._setup_lr_schedule()
+        # self.set_random_seed(self.seed)
         # self.target_policy = self.policy_class(  # pytype:disable=not-instantiable
         #     self.observation_space,
         #     self.action_space,
@@ -189,22 +198,40 @@ class HPO(OnPolicyAlgorithm):
         # )
         # self.target_policy = self.target_policy.to(self.device)
         # self.target_policy.load_state_dict(self.policy.state_dict())
-        
-        # self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
+        # self.policy = self.policy_class(  # pytype:disable=not-instantiable
         #     self.observation_space,
         #     self.action_space,
         #     self.lr_schedule,
         #     use_sde=self.use_sde,
         #     **self.policy_kwargs  # pytype:disable=not-instantiable
         # )
-        # self.value_policy = self.value_policy.to(self.device)
+        # self.policy = self.policy.to(self.device)
+        if self.independent_value_net == True:
+            self.value_policy = self.policy_class(  # pytype:disable=not-instantiable
+                self.observation_space,
+                self.action_space,
+                self.lr_schedule,
+                use_sde=self.use_sde,
+                **self.policy_kwargs  # pytype:disable=not-instantiable
+            )
+            self.value_policy = self.value_policy.to(self.device)
         # print("self.value_policy",self.value_policy)
         # print("self.target_policy",self.target_policy)
         # print("self.policy",self.policy)
         # envname = self.env.unwrapped.spec.id
-        
+        # buffer_cls = DictRolloutBuffer if isinstance(self.observation_space, gym.spaces.Dict) else RolloutBuffer
+        # print("self.n_envs 208",self.n_envs)
+        # self.rollout_buffer = buffer_cls(
+        #     self.n_steps,
+        #     self.observation_space,
+        #     self.action_space,
+        #     device=self.device,
+        #     gamma=self.gamma,
+        #     gae_lambda=self.gae_lambda,
+        #     n_envs=self.n_envs,
+        # )
         # Initialize schedules for policy/value clipping
-        self.clip_range = get_schedule_fn(self.clip_range)
+        # self.clip_range = get_schedule_fn(self.clip_range)
         if self.clip_range_vf is not None:
             if isinstance(self.clip_range_vf, (float, int)):
                 assert self.clip_range_vf > 0, "`clip_range_vf` must be positive, " "pass `None` to deactivate vf clipping"
@@ -246,7 +273,9 @@ class HPO(OnPolicyAlgorithm):
         # self._last_obs = env.reset()
         rollout_time = []
         computeV_time = []
-
+        # print("self.n_envs")
+        print("self.n_envs 273",self.n_envs)
+        print("n_rollout_steps",n_rollout_steps)
         t_rollout_start = time.time()
         while n_steps < n_rollout_steps :
             # print("n_steps:",n_steps,"n_rollout_steps: ",n_rollout_steps)
@@ -300,7 +329,11 @@ class HPO(OnPolicyAlgorithm):
                     batch_actions = np.full(batch_actions.shape, a)
                     #print(batch_actions)
                     # print("collect_rollouts self.policy.evaluate_actions")
-                    next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                    if self.independent_value_net == True:
+                        _, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                        next_q_values, _ , _ = self.value_policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                    else: 
+                        next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
                     # print("print(next_q_values.shape, next_log_probs.shape) ",next_q_values.shape, next_log_probs.shape) 4,1
                     #print(rewards.shape)
                     #print(next_q_values[:,a])
@@ -348,7 +381,12 @@ class HPO(OnPolicyAlgorithm):
                 batch_actions = np.full(batch_actions.shape, a)
                 #print(batch_actions)
                 # print("collect_rollouts last timestep self.policy.evaluate_actions")
-                next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                if self.independent_value_net == True:
+                    _ , next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                    next_q_values, _ , _ = self.value_policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                else: 
+                    next_q_values, next_log_probs, _ = self.policy.evaluate_actions(new_obs_tensor, th.from_numpy(batch_actions).to(self.device))
+                # next_q_values, next_log_probs, _ = self.policy.evaluate_actions(obs_tensor, th.from_numpy(batch_actions).to(self.device))
                 #print(next_q_values.shape, next_log_probs.shape)
                 # exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
                 exp_q_values = (th.exp(next_log_probs) * next_q_values[:,a]).clone().detach()
@@ -412,6 +450,8 @@ class HPO(OnPolicyAlgorithm):
         print("self.rgamma",self.rgamma)
         print("actor_delay",self.actor_delay)
         print("self.policy.optimizer",self.policy.optimizer)
+        print("self.rollout_buffer.size()",self.rollout_buffer.size())
+        
         # Hard update for target policy -6~8
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
         # print("self.batch_size: ",self.batch_size)
@@ -422,7 +462,9 @@ class HPO(OnPolicyAlgorithm):
         # tempb = th.bernoulli(tempa)
         flipped_adv_list = []
         active_example_counter = 0 
+        rollbutffer_get_counter = 0
         for rollout_data in self.rollout_buffer.get(self.batch_size):
+            rollbutffer_get_counter += 1
             for _ in range(self.action_space.n):
                 flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
                 flipped_adv_list.append(flipped_adv)
@@ -473,7 +515,11 @@ class HPO(OnPolicyAlgorithm):
                 #     minMu = min(old_p[i],minMu)
                 # print("train self.policy.evaluate_actions real actions")
                 # action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
-                action_q_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                if self.independent_value_net == True:
+                    action_q_values, _ , _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                    _ , val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+                else:
+                    action_q_values, val_log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
                 t_computeV_start = time.time()
                 minMu = th.zeros_like(val_log_prob).cpu().detach()
                 gpu_zero_batchsize =  th.zeros_like(val_log_prob)
@@ -488,7 +534,11 @@ class HPO(OnPolicyAlgorithm):
                     # print("action", a, batch_actions)
                     batch_actions = np.full(batch_actions.shape,a)
                     # print("train self.policy.evaluate_actions batch actions")
-                    q_values, a_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    if self.independent_value_net == True:
+                        q_values , _ , _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
+                        _ , a_log_prob , _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
+                    else:
+                        q_values , a_log_prob , _ = self.policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     _, target_a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #_, a_log_prob, _ = self.target_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
                     #q_values, _, _ = self.value_policy.evaluate_actions(rollout_data.observations, th.from_numpy(batch_actions).to(self.device))
@@ -664,6 +714,7 @@ class HPO(OnPolicyAlgorithm):
                     # for a in range(self.action_space.n) :
                     # a =  int((episode_counter/self.actor_delay) %  self.action_space.n )
                     # print("episode: ",episode_counter,"a: ",a)
+                    # print("pitheta 0",th.exp(full_sa_log_prob[a][0]).item(),"old pi 0",th.exp(target_full_sa_log_prob[a][0]).detach().item())
                     if self.classifier == "AM":
                         # x1 = th.exp(val_log_prob - rollout_data.old_log_prob.detach()) # ratio
                         x1 = th.exp(full_sa_log_prob[a] - target_full_sa_log_prob[a].detach()) # ratio
@@ -731,6 +782,12 @@ class HPO(OnPolicyAlgorithm):
                         if epoch == 0 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             active_example_counter+=1
                             # print("th.exp(full_sa_log_prob[a][i]).item()",th.exp(full_sa_log_prob[a][i]).item())
+                        # print("(th.exp(full_sa_log_prob[a][i]).item()",th.exp(full_sa_log_prob[a][i]).item())
+                        # print("y[i].item()",y[i].item())
+                        if epoch == self.n_epochs-1 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob and not (th.exp(full_sa_log_prob[a][i]).item() >= 0.99 and y[i].item()==1.0 ) :
+                            # pg_log = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ).item()
+                            pg_losses.append(policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ).item())
+                        
                         if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                             not_0_loss_counter+=1
@@ -818,6 +875,11 @@ class HPO(OnPolicyAlgorithm):
                         # policy_loss += abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]*(1-2*deltaYs[i] )) .unsqueeze(0) )
                         if epoch == 0 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             active_example_counter+=1
+                        print("(th.exp(full_sa_log_prob[a][i]).item()",th.exp(full_sa_log_prob[a][i]).item())
+                        print("y[i].item()",y[i].item())
+                        if epoch == self.n_epochs-1 and th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob and not (th.exp(full_sa_log_prob[a][i]).item() >= 0.995 and y[i].item()==1.0 ) :
+                            # pg_log = policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ).item()
+                            pg_losses.append(policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ).item())
                         if th.exp(full_sa_log_prob[a][i]).item() <= self.spt_clipped_prob:
                             policy_losses2.append(abs_adv[i] * policy_loss_fn( x1[i].unsqueeze(0) , x2[i].unsqueeze(0) , (y[i]  ) .unsqueeze(0) ))
                             not_0_loss_counter+=1
@@ -837,8 +899,8 @@ class HPO(OnPolicyAlgorithm):
                 margins.append(epsilon)
 
                 # Logging
-                if epoch == self.n_epochs-1:
-                    pg_losses.append(policy_loss.item())
+                # if epoch == self.n_epochs-1:
+                #     pg_losses.append(policy_loss.item())
                 #pg_losses.append(policy_loss)
                 #clip_fraction = th.mean((th.abs(ratio - 1) > clip_range).float()).item()
                 #clip_fractions.append(clip_fraction)
@@ -878,12 +940,16 @@ class HPO(OnPolicyAlgorithm):
                 # print("policy_loss.requires_grad:",policy_loss.requires_grad)
                 if self.entropy_hpo == True:
                     loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
-                else :
+                elif self.independent_value_net == True :
+                    loss = self.pf_coef * policy_loss
+                    # vloss = 
+                else : # if self.independent_value_net == False
                     loss = self.pf_coef * policy_loss + self.vf_coef * value_loss
                     # if episode_counter % self.actor_delay == 0:
                     #     loss = self.pf_coef * policy_loss + self.vf_coef * value_loss + self.ent_coef * entropy_loss ##08070 final HPO-63 with 304
                     # else :
                     #     loss = self.vf_coef * value_loss
+                
                 # loss = policy_loss + self.vf_coef * value_loss ##08070 final HPO-63 with 304
                 #loss = policy_loss
                 #loss = th.stack(policy_loss).sum() + self.vf_coef * value_loss
@@ -896,7 +962,11 @@ class HPO(OnPolicyAlgorithm):
                 self.policy.optimizer.step()
                 #approx_kl_divs.append(th.mean(rollout_data.old_log_prob - val_log_prob).detach().cpu().numpy())
                 approx_kl_divs.append(th.mean(rollout_data.old_log_prob.detach() - val_log_prob).detach().cpu().numpy())
-                
+                if self.independent_value_net:
+                    self.value_policy.optimizer.zero_grad()
+                    value_loss = self.vf_coef * value_loss
+                    value_loss.backward()
+                    self.value_policy.optimizer.step()
                 ## value policy
                 #value_loss = self.vf_coef * value_loss
                 #self.value_policy.optimizer.zero_grad()
@@ -914,6 +984,7 @@ class HPO(OnPolicyAlgorithm):
             #    print(f"Early stopping at step {epoch} due to reaching ploss: {np.mean(pg_losses):.2f}")
             #    break
         # th.cuda.empty_cache()
+        print("rollbutffer_get_counter",rollbutffer_get_counter)
         t_epoch_end = time.time()
         epoch_time.append(t_epoch_end - t_epoch_start)
         logger.record("Time/train_loss/Sum", np.sum(loss_time))
@@ -928,7 +999,8 @@ class HPO(OnPolicyAlgorithm):
         self._n_updates += self.n_epochs
         explained_var = explained_variance(self.rollout_buffer.values.flatten(), self.rollout_buffer.returns.flatten())
 
-
+        if len(pg_losses) == 0:
+            pg_losses.append(-0.1)
         # Logs
         logger.record("train/active_example", active_example_counter)
         logger.record("train/entropy_loss", np.mean(entropy_losses))
