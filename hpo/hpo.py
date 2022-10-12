@@ -174,9 +174,9 @@ class HPO(OnPolicyAlgorithm):
         self.actor_delay = actor_delay
         self.pf_coef = pf_coef
         self.policy_update_scheme = policy_update_scheme
-        self.n_envs = n_envs
+        # self.n_envs = n_envs
         self.independent_value_net = independent_value_net
-        print("self.n_envs 177",self.n_envs)
+        # print("self.n_envs 177",self.n_envs)
         # pdb.set_trace()
         # self.robust_delta_y = self.ROBUSTDELTAY()
         
@@ -231,7 +231,7 @@ class HPO(OnPolicyAlgorithm):
         #     n_envs=self.n_envs,
         # )
         # Initialize schedules for policy/value clipping
-        # self.clip_range = get_schedule_fn(self.clip_range)
+        self.clip_range = get_schedule_fn(self.clip_range)
         if self.clip_range_vf is not None:
             if isinstance(self.clip_range_vf, (float, int)):
                 assert self.clip_range_vf > 0, "`clip_range_vf` must be positive, " "pass `None` to deactivate vf clipping"
@@ -274,7 +274,7 @@ class HPO(OnPolicyAlgorithm):
         rollout_time = []
         computeV_time = []
         # print("self.n_envs")
-        print("self.n_envs 273",self.n_envs)
+        # print("self.n_envs 273",self.n_envs)
         print("n_rollout_steps",n_rollout_steps)
         t_rollout_start = time.time()
         while n_steps < n_rollout_steps :
