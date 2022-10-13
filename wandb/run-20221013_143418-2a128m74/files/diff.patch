@@ -1,0 +1,95 @@
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495218.lab708-Default-string.1467483.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495218.lab708-Default-string.1467483.0
+index f02cb98..96836ce 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495218.lab708-Default-string.1467483.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495218.lab708-Default-string.1467483.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495246.lab708-Default-string.1492853.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495246.lab708-Default-string.1492853.0
+index 1bcdefe..f8cf4c3 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495246.lab708-Default-string.1492853.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495246.lab708-Default-string.1492853.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_3/events.out.tfevents.1665542853.lab708-Default-string.2691444.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_3/events.out.tfevents.1665542853.lab708-Default-string.2691444.0
+index 1b7dc38..0d9d1cc 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_3/events.out.tfevents.1665542853.lab708-Default-string.2691444.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_3/events.out.tfevents.1665542853.lab708-Default-string.2691444.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_4/events.out.tfevents.1665542871.lab708-Default-string.2698189.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_4/events.out.tfevents.1665542871.lab708-Default-string.2698189.0
+index ddb40ca..a5b1b37 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_4/events.out.tfevents.1665542871.lab708-Default-string.2698189.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_4/events.out.tfevents.1665542871.lab708-Default-string.2698189.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467208.lab708-Default-string.2446649.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467208.lab708-Default-string.2446649.0
+index c7b0acf..707e30c 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467208.lab708-Default-string.2446649.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467208.lab708-Default-string.2446649.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467213.lab708-Default-string.2465477.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467213.lab708-Default-string.2465477.0
+index 1e9b39e..eea5886 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467213.lab708-Default-string.2465477.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467213.lab708-Default-string.2465477.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492885.lab708-Default-string.3693976.0 b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492885.lab708-Default-string.3693976.0
+index 6dc6d94..73b06a3 100644
+Binary files a/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492885.lab708-Default-string.3693976.0 and b/tensorboard/AMCEFRate020Spt090ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492885.lab708-Default-string.3693976.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495251.lab708-Default-string.1497310.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495251.lab708-Default-string.1497310.0
+index 3c844a6..dac5a4e 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495251.lab708-Default-string.1497310.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_1/events.out.tfevents.1665495251.lab708-Default-string.1497310.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495256.lab708-Default-string.1495386.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495256.lab708-Default-string.1495386.0
+index 74cce26..44f6664 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495256.lab708-Default-string.1495386.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs16_lr001_batch16_indievnetTrue/MountainCar-v0/HPO_2/events.out.tfevents.1665495256.lab708-Default-string.1495386.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_1/events.out.tfevents.1665212122.lab708-Default-string.2273445.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_1/events.out.tfevents.1665212122.lab708-Default-string.2273445.0
+index 197742d..67444ee 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_1/events.out.tfevents.1665212122.lab708-Default-string.2273445.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_1/events.out.tfevents.1665212122.lab708-Default-string.2273445.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_2/events.out.tfevents.1665212131.lab708-Default-string.2273599.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_2/events.out.tfevents.1665212131.lab708-Default-string.2273599.0
+index d7a45b0..c1d5f34 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_2/events.out.tfevents.1665212131.lab708-Default-string.2273599.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnet/CartPole-v1/HPO_2/events.out.tfevents.1665212131.lab708-Default-string.2273599.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467014.lab708-Default-string.2089923.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467014.lab708-Default-string.2089923.0
+index 5df2ed2..9204db8 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467014.lab708-Default-string.2089923.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_1/events.out.tfevents.1665467014.lab708-Default-string.2089923.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467026.lab708-Default-string.2110933.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467026.lab708-Default-string.2110933.0
+index 765b4dd..d5da1aa 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467026.lab708-Default-string.2110933.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_2/events.out.tfevents.1665467026.lab708-Default-string.2110933.0 differ
+diff --git a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492917.lab708-Default-string.3712018.0 b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492917.lab708-Default-string.3712018.0
+index dc2db2d..3f1b710 100644
+Binary files a/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492917.lab708-Default-string.3712018.0 and b/tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd200epochn_envs1_lr001_batch16_indievnetfalse/CartPole-v1/HPO_3/events.out.tfevents.1665492917.lab708-Default-string.3712018.0 differ
+diff --git a/train.py b/train.py
+index 833eca1..64d8cf4 100644
+--- a/train.py
++++ b/train.py
+@@ -3,6 +3,7 @@ import difflib
+ import importlib
+ import os
+ import uuid
++import time
+ 
+ import gym
+ import numpy as np
+@@ -92,6 +93,14 @@ if __name__ == "__main__":  # noqa: C901
+     )
+     parser.add_argument("-uuid", "--uuid", action="store_true", default=False, help="Ensure that the run has a unique ID")
+     parser.add_argument("--entropy-hpo", action="store_true", default=False, help="use entropy in hpo loss")
++    parser.add_argument(
++        "--track",
++        action="store_true",
++        default=False,
++        help="if toggled, this experiment will be tracked with Weights and Biases",
++    )
++    parser.add_argument("--wandb-project-name", type=str, default="spt", help="the wandb's project name")
++    parser.add_argument("--wandb-entity", type=str, default=None, help="the entity (team) of wandb's project")
+     args = parser.parse_args()
+ 
+     # Going through custom gym packages to let them register in the global registory
+@@ -152,7 +161,25 @@ if __name__ == "__main__":  # noqa: C901
+ 
+     print("=" * 10, env_id, "=" * 10)
+     print(f"Seed: {args.seed}")
++    if args.track:
++        try:
++            import wandb
++        except ImportError:
++            raise ImportError(
++                "if you want to use Weights & Biases to track experiment, please install W&B via `pip install wandb`"
++            )
+ 
++        run_name = f"{args.env}__{args.algo}__{args.seed}__{int(time.time())}"
++        run = wandb.init(
++            name=run_name,
++            project=args.wandb_project_name,
++            # entity=args.wandb_entity,
++            config=vars(args),
++            sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
++            monitor_gym=True,  # auto-upload the videos of agents playing the game
++            save_code=True,  # optional
++        )
++        args.tensorboard_log = f"runs/{run_name}"
+     exp_manager = ExperimentManager(
+         args,
+         args.algo,

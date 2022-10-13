@@ -1,0 +1,55 @@
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.classic_control:AcrobotEnv
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.classic_control:AcrobotEnv
+OrderedDict([('actor_delay', 3),
+             ('advantage_flipped_rate', 0.2),
+             ('batch_size', 16),
+             ('device', 1),
+             ('ent_coef', 0.0),
+             ('gae_lambda', 0.94),
+             ('gamma', 0.99),
+             ('independent_value_net', False),
+             ('learning_rate', 0.01),
+             ('n_envs', 16),
+             ('n_epochs', 100),
+             ('n_steps', 256),
+             ('n_timesteps', 1500000),
+             ('normalize', True),
+             ('policy', 'MlpPolicy'),
+             ('policy_kwargs',
+              {'optimizer_class': <class 'torch.optim.sgd.SGD'>}),
+             ('policy_update_scheme', 1),
+             ('rgamma', 1.0)])
+Using 16 environments
+Creating test environment
+Normalization activated: {'gamma': 0.99, 'norm_reward': False}
+Normalization activated: {'gamma': 0.99}
+Using cuda:1 device
+setup model true
+Log path: logs/hpo/Acrobot-v1_158
+n_eval_episodes 100
+Logging to runs/Acrobot-v1__hpo__123__1665654619/Acrobot-v1/HPO_1
+reward_noise_std 0.0
+n_rollout_steps 256
+--------------------------------------
+| Time/                   |          |
+|    collect_computeV/... | 0.00703  |
+|    collect_computeV/Sum | 1.8      |
+|    collect_rollout/Mean | 3.83     |
+|    collect_rollout/Sum  | 3.83     |
+| time/                   |          |
+|    fps                  | 1067     |
+|    iterations           | 1        |
+|    time_elapsed         | 3        |
+|    total_timesteps      | 4096     |
+--------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
