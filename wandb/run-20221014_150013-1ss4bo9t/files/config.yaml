@@ -1,0 +1,153 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.4
+    code_path: code/train.py
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.9.2
+    start_time: 1665730813.784527
+    t:
+      1:
+      - 1
+      - 3
+      - 5
+      - 35
+      - 53
+      - 55
+      2:
+      - 1
+      - 3
+      - 5
+      - 35
+      - 53
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      - 35
+      4: 3.9.2
+      5: 0.13.4
+      8:
+      - 5
+aece:
+  desc: null
+  value: CE
+algo:
+  desc: null
+  value: hpo
+classifier:
+  desc: null
+  value: AM
+entropy_hpo:
+  desc: null
+  value: false
+env:
+  desc: null
+  value: Acrobot-v1
+env_kwargs:
+  desc: null
+  value: null
+eval_episodes:
+  desc: null
+  value: 5
+eval_freq:
+  desc: null
+  value: 10000
+gym_packages:
+  desc: null
+  value: []
+hyperparams:
+  desc: null
+  value:
+    actor_delay: 3
+    advantage_flipped_rate: 0.2
+    batch_size: 64
+    device: 1
+    learning_rate: 0.01
+    n_envs: 16
+    n_epochs: 100
+    n_timesteps: 1500000
+    policy_kwargs:
+      optimizer_class: torch.optim.sgd.SGD
+    policy_update_scheme: 1
+    rgamma: 1.0
+log_folder:
+  desc: null
+  value: logs
+log_interval:
+  desc: null
+  value: -1
+n_evaluations:
+  desc: null
+  value: 20
+n_jobs:
+  desc: null
+  value: 1
+n_startup_trials:
+  desc: null
+  value: 10
+n_timesteps:
+  desc: null
+  value: -1
+n_trials:
+  desc: null
+  value: 10
+num_threads:
+  desc: null
+  value: -1
+optimize_hyperparameters:
+  desc: null
+  value: false
+pruner:
+  desc: null
+  value: median
+sampler:
+  desc: null
+  value: tpe
+save_freq:
+  desc: null
+  value: -1
+save_replay_buffer:
+  desc: null
+  value: false
+seed:
+  desc: null
+  value: 456
+storage:
+  desc: null
+  value: null
+study_name:
+  desc: null
+  value: null
+tensorboard_log:
+  desc: null
+  value: ./tensorboard/AMCEFRate020Spt100ActorDelay2scheme1sgd100epochn_envs1_lr001_batch64_indievnetFalse
+track:
+  desc: null
+  value: true
+trained_agent:
+  desc: null
+  value: /708HDD/lcouy/HPO-AM/logs/hpo/Acrobot-v1_114/Acrobot-v1.zip
+truncate_last_trajectory:
+  desc: null
+  value: true
+uuid:
+  desc: null
+  value: false
+vec_env:
+  desc: null
+  value: dummy
+verbose:
+  desc: null
+  value: 1
+wandb_entity:
+  desc: null
+  value: null
+wandb_project_name:
+  desc: null
+  value: spt

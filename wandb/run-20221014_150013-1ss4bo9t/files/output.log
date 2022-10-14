@@ -1,0 +1,398 @@
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.classic_control:AcrobotEnv
+gym.envs.registry.env_specs[env_id].entry_point gym.envs.classic_control:AcrobotEnv
+OrderedDict([('actor_delay', 3),
+             ('advantage_flipped_rate', 0.2),
+             ('batch_size', 64),
+             ('device', 1),
+             ('ent_coef', 0.0),
+             ('gae_lambda', 0.94),
+             ('gamma', 0.99),
+             ('learning_rate', 0.01),
+             ('n_envs', 16),
+             ('n_epochs', 100),
+             ('n_steps', 256),
+             ('n_timesteps', 1500000),
+             ('normalize', True),
+             ('policy', 'MlpPolicy'),
+             ('policy_kwargs',
+              {'optimizer_class': <class 'torch.optim.sgd.SGD'>}),
+             ('policy_update_scheme', 1),
+             ('rgamma', 1.0)])
+Using 16 environments
+Creating test environment
+Loading saved VecNormalize stats
+Loading saved VecNormalize stats
+Loading pretrained agent
+setup model true
+Log path: logs/hpo/Acrobot-v1_159
+n_eval_episodes 100
+Logging to runs/Acrobot-v1__hpo__456__1665730810/Acrobot-v1/HPO_1
+reward_noise_std 0.0
+n_rollout_steps 256
+--------------------------------------
+| Time/                   |          |
+|    collect_computeV/... | 0.00795  |
+|    collect_computeV/Sum | 2.04     |
+|    collect_rollout/Mean | 4.2      |
+|    collect_rollout/Sum  | 4.2      |
+| rollout/                |          |
+|    ep_len_mean          | 84.1     |
+|    ep_rew_mean          | -83.1    |
+| time/                   |          |
+|    fps                  | 974      |
+|    iterations           | 1        |
+|    time_elapsed         | 4        |
+|    total_timesteps      | 4096     |
+--------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0505     |
+|    negative_advantag... | 0.44523114 |
+|    positive_advantag... | 0.53764987 |
+|    prob_ratio           | 168285.69  |
+|    rollout_return       | -1.3383243 |
+| Time/                   |            |
+|    collect_computeV/... | 0.00792    |
+|    collect_computeV/Sum | 2.03       |
+|    collect_rollout/Mean | 3.62       |
+|    collect_rollout/Sum  | 3.62       |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0162     |
+|    train_computeV/Sum   | 104        |
+|    train_epoch/Mean     | 834        |
+|    train_epoch/Sum      | 834        |
+|    train_loss/Mean      | 0.0469     |
+|    train_loss/Sum       | 300        |
+| rollout/                |            |
+|    ep_len_mean          | 92.8       |
+|    ep_rew_mean          | -91.8      |
+| time/                   |            |
+|    fps                  | 9          |
+|    iterations           | 2          |
+|    time_elapsed         | 841        |
+|    total_timesteps      | 8192       |
+| train/                  |            |
+|    active_example       | 3816       |
+|    approx_kl            | 5.4188952  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.218     |
+|    explained_variance   | 0.886      |
+|    learning_rate        | 0.01       |
+|    loss                 | 15         |
+|    n_updates            | 5000       |
+|    policy_gradient_loss | 0.19       |
+|    value_loss           | 0.0335     |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=10000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+New best mean reward!
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0542     |
+|    negative_advantag... | 0.5061149  |
+|    positive_advantag... | 0.4171641  |
+|    prob_ratio           | 949761.75  |
+|    rollout_return       | -1.9027067 |
+| Time/                   |            |
+|    collect_computeV/... | 0.00797    |
+|    collect_computeV/Sum | 2.04       |
+|    collect_rollout/Mean | 9.05       |
+|    collect_rollout/Sum  | 9.05       |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0162     |
+|    train_computeV/Sum   | 104        |
+|    train_epoch/Mean     | 837        |
+|    train_epoch/Sum      | 837        |
+|    train_loss/Mean      | 0.047      |
+|    train_loss/Sum       | 301        |
+| eval/                   |            |
+|    mean_ep_length       | 500        |
+|    mean_reward          | -500       |
+| rollout/                |            |
+|    ep_len_mean          | 193        |
+|    ep_rew_mean          | -192       |
+| time/                   |            |
+|    fps                  | 7          |
+|    iterations           | 3          |
+|    time_elapsed         | 1687       |
+|    total_timesteps      | 12288      |
+| train/                  |            |
+|    active_example       | 3968       |
+|    approx_kl            | 5.0238748  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0668    |
+|    explained_variance   | -0.293     |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.996      |
+|    n_updates            | 5100       |
+|    policy_gradient_loss | 0.464      |
+|    value_loss           | 0.0927     |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0513     |
+|    negative_advantag... | 0.49527824 |
+|    positive_advantag... | 0.27735373 |
+|    prob_ratio           | 490271.72  |
+|    rollout_return       | -2.1936903 |
+| Time/                   |            |
+|    collect_computeV/... | 0.00794    |
+|    collect_computeV/Sum | 2.03       |
+|    collect_rollout/Mean | 3.6        |
+|    collect_rollout/Sum  | 3.6        |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0162     |
+|    train_computeV/Sum   | 103        |
+|    train_epoch/Mean     | 836        |
+|    train_epoch/Sum      | 836        |
+|    train_loss/Mean      | 0.0469     |
+|    train_loss/Sum       | 300        |
+| rollout/                |            |
+|    ep_len_mean          | 203        |
+|    ep_rew_mean          | -202       |
+| time/                   |            |
+|    fps                  | 6          |
+|    iterations           | 4          |
+|    time_elapsed         | 2527       |
+|    total_timesteps      | 16384      |
+| train/                  |            |
+|    active_example       | 3923       |
+|    approx_kl            | 0.17280626 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0241    |
+|    explained_variance   | -0.259     |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.372      |
+|    n_updates            | 5200       |
+|    policy_gradient_loss | 0.44       |
+|    value_loss           | 0.159      |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=20000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0596     |
+|    negative_advantag... | 0.5419812  |
+|    positive_advantag... | 0.45792824 |
+|    prob_ratio           | 30.212458  |
+|    rollout_return       | -2.440914  |
+| Time/                   |            |
+|    collect_computeV/... | 0.00796    |
+|    collect_computeV/Sum | 2.04       |
+|    collect_rollout/Mean | 8.98       |
+|    collect_rollout/Sum  | 8.98       |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0162     |
+|    train_computeV/Sum   | 104        |
+|    train_epoch/Mean     | 833        |
+|    train_epoch/Sum      | 833        |
+|    train_loss/Mean      | 0.0462     |
+|    train_loss/Sum       | 296        |
+| eval/                   |            |
+|    mean_ep_length       | 500        |
+|    mean_reward          | -500       |
+| rollout/                |            |
+|    ep_len_mean          | 263        |
+|    ep_rew_mean          | -263       |
+| time/                   |            |
+|    fps                  | 6          |
+|    iterations           | 5          |
+|    time_elapsed         | 3369       |
+|    total_timesteps      | 20480      |
+| train/                  |            |
+|    active_example       | 0          |
+|    approx_kl            | 0.09082003 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.304     |
+|    explained_variance   | -2.73      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.011      |
+|    n_updates            | 5300       |
+|    policy_gradient_loss | -0.1       |
+|    value_loss           | 0.0196     |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0783     |
+|    negative_advantag... | 0.46996924 |
+|    positive_advantag... | 0.5300308  |
+|    prob_ratio           | 2.474447   |
+|    rollout_return       | -2.4272459 |
+| Time/                   |            |
+|    collect_computeV/... | 0.00795    |
+|    collect_computeV/Sum | 2.03       |
+|    collect_rollout/Mean | 3.59       |
+|    collect_rollout/Sum  | 3.59       |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0161     |
+|    train_computeV/Sum   | 103        |
+|    train_epoch/Mean     | 834        |
+|    train_epoch/Sum      | 834        |
+|    train_loss/Mean      | 0.047      |
+|    train_loss/Sum       | 301        |
+| rollout/                |            |
+|    ep_len_mean          | 267        |
+|    ep_rew_mean          | -266       |
+| time/                   |            |
+|    fps                  | 5          |
+|    iterations           | 6          |
+|    time_elapsed         | 4206       |
+|    total_timesteps      | 24576      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.29861236 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.671     |
+|    explained_variance   | -0.0508    |
+|    learning_rate        | 0.01       |
+|    loss                 | 3.32       |
+|    n_updates            | 5400       |
+|    policy_gradient_loss | 0.133      |
+|    value_loss           | 0.155      |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 64
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0387     |
+|    negative_advantag... | 0.30998567 |
+|    positive_advantag... | 0.45248088 |
+|    prob_ratio           | 1486637.2  |
+|    rollout_return       | -2.659254  |
+| Time/                   |            |
+|    collect_computeV/... | 0.00795    |
+|    collect_computeV/Sum | 2.04       |
+|    collect_rollout/Mean | 3.61       |
+|    collect_rollout/Sum  | 3.61       |
+|    train_action_adv/... | 0.0446     |
+|    train_action_adv/Sum | 285        |
+|    train_computeV/Mean  | 0.0162     |
+|    train_computeV/Sum   | 103        |
+|    train_epoch/Mean     | 830        |
+|    train_epoch/Sum      | 830        |
+|    train_loss/Mean      | 0.0463     |
+|    train_loss/Sum       | 297        |
+| rollout/                |            |
+|    ep_len_mean          | 305        |
+|    ep_rew_mean          | -305       |
+| time/                   |            |
+|    fps                  | 5          |
+|    iterations           | 7          |
+|    time_elapsed         | 5039       |
+|    total_timesteps      | 28672      |
+| train/                  |            |
+|    active_example       | 957        |
+|    approx_kl            | 2.7204711  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0844    |
+|    explained_variance   | -1.97      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.0315     |
+|    n_updates            | 5500       |
+|    policy_gradient_loss | 0.474      |
+|    value_loss           | 0.329      |
+----------------------------------------
+in hpg.py def train: self .aece WCE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-05
+    lr: 0.01
+    weight_decay: 0
+)

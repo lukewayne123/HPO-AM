@@ -451,10 +451,11 @@ class HPO(OnPolicyAlgorithm):
         print("actor_delay",self.actor_delay)
         print("self.policy.optimizer",self.policy.optimizer)
         print("self.rollout_buffer.size()",self.rollout_buffer.size())
-        
+        print("self.n_epochs",self.n_epochs)
         # Hard update for target policy -6~8
         #polyak_update(self.policy.parameters(), self.target_policy.parameters(), 1.0)
-        # print("self.batch_size: ",self.batch_size)
+        print("self.batch_size: ",self.batch_size)
+        print("self.advantage_flipped_rate",self.advantage_flipped_rate)
         # train for n_epochs epochs
         t_epoch_start = time.time()
         # flipped_adv = th.randint(0, 2, (self.batch_size,)) #then mul this to advantages

@@ -53,3 +53,3607 @@ Parameter Group 0
     nesterov: False
     weight_decay: 0
 )
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.071       |
+|    negative_advantag... | 0.46126315  |
+|    positive_advantag... | 0.5387368   |
+|    prob_ratio           | 1.0728459   |
+|    rollout_return       | -0.9450578  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0127      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 4.69        |
+|    collect_rollout/Sum  | 4.69        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 497         |
+|    ep_rew_mean          | -497        |
+| time/                   |             |
+|    fps                  | 6           |
+|    iterations           | 2           |
+|    time_elapsed         | 1279        |
+|    total_timesteps      | 8192        |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.049456354 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -1.09       |
+|    explained_variance   | -0.0799     |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.0339      |
+|    n_updates            | 100         |
+|    policy_gradient_loss | 0.0208      |
+|    value_loss           | 0.345       |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=10000, episode_reward=-412.40 +/- 68.76
+Episode length: 413.20 +/- 68.51
+New best mean reward!
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0768       |
+|    negative_advantag... | 0.4932018    |
+|    positive_advantag... | 0.5067982    |
+|    prob_ratio           | 1.3487964    |
+|    rollout_return       | -1.2261784   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.24         |
+|    collect_rollout/Mean | 8.56         |
+|    collect_rollout/Sum  | 8.56         |
+|    train_action_adv/... | 0.00947      |
+|    train_action_adv/Sum | 242          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 466          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| eval/                   |              |
+|    mean_ep_length       | 413          |
+|    mean_reward          | -412         |
+| rollout/                |              |
+|    ep_len_mean          | 497          |
+|    ep_rew_mean          | -497         |
+| time/                   |              |
+|    fps                  | 4            |
+|    iterations           | 3            |
+|    time_elapsed         | 2559         |
+|    total_timesteps      | 12288        |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.020308789 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -1.04        |
+|    explained_variance   | -2.31        |
+|    learning_rate        | 0.01         |
+|    loss                 | 1.09         |
+|    n_updates            | 200          |
+|    policy_gradient_loss | 0.0289       |
+|    value_loss           | 0.0256       |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0756     |
+|    negative_advantag... | 0.47923386 |
+|    positive_advantag... | 0.5207655  |
+|    prob_ratio           | 1.3021712  |
+|    rollout_return       | -1.483739  |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 4.67       |
+|    collect_rollout/Sum  | 4.67       |
+|    train_action_adv/... | 0.0095     |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| rollout/                |            |
+|    ep_len_mean          | 499        |
+|    ep_rew_mean          | -499       |
+| time/                   |            |
+|    fps                  | 4          |
+|    iterations           | 4          |
+|    time_elapsed         | 3836       |
+|    total_timesteps      | 16384      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.05630331 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -1.01      |
+|    explained_variance   | -2.99      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.183      |
+|    n_updates            | 300        |
+|    policy_gradient_loss | 0.0149     |
+|    value_loss           | 0.00313    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=20000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0752      |
+|    negative_advantag... | 0.48718804  |
+|    positive_advantag... | 0.51281196  |
+|    prob_ratio           | 1.4970064   |
+|    rollout_return       | -1.7182596  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0127      |
+|    collect_computeV/Sum | 3.25        |
+|    collect_rollout/Mean | 9.49        |
+|    collect_rollout/Sum  | 9.49        |
+|    train_action_adv/... | 0.0095      |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 500         |
+|    mean_reward          | -500        |
+| rollout/                |             |
+|    ep_len_mean          | 499         |
+|    ep_rew_mean          | -499        |
+| time/                   |             |
+|    fps                  | 4           |
+|    iterations           | 5           |
+|    time_elapsed         | 5117        |
+|    total_timesteps      | 20480       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | -0.06679905 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.954      |
+|    explained_variance   | 0.0205      |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 400         |
+|    policy_gradient_loss | 0.0174      |
+|    value_loss           | 0.0394      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0725      |
+|    negative_advantag... | 0.45929065  |
+|    positive_advantag... | 0.54070765  |
+|    prob_ratio           | 1.2353541   |
+|    rollout_return       | -1.9895903  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0127      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 4.7         |
+|    collect_rollout/Sum  | 4.7         |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 499         |
+|    ep_rew_mean          | -499        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 6           |
+|    time_elapsed         | 6394        |
+|    total_timesteps      | 24576       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.049765456 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.968      |
+|    explained_variance   | -1.8        |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.824       |
+|    n_updates            | 500         |
+|    policy_gradient_loss | 0.023       |
+|    value_loss           | 0.00197     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0768       |
+|    negative_advantag... | 0.50122494   |
+|    positive_advantag... | 0.49877444   |
+|    prob_ratio           | 2.0546896    |
+|    rollout_return       | -2.088501    |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.23         |
+|    collect_rollout/Mean | 4.65         |
+|    collect_rollout/Sum  | 4.65         |
+|    train_action_adv/... | 0.00949      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0183       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| rollout/                |              |
+|    ep_len_mean          | 499          |
+|    ep_rew_mean          | -499         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 7            |
+|    time_elapsed         | 7670         |
+|    total_timesteps      | 28672        |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.022892442 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.869       |
+|    explained_variance   | 0.0525       |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.218        |
+|    n_updates            | 600          |
+|    policy_gradient_loss | 0.0233       |
+|    value_loss           | 0.0529       |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=30000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.074       |
+|    negative_advantag... | 0.49279878  |
+|    positive_advantag... | 0.5071974   |
+|    prob_ratio           | 1.9874634   |
+|    rollout_return       | -2.3099842  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0127      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 9.48        |
+|    collect_rollout/Sum  | 9.48        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 257         |
+| eval/                   |             |
+|    mean_ep_length       | 500         |
+|    mean_reward          | -500        |
+| rollout/                |             |
+|    ep_len_mean          | 497         |
+|    ep_rew_mean          | -497        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 8           |
+|    time_elapsed         | 8949        |
+|    total_timesteps      | 32768       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.036229663 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.849      |
+|    explained_variance   | -4.54       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.632       |
+|    n_updates            | 700         |
+|    policy_gradient_loss | 0.0187      |
+|    value_loss           | 0.00394     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0709     |
+|    negative_advantag... | 0.47640014 |
+|    positive_advantag... | 0.5235985  |
+|    prob_ratio           | 2.2253754  |
+|    rollout_return       | -2.3621676 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 4.67       |
+|    collect_rollout/Sum  | 4.67       |
+|    train_action_adv/... | 0.00951    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| rollout/                |            |
+|    ep_len_mean          | 497        |
+|    ep_rew_mean          | -497       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 9          |
+|    time_elapsed         | 10224      |
+|    total_timesteps      | 36864      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.1269738  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.838     |
+|    explained_variance   | 0.0471     |
+|    learning_rate        | 0.01       |
+|    loss                 | 0          |
+|    n_updates            | 800        |
+|    policy_gradient_loss | 0.0122     |
+|    value_loss           | 0.061      |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=40000, episode_reward=-420.60 +/- 40.12
+Episode length: 421.40 +/- 39.72
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0644      |
+|    negative_advantag... | 0.43854508  |
+|    positive_advantag... | 0.56145054  |
+|    prob_ratio           | 2.026114    |
+|    rollout_return       | -2.5859346  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0125      |
+|    collect_computeV/Sum | 3.19        |
+|    collect_rollout/Mean | 8.54        |
+|    collect_rollout/Sum  | 8.54        |
+|    train_action_adv/... | 0.0095      |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 421         |
+|    mean_reward          | -421        |
+| rollout/                |             |
+|    ep_len_mean          | 496         |
+|    ep_rew_mean          | -496        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 10          |
+|    time_elapsed         | 11502       |
+|    total_timesteps      | 40960       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.037295055 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.784      |
+|    explained_variance   | -1.08       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.408       |
+|    n_updates            | 900         |
+|    policy_gradient_loss | 0.0155      |
+|    value_loss           | 0.00262     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0639     |
+|    negative_advantag... | 0.45701954 |
+|    positive_advantag... | 0.54298043 |
+|    prob_ratio           | 3.0761862  |
+|    rollout_return       | -2.5738668 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.25       |
+|    collect_rollout/Mean | 4.69       |
+|    collect_rollout/Sum  | 4.69       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| rollout/                |            |
+|    ep_len_mean          | 484        |
+|    ep_rew_mean          | -484       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 11         |
+|    time_elapsed         | 12778      |
+|    total_timesteps      | 45056      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.0780685  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.692     |
+|    explained_variance   | 0.218      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.479      |
+|    n_updates            | 1000       |
+|    policy_gradient_loss | 0.0121     |
+|    value_loss           | 0.059      |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0619      |
+|    negative_advantag... | 0.44775164  |
+|    positive_advantag... | 0.5522412   |
+|    prob_ratio           | 2.5258117   |
+|    rollout_return       | -2.6165237  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 4.69        |
+|    collect_rollout/Sum  | 4.69        |
+|    train_action_adv/... | 0.00946     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 479         |
+|    ep_rew_mean          | -479        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 12          |
+|    time_elapsed         | 14053       |
+|    total_timesteps      | 49152       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.048250977 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.676      |
+|    explained_variance   | 0.285       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 1100        |
+|    policy_gradient_loss | 0.00636     |
+|    value_loss           | 0.0117      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=50000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0626     |
+|    negative_advantag... | 0.47207686 |
+|    positive_advantag... | 0.5279183  |
+|    prob_ratio           | 4.5227146  |
+|    rollout_return       | -2.7151296 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 9.34       |
+|    collect_rollout/Sum  | 9.34       |
+|    train_action_adv/... | 0.00947    |
+|    train_action_adv/Sum | 242        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 468        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 500        |
+|    mean_reward          | -500       |
+| rollout/                |            |
+|    ep_len_mean          | 463        |
+|    ep_rew_mean          | -463       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 13         |
+|    time_elapsed         | 15335      |
+|    total_timesteps      | 53248      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.03719253 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.612     |
+|    explained_variance   | 0.7        |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.222      |
+|    n_updates            | 1200       |
+|    policy_gradient_loss | 0.0155     |
+|    value_loss           | 0.0223     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0574      |
+|    negative_advantag... | 0.44984958  |
+|    positive_advantag... | 0.5501483   |
+|    prob_ratio           | 7.646326    |
+|    rollout_return       | -2.7328074  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.65        |
+|    collect_rollout/Sum  | 4.65        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 455         |
+|    ep_rew_mean          | -454        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 14          |
+|    time_elapsed         | 16613       |
+|    total_timesteps      | 57344       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.029767364 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.501      |
+|    explained_variance   | 0.781       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.385       |
+|    n_updates            | 1300        |
+|    policy_gradient_loss | 0.0102      |
+|    value_loss           | 0.0154      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=60000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0599     |
+|    negative_advantag... | 0.4707065  |
+|    positive_advantag... | 0.52927595 |
+|    prob_ratio           | 10.353421  |
+|    rollout_return       | -2.6119742 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.23       |
+|    collect_rollout/Mean | 9.34       |
+|    collect_rollout/Sum  | 9.34       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| eval/                   |            |
+|    mean_ep_length       | 500        |
+|    mean_reward          | -500       |
+| rollout/                |            |
+|    ep_len_mean          | 434        |
+|    ep_rew_mean          | -434       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 15         |
+|    time_elapsed         | 17892      |
+|    total_timesteps      | 61440      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.0171507  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.524     |
+|    explained_variance   | 0.536      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0          |
+|    n_updates            | 1400       |
+|    policy_gradient_loss | 0.00693    |
+|    value_loss           | 0.0189     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0603       |
+|    negative_advantag... | 0.4739249    |
+|    positive_advantag... | 0.5260652    |
+|    prob_ratio           | 11.650917    |
+|    rollout_return       | -2.8082232   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0127       |
+|    collect_computeV/Sum | 3.24         |
+|    collect_rollout/Mean | 4.69         |
+|    collect_rollout/Sum  | 4.69         |
+|    train_action_adv/... | 0.00947      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0183       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 257          |
+| rollout/                |              |
+|    ep_len_mean          | 408          |
+|    ep_rew_mean          | -407         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 16           |
+|    time_elapsed         | 19168        |
+|    total_timesteps      | 65536        |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.016629107 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.508       |
+|    explained_variance   | 0.858        |
+|    learning_rate        | 0.01         |
+|    loss                 | 1.02         |
+|    n_updates            | 1500         |
+|    policy_gradient_loss | 0.0291       |
+|    value_loss           | 0.0118       |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0564      |
+|    negative_advantag... | 0.45616862  |
+|    positive_advantag... | 0.54379666  |
+|    prob_ratio           | 38.13056    |
+|    rollout_return       | -2.682647   |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.66        |
+|    collect_rollout/Sum  | 4.66        |
+|    train_action_adv/... | 0.00947     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 382         |
+|    ep_rew_mean          | -382        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 17          |
+|    time_elapsed         | 20444       |
+|    total_timesteps      | 69632       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.093000166 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.442      |
+|    explained_variance   | 0.831       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.218       |
+|    n_updates            | 1600        |
+|    policy_gradient_loss | 0.0182      |
+|    value_loss           | 0.0146      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=70000, episode_reward=-500.00 +/- 0.00
+Episode length: 500.00 +/- 0.00
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0565      |
+|    negative_advantag... | 0.4714932   |
+|    positive_advantag... | 0.5284728   |
+|    prob_ratio           | 51.5339     |
+|    rollout_return       | -2.8092413  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 9.33        |
+|    collect_rollout/Sum  | 9.33        |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 500         |
+|    mean_reward          | -500        |
+| rollout/                |             |
+|    ep_len_mean          | 365         |
+|    ep_rew_mean          | -364        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 18          |
+|    time_elapsed         | 21725       |
+|    total_timesteps      | 73728       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.018146057 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.388      |
+|    explained_variance   | 0.8         |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.0987      |
+|    n_updates            | 1700        |
+|    policy_gradient_loss | 0.00399     |
+|    value_loss           | 0.0125      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0573      |
+|    negative_advantag... | 0.47428447  |
+|    positive_advantag... | 0.52563554  |
+|    prob_ratio           | 141.49228   |
+|    rollout_return       | -2.7515879  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.65        |
+|    collect_rollout/Sum  | 4.65        |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 348         |
+|    ep_rew_mean          | -347        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 19          |
+|    time_elapsed         | 23002       |
+|    total_timesteps      | 77824       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.022607446 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.391      |
+|    explained_variance   | 0.779       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.248       |
+|    n_updates            | 1800        |
+|    policy_gradient_loss | 0.0222      |
+|    value_loss           | 0.0219      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=80000, episode_reward=-373.80 +/- 111.23
+Episode length: 374.80 +/- 111.23
+New best mean reward!
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0528     |
+|    negative_advantag... | 0.42583156 |
+|    positive_advantag... | 0.5741272  |
+|    prob_ratio           | 60.90975   |
+|    rollout_return       | -2.9439898 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.22       |
+|    collect_rollout/Mean | 8.18       |
+|    collect_rollout/Sum  | 8.18       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 375        |
+|    mean_reward          | -374       |
+| rollout/                |            |
+|    ep_len_mean          | 331        |
+|    ep_rew_mean          | -330       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 20         |
+|    time_elapsed         | 24280      |
+|    total_timesteps      | 81920      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.07913019 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.418     |
+|    explained_variance   | 0.795      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.68       |
+|    n_updates            | 1900       |
+|    policy_gradient_loss | 0.019      |
+|    value_loss           | 0.0166     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0526     |
+|    negative_advantag... | 0.42809445 |
+|    positive_advantag... | 0.5718571  |
+|    prob_ratio           | 72.52125   |
+|    rollout_return       | -2.8350358 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.22       |
+|    collect_rollout/Mean | 4.66       |
+|    collect_rollout/Sum  | 4.66       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| rollout/                |            |
+|    ep_len_mean          | 321        |
+|    ep_rew_mean          | -320       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 21         |
+|    time_elapsed         | 25554      |
+|    total_timesteps      | 86016      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.09681271 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.384     |
+|    explained_variance   | 0.748      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0          |
+|    n_updates            | 2000       |
+|    policy_gradient_loss | 0.00195    |
+|    value_loss           | 0.0176     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=90000, episode_reward=-366.80 +/- 103.99
+Episode length: 367.60 +/- 103.73
+New best mean reward!
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0495     |
+|    negative_advantag... | 0.4090782  |
+|    positive_advantag... | 0.5908488  |
+|    prob_ratio           | 140.81525  |
+|    rollout_return       | -2.7767189 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.25       |
+|    collect_rollout/Mean | 8.32       |
+|    collect_rollout/Sum  | 8.32       |
+|    train_action_adv/... | 0.0095     |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| eval/                   |            |
+|    mean_ep_length       | 368        |
+|    mean_reward          | -367       |
+| rollout/                |            |
+|    ep_len_mean          | 308        |
+|    ep_rew_mean          | -307       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 22         |
+|    time_elapsed         | 26834      |
+|    total_timesteps      | 90112      |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.17115745 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.341     |
+|    explained_variance   | 0.848      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.212      |
+|    n_updates            | 2100       |
+|    policy_gradient_loss | 0.0194     |
+|    value_loss           | 0.0167     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0519      |
+|    negative_advantag... | 0.42777267  |
+|    positive_advantag... | 0.57201594  |
+|    prob_ratio           | 4792.726    |
+|    rollout_return       | -2.6989071  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 4.67        |
+|    collect_rollout/Sum  | 4.67        |
+|    train_action_adv/... | 0.0095      |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0183      |
+|    train_computeV/Sum   | 468         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 303         |
+|    ep_rew_mean          | -302        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 23          |
+|    time_elapsed         | 28110       |
+|    total_timesteps      | 94208       |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | -0.03595742 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.342      |
+|    explained_variance   | 0.873       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.126       |
+|    n_updates            | 2200        |
+|    policy_gradient_loss | 0.0223      |
+|    value_loss           | 0.0177      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0487       |
+|    negative_advantag... | 0.41106138   |
+|    positive_advantag... | 0.58861846   |
+|    prob_ratio           | 5412.74      |
+|    rollout_return       | -2.7021222   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.23         |
+|    collect_rollout/Mean | 4.68         |
+|    collect_rollout/Sum  | 4.68         |
+|    train_action_adv/... | 0.00949      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| rollout/                |              |
+|    ep_len_mean          | 301          |
+|    ep_rew_mean          | -300         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 24           |
+|    time_elapsed         | 29385        |
+|    total_timesteps      | 98304        |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.080960035 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.28        |
+|    explained_variance   | 0.86         |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.296        |
+|    n_updates            | 2300         |
+|    policy_gradient_loss | 0.00154      |
+|    value_loss           | 0.0176       |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=100000, episode_reward=-159.40 +/- 36.27
+Episode length: 160.40 +/- 36.27
+New best mean reward!
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0459      |
+|    negative_advantag... | 0.3909541   |
+|    positive_advantag... | 0.60844547  |
+|    prob_ratio           | 41526.484   |
+|    rollout_return       | -2.5374503  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 6.24        |
+|    collect_rollout/Sum  | 6.24        |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 160         |
+|    mean_reward          | -159        |
+| rollout/                |             |
+|    ep_len_mean          | 274         |
+|    ep_rew_mean          | -273        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 25          |
+|    time_elapsed         | 30664       |
+|    total_timesteps      | 102400      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | -0.01731506 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.255      |
+|    explained_variance   | 0.852       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.498       |
+|    n_updates            | 2400        |
+|    policy_gradient_loss | 0.0132      |
+|    value_loss           | 0.0154      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.043       |
+|    negative_advantag... | 0.37301695  |
+|    positive_advantag... | 0.6245662   |
+|    prob_ratio           | 214996.08   |
+|    rollout_return       | -2.3914194  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 4.65        |
+|    collect_rollout/Sum  | 4.65        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 238         |
+|    ep_rew_mean          | -237        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 26          |
+|    time_elapsed         | 31938       |
+|    total_timesteps      | 106496      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.024613246 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.202      |
+|    explained_variance   | 0.806       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.705       |
+|    n_updates            | 2500        |
+|    policy_gradient_loss | 0.0262      |
+|    value_loss           | 0.0168      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=110000, episode_reward=-263.20 +/- 133.11
+Episode length: 264.00 +/- 132.75
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0467       |
+|    negative_advantag... | 0.41418773   |
+|    positive_advantag... | 0.5845722    |
+|    prob_ratio           | 29220.04     |
+|    rollout_return       | -2.5236073   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.23         |
+|    collect_rollout/Mean | 7.11         |
+|    collect_rollout/Sum  | 7.11         |
+|    train_action_adv/... | 0.00949      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| eval/                   |              |
+|    mean_ep_length       | 264          |
+|    mean_reward          | -263         |
+| rollout/                |              |
+|    ep_len_mean          | 199          |
+|    ep_rew_mean          | -198         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 27           |
+|    time_elapsed         | 33214        |
+|    total_timesteps      | 110592       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.020573214 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.183       |
+|    explained_variance   | 0.906        |
+|    learning_rate        | 0.01         |
+|    loss                 | 0            |
+|    n_updates            | 2600         |
+|    policy_gradient_loss | 0.0021       |
+|    value_loss           | 0.00939      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0444     |
+|    negative_advantag... | 0.3921701  |
+|    positive_advantag... | 0.60716844 |
+|    prob_ratio           | 33047.746  |
+|    rollout_return       | -2.3128479 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.25       |
+|    collect_rollout/Mean | 4.71       |
+|    collect_rollout/Sum  | 4.71       |
+|    train_action_adv/... | 0.00947    |
+|    train_action_adv/Sum | 242        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| rollout/                |            |
+|    ep_len_mean          | 171        |
+|    ep_rew_mean          | -170       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 28         |
+|    time_elapsed         | 34489      |
+|    total_timesteps      | 114688     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.1843228  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.182     |
+|    explained_variance   | 0.906      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.342      |
+|    n_updates            | 2700       |
+|    policy_gradient_loss | 0.0188     |
+|    value_loss           | 0.0122     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0422     |
+|    negative_advantag... | 0.35950875 |
+|    positive_advantag... | 0.63876295 |
+|    prob_ratio           | 137405.12  |
+|    rollout_return       | -2.1998405 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.23       |
+|    collect_rollout/Mean | 4.64       |
+|    collect_rollout/Sum  | 4.64       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| rollout/                |            |
+|    ep_len_mean          | 159        |
+|    ep_rew_mean          | -158       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 29         |
+|    time_elapsed         | 35763      |
+|    total_timesteps      | 118784     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.12590903 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.212     |
+|    explained_variance   | 0.896      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.455      |
+|    n_updates            | 2800       |
+|    policy_gradient_loss | 0.0228     |
+|    value_loss           | 0.0119     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=120000, episode_reward=-425.00 +/- 150.00
+Episode length: 425.20 +/- 149.60
+-------------------------------------------
+| HPO/                    |               |
+|    margin               | 0.0533        |
+|    negative_advantag... | 0.46393615    |
+|    positive_advantag... | 0.5354246     |
+|    prob_ratio           | 4382.5107     |
+|    rollout_return       | -2.1922176    |
+| Time/                   |               |
+|    collect_computeV/... | 0.0126        |
+|    collect_computeV/Sum | 3.22          |
+|    collect_rollout/Mean | 8.63          |
+|    collect_rollout/Sum  | 8.63          |
+|    train_action_adv/... | 0.00948       |
+|    train_action_adv/Sum | 243           |
+|    train_computeV/Mean  | 0.0182        |
+|    train_computeV/Sum   | 466           |
+|    train_epoch/Mean     | 1.27e+03      |
+|    train_epoch/Sum      | 1.27e+03      |
+|    train_loss/Mean      | 0.0101        |
+|    train_loss/Sum       | 258           |
+| eval/                   |               |
+|    mean_ep_length       | 425           |
+|    mean_reward          | -425          |
+| rollout/                |               |
+|    ep_len_mean          | 160           |
+|    ep_rew_mean          | -159          |
+| time/                   |               |
+|    fps                  | 3             |
+|    iterations           | 30            |
+|    time_elapsed         | 37040         |
+|    total_timesteps      | 122880        |
+| train/                  |               |
+|    active_example       | 4096          |
+|    approx_kl            | -0.0017820001 |
+|    clip_range           | 0.2           |
+|    entropy_loss         | -0.242        |
+|    explained_variance   | 0.912         |
+|    learning_rate        | 0.01          |
+|    loss                 | 0.294         |
+|    n_updates            | 2900          |
+|    policy_gradient_loss | 0.00325       |
+|    value_loss           | 0.0105        |
+-------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0515      |
+|    negative_advantag... | 0.44020447  |
+|    positive_advantag... | 0.5589974   |
+|    prob_ratio           | 41771.855   |
+|    rollout_return       | -2.2479436  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 4.65        |
+|    collect_rollout/Sum  | 4.65        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 163         |
+|    ep_rew_mean          | -162        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 31          |
+|    time_elapsed         | 38314       |
+|    total_timesteps      | 126976      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.017986618 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.248      |
+|    explained_variance   | 0.919       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.789       |
+|    n_updates            | 3000        |
+|    policy_gradient_loss | 0.0223      |
+|    value_loss           | 0.0106      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=130000, episode_reward=-189.60 +/- 77.99
+Episode length: 190.60 +/- 77.99
+--------------------------------------------
+| HPO/                    |                |
+|    margin               | 0.0425         |
+|    negative_advantag... | 0.35983586     |
+|    positive_advantag... | 0.63885844     |
+|    prob_ratio           | 106380.37      |
+|    rollout_return       | -2.022111      |
+| Time/                   |                |
+|    collect_computeV/... | 0.0126         |
+|    collect_computeV/Sum | 3.23           |
+|    collect_rollout/Mean | 6.46           |
+|    collect_rollout/Sum  | 6.46           |
+|    train_action_adv/... | 0.00949        |
+|    train_action_adv/Sum | 243            |
+|    train_computeV/Mean  | 0.0183         |
+|    train_computeV/Sum   | 467            |
+|    train_epoch/Mean     | 1.27e+03       |
+|    train_epoch/Sum      | 1.27e+03       |
+|    train_loss/Mean      | 0.01           |
+|    train_loss/Sum       | 257            |
+| eval/                   |                |
+|    mean_ep_length       | 191            |
+|    mean_reward          | -190           |
+| rollout/                |                |
+|    ep_len_mean          | 155            |
+|    ep_rew_mean          | -154           |
+| time/                   |                |
+|    fps                  | 3              |
+|    iterations           | 32             |
+|    time_elapsed         | 39591          |
+|    total_timesteps      | 131072         |
+| train/                  |                |
+|    active_example       | 4096           |
+|    approx_kl            | -0.00068342686 |
+|    clip_range           | 0.2            |
+|    entropy_loss         | -0.228         |
+|    explained_variance   | 0.906          |
+|    learning_rate        | 0.01           |
+|    loss                 | 0.428          |
+|    n_updates            | 3100           |
+|    policy_gradient_loss | 0.0175         |
+|    value_loss           | 0.0101         |
+--------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-------------------------------------------
+| HPO/                    |               |
+|    margin               | 0.0405        |
+|    negative_advantag... | 0.35130104    |
+|    positive_advantag... | 0.6476076     |
+|    prob_ratio           | 97718.67      |
+|    rollout_return       | -1.8499298    |
+| Time/                   |               |
+|    collect_computeV/... | 0.0126        |
+|    collect_computeV/Sum | 3.23          |
+|    collect_rollout/Mean | 4.67          |
+|    collect_rollout/Sum  | 4.67          |
+|    train_action_adv/... | 0.0095        |
+|    train_action_adv/Sum | 243           |
+|    train_computeV/Mean  | 0.0183        |
+|    train_computeV/Sum   | 468           |
+|    train_epoch/Mean     | 1.27e+03      |
+|    train_epoch/Sum      | 1.27e+03      |
+|    train_loss/Mean      | 0.0101        |
+|    train_loss/Sum       | 258           |
+| rollout/                |               |
+|    ep_len_mean          | 142           |
+|    ep_rew_mean          | -141          |
+| time/                   |               |
+|    fps                  | 3             |
+|    iterations           | 33            |
+|    time_elapsed         | 40868         |
+|    total_timesteps      | 135168        |
+| train/                  |               |
+|    active_example       | 4096          |
+|    approx_kl            | -0.0024535991 |
+|    clip_range           | 0.2           |
+|    entropy_loss         | -0.188        |
+|    explained_variance   | 0.898         |
+|    learning_rate        | 0.01          |
+|    loss                 | 0             |
+|    n_updates            | 3200          |
+|    policy_gradient_loss | 0.0018        |
+|    value_loss           | 0.00891       |
+-------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.043       |
+|    negative_advantag... | 0.36539227  |
+|    positive_advantag... | 0.6301133   |
+|    prob_ratio           | 375896.56   |
+|    rollout_return       | -1.7798747  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.67        |
+|    collect_rollout/Sum  | 4.67        |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 133         |
+|    ep_rew_mean          | -132        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 34          |
+|    time_elapsed         | 42141       |
+|    total_timesteps      | 139264      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.052586593 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.201      |
+|    explained_variance   | 0.911       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.107       |
+|    n_updates            | 3300        |
+|    policy_gradient_loss | 0.0175      |
+|    value_loss           | 0.00968     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=140000, episode_reward=-135.00 +/- 16.10
+Episode length: 136.00 +/- 16.10
+New best mean reward!
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0452       |
+|    negative_advantag... | 0.37214115   |
+|    positive_advantag... | 0.62042964   |
+|    prob_ratio           | 621419.75    |
+|    rollout_return       | -1.8591505   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.24         |
+|    collect_rollout/Mean | 5.96         |
+|    collect_rollout/Sum  | 5.96         |
+|    train_action_adv/... | 0.0095       |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| eval/                   |              |
+|    mean_ep_length       | 136          |
+|    mean_reward          | -135         |
+| rollout/                |              |
+|    ep_len_mean          | 137          |
+|    ep_rew_mean          | -136         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 35           |
+|    time_elapsed         | 43418        |
+|    total_timesteps      | 143360       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.039215147 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.275       |
+|    explained_variance   | 0.92         |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.956        |
+|    n_updates            | 3400         |
+|    policy_gradient_loss | 0.0286       |
+|    value_loss           | 0.00655      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0373      |
+|    negative_advantag... | 0.3106847   |
+|    positive_advantag... | 0.67886466  |
+|    prob_ratio           | 427762.56   |
+|    rollout_return       | -1.772621   |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 4.64        |
+|    collect_rollout/Sum  | 4.64        |
+|    train_action_adv/... | 0.00947     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 145         |
+|    ep_rew_mean          | -144        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 36          |
+|    time_elapsed         | 44693       |
+|    total_timesteps      | 147456      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.015776984 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.219      |
+|    explained_variance   | 0.909       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 3500        |
+|    policy_gradient_loss | 0.00235     |
+|    value_loss           | 0.00685     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=150000, episode_reward=-126.00 +/- 7.07
+Episode length: 127.00 +/- 7.07
+New best mean reward!
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0378      |
+|    negative_advantag... | 0.31289285  |
+|    positive_advantag... | 0.67226607  |
+|    prob_ratio           | 520531.72   |
+|    rollout_return       | -1.7152939  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0128      |
+|    collect_computeV/Sum | 3.28        |
+|    collect_rollout/Mean | 5.99        |
+|    collect_rollout/Sum  | 5.99        |
+|    train_action_adv/... | 0.00951     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 127         |
+|    mean_reward          | -126        |
+| rollout/                |             |
+|    ep_len_mean          | 144         |
+|    ep_rew_mean          | -143        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 37          |
+|    time_elapsed         | 45970       |
+|    total_timesteps      | 151552      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | -0.13815123 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.203      |
+|    explained_variance   | 0.937       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.249       |
+|    n_updates            | 3600        |
+|    policy_gradient_loss | 0.0131      |
+|    value_loss           | 0.00726     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0422     |
+|    negative_advantag... | 0.35132515 |
+|    positive_advantag... | 0.629586   |
+|    prob_ratio           | 973647.06  |
+|    rollout_return       | -1.7205455 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.23       |
+|    collect_rollout/Mean | 4.67       |
+|    collect_rollout/Sum  | 4.67       |
+|    train_action_adv/... | 0.0095     |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 466        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 257        |
+| rollout/                |            |
+|    ep_len_mean          | 138        |
+|    ep_rew_mean          | -137       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 38         |
+|    time_elapsed         | 47244      |
+|    total_timesteps      | 155648     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.16246428 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.213     |
+|    explained_variance   | 0.948      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.923      |
+|    n_updates            | 3700       |
+|    policy_gradient_loss | 0.0238     |
+|    value_loss           | 0.00663    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0397       |
+|    negative_advantag... | 0.3169009    |
+|    positive_advantag... | 0.6289051    |
+|    prob_ratio           | 876319.2     |
+|    rollout_return       | -1.5495261   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.23         |
+|    collect_rollout/Mean | 4.65         |
+|    collect_rollout/Sum  | 4.65         |
+|    train_action_adv/... | 0.00947      |
+|    train_action_adv/Sum | 242          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 467          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 257          |
+| rollout/                |              |
+|    ep_len_mean          | 129          |
+|    ep_rew_mean          | -128         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 39           |
+|    time_elapsed         | 48519        |
+|    total_timesteps      | 159744       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.023834612 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.17        |
+|    explained_variance   | 0.88         |
+|    learning_rate        | 0.01         |
+|    loss                 | 0            |
+|    n_updates            | 3800         |
+|    policy_gradient_loss | 0.00275      |
+|    value_loss           | 0.00897      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=160000, episode_reward=-107.60 +/- 13.79
+Episode length: 108.60 +/- 13.79
+New best mean reward!
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0341       |
+|    negative_advantag... | 0.27301103   |
+|    positive_advantag... | 0.68548536   |
+|    prob_ratio           | 1011351.25   |
+|    rollout_return       | -1.6171896   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.23         |
+|    collect_rollout/Mean | 5.69         |
+|    collect_rollout/Sum  | 5.69         |
+|    train_action_adv/... | 0.00949      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0182       |
+|    train_computeV/Sum   | 466          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.0101       |
+|    train_loss/Sum       | 258          |
+| eval/                   |              |
+|    mean_ep_length       | 109          |
+|    mean_reward          | -108         |
+| rollout/                |              |
+|    ep_len_mean          | 127          |
+|    ep_rew_mean          | -126         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 40           |
+|    time_elapsed         | 49796        |
+|    total_timesteps      | 163840       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.028893396 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.141       |
+|    explained_variance   | 0.916        |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.504        |
+|    n_updates            | 3900         |
+|    policy_gradient_loss | 0.0155       |
+|    value_loss           | 0.00815      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0342      |
+|    negative_advantag... | 0.2748453   |
+|    positive_advantag... | 0.6736537   |
+|    prob_ratio           | 1216028.9   |
+|    rollout_return       | -1.5332634  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.66        |
+|    collect_rollout/Sum  | 4.66        |
+|    train_action_adv/... | 0.0095      |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 121         |
+|    ep_rew_mean          | -120        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 41          |
+|    time_elapsed         | 51071       |
+|    total_timesteps      | 167936      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.010013148 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.117      |
+|    explained_variance   | 0.914       |
+|    learning_rate        | 0.01        |
+|    loss                 | 1.09        |
+|    n_updates            | 4000        |
+|    policy_gradient_loss | 0.0295      |
+|    value_loss           | 0.00773     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=170000, episode_reward=-122.20 +/- 28.44
+Episode length: 123.20 +/- 28.44
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0338      |
+|    negative_advantag... | 0.26920885  |
+|    positive_advantag... | 0.66298383  |
+|    prob_ratio           | 2896905.5   |
+|    rollout_return       | -1.5547138  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 5.84        |
+|    collect_rollout/Sum  | 5.84        |
+|    train_action_adv/... | 0.00947     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| eval/                   |             |
+|    mean_ep_length       | 123         |
+|    mean_reward          | -122        |
+| rollout/                |             |
+|    ep_len_mean          | 119         |
+|    ep_rew_mean          | -118        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 42          |
+|    time_elapsed         | 52346       |
+|    total_timesteps      | 172032      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.006188661 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0891     |
+|    explained_variance   | 0.9         |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 4100        |
+|    policy_gradient_loss | 0.000824    |
+|    value_loss           | 0.00818     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0318      |
+|    negative_advantag... | 0.25685015  |
+|    positive_advantag... | 0.69128495  |
+|    prob_ratio           | 1835956.6   |
+|    rollout_return       | -1.4930053  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0127      |
+|    collect_computeV/Sum | 3.24        |
+|    collect_rollout/Mean | 4.69        |
+|    collect_rollout/Sum  | 4.69        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0183      |
+|    train_computeV/Sum   | 468         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 121         |
+|    ep_rew_mean          | -120        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 43          |
+|    time_elapsed         | 53623       |
+|    total_timesteps      | 176128      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.029287353 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0909     |
+|    explained_variance   | 0.919       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.414       |
+|    n_updates            | 4200        |
+|    policy_gradient_loss | 0.0179      |
+|    value_loss           | 0.00795     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=180000, episode_reward=-115.00 +/- 20.03
+Episode length: 116.00 +/- 20.03
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0381     |
+|    negative_advantag... | 0.32045305 |
+|    positive_advantag... | 0.6123111  |
+|    prob_ratio           | 2467610.5  |
+|    rollout_return       | -1.4430835 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.23       |
+|    collect_rollout/Mean | 5.75       |
+|    collect_rollout/Sum  | 5.75       |
+|    train_action_adv/... | 0.00949    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 116        |
+|    mean_reward          | -115       |
+| rollout/                |            |
+|    ep_len_mean          | 123        |
+|    ep_rew_mean          | -122       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 44         |
+|    time_elapsed         | 54900      |
+|    total_timesteps      | 180224     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.11159207 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0863    |
+|    explained_variance   | 0.899      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.991      |
+|    n_updates            | 4300       |
+|    policy_gradient_loss | 0.0308     |
+|    value_loss           | 0.00597    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0393      |
+|    negative_advantag... | 0.3176979   |
+|    positive_advantag... | 0.6100882   |
+|    prob_ratio           | 1836438.2   |
+|    rollout_return       | -1.5411526  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.68        |
+|    collect_rollout/Sum  | 4.68        |
+|    train_action_adv/... | 0.00949     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 466         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 125         |
+|    ep_rew_mean          | -124        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 45          |
+|    time_elapsed         | 56174       |
+|    total_timesteps      | 184320      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.040714085 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0934     |
+|    explained_variance   | 0.897       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.176       |
+|    n_updates            | 4400        |
+|    policy_gradient_loss | 0.000752    |
+|    value_loss           | 0.00754     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0429     |
+|    negative_advantag... | 0.36358452 |
+|    positive_advantag... | 0.56402826 |
+|    prob_ratio           | 2356486.0  |
+|    rollout_return       | -1.5317873 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.26       |
+|    collect_rollout/Mean | 4.72       |
+|    collect_rollout/Sum  | 4.72       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| rollout/                |            |
+|    ep_len_mean          | 124        |
+|    ep_rew_mean          | -123       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 46         |
+|    time_elapsed         | 57450      |
+|    total_timesteps      | 188416     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.16565567 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0838    |
+|    explained_variance   | 0.888      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.381      |
+|    n_updates            | 4500       |
+|    policy_gradient_loss | 0.0248     |
+|    value_loss           | 0.00905    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=190000, episode_reward=-101.80 +/- 4.12
+Episode length: 102.80 +/- 4.12
+New best mean reward!
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0397     |
+|    negative_advantag... | 0.3414789  |
+|    positive_advantag... | 0.6035337  |
+|    prob_ratio           | 1473957.8  |
+|    rollout_return       | -1.4453557 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.22       |
+|    collect_rollout/Mean | 5.62       |
+|    collect_rollout/Sum  | 5.62       |
+|    train_action_adv/... | 0.00947    |
+|    train_action_adv/Sum | 242        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 468        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 256        |
+| eval/                   |            |
+|    mean_ep_length       | 103        |
+|    mean_reward          | -102       |
+| rollout/                |            |
+|    ep_len_mean          | 123        |
+|    ep_rew_mean          | -122       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 47         |
+|    time_elapsed         | 58725      |
+|    total_timesteps      | 192512     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.044224   |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0904    |
+|    explained_variance   | 0.879      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.874      |
+|    n_updates            | 4600       |
+|    policy_gradient_loss | 0.0306     |
+|    value_loss           | 0.00931    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+--------------------------------------------
+| HPO/                    |                |
+|    margin               | 0.0368         |
+|    negative_advantag... | 0.30857155     |
+|    positive_advantag... | 0.6221489      |
+|    prob_ratio           | 1583701.9      |
+|    rollout_return       | -1.4477675     |
+| Time/                   |                |
+|    collect_computeV/... | 0.0126         |
+|    collect_computeV/Sum | 3.23           |
+|    collect_rollout/Mean | 4.66           |
+|    collect_rollout/Sum  | 4.66           |
+|    train_action_adv/... | 0.00946        |
+|    train_action_adv/Sum | 242            |
+|    train_computeV/Mean  | 0.0182         |
+|    train_computeV/Sum   | 467            |
+|    train_epoch/Mean     | 1.27e+03       |
+|    train_epoch/Sum      | 1.27e+03       |
+|    train_loss/Mean      | 0.0101         |
+|    train_loss/Sum       | 258            |
+| rollout/                |                |
+|    ep_len_mean          | 119            |
+|    ep_rew_mean          | -118           |
+| time/                   |                |
+|    fps                  | 3              |
+|    iterations           | 48             |
+|    time_elapsed         | 60000          |
+|    total_timesteps      | 196608         |
+| train/                  |                |
+|    active_example       | 4096           |
+|    approx_kl            | -0.00020639598 |
+|    clip_range           | 0.2            |
+|    entropy_loss         | -0.0831        |
+|    explained_variance   | 0.916          |
+|    learning_rate        | 0.01           |
+|    loss                 | 0              |
+|    n_updates            | 4700           |
+|    policy_gradient_loss | 0.000549       |
+|    value_loss           | 0.00673        |
+--------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=200000, episode_reward=-115.20 +/- 11.00
+Episode length: 116.20 +/- 11.00
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0356     |
+|    negative_advantag... | 0.28427687 |
+|    positive_advantag... | 0.6274276  |
+|    prob_ratio           | 2158006.5  |
+|    rollout_return       | -1.4577343 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 5.79       |
+|    collect_rollout/Sum  | 5.79       |
+|    train_action_adv/... | 0.00947    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 469        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 116        |
+|    mean_reward          | -115       |
+| rollout/                |            |
+|    ep_len_mean          | 115        |
+|    ep_rew_mean          | -114       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 49         |
+|    time_elapsed         | 61279      |
+|    total_timesteps      | 200704     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.10299535 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0781    |
+|    explained_variance   | 0.904      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.859      |
+|    n_updates            | 4800       |
+|    policy_gradient_loss | 0.0172     |
+|    value_loss           | 0.00773    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0346      |
+|    negative_advantag... | 0.27767104  |
+|    positive_advantag... | 0.6242288   |
+|    prob_ratio           | 1847319.0   |
+|    rollout_return       | -1.48641    |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.66        |
+|    collect_rollout/Sum  | 4.66        |
+|    train_action_adv/... | 0.00948     |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0183      |
+|    train_computeV/Sum   | 468         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 114         |
+|    ep_rew_mean          | -113        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 50          |
+|    time_elapsed         | 62555       |
+|    total_timesteps      | 204800      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.014412917 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0891     |
+|    explained_variance   | 0.862       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.625       |
+|    n_updates            | 4900        |
+|    policy_gradient_loss | 0.0352      |
+|    value_loss           | 0.0104      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0304      |
+|    negative_advantag... | 0.23114376  |
+|    positive_advantag... | 0.66740876  |
+|    prob_ratio           | 1604089.8   |
+|    rollout_return       | -1.4267179  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 4.64        |
+|    collect_rollout/Sum  | 4.64        |
+|    train_action_adv/... | 0.00946     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0183      |
+|    train_computeV/Sum   | 468         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 116         |
+|    ep_rew_mean          | -115        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 51          |
+|    time_elapsed         | 63831       |
+|    total_timesteps      | 208896      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.031213127 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0841     |
+|    explained_variance   | 0.859       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 5000        |
+|    policy_gradient_loss | 0.000445    |
+|    value_loss           | 0.0104      |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=210000, episode_reward=-92.80 +/- 12.46
+Episode length: 93.80 +/- 12.46
+New best mean reward!
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0385     |
+|    negative_advantag... | 0.2948975  |
+|    positive_advantag... | 0.59362316 |
+|    prob_ratio           | 2197196.5  |
+|    rollout_return       | -1.456794  |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 5.56       |
+|    collect_rollout/Sum  | 5.56       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 468        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 93.8       |
+|    mean_reward          | -92.8      |
+| rollout/                |            |
+|    ep_len_mean          | 112        |
+|    ep_rew_mean          | -111       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 52         |
+|    time_elapsed         | 65109      |
+|    total_timesteps      | 212992     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.12349166 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.097     |
+|    explained_variance   | 0.821      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.604      |
+|    n_updates            | 5100       |
+|    policy_gradient_loss | 0.0155     |
+|    value_loss           | 0.0109     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0359       |
+|    negative_advantag... | 0.27806965   |
+|    positive_advantag... | 0.57279724   |
+|    prob_ratio           | 1304657.5    |
+|    rollout_return       | -1.523667    |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.22         |
+|    collect_rollout/Mean | 4.65         |
+|    collect_rollout/Sum  | 4.65         |
+|    train_action_adv/... | 0.00946      |
+|    train_action_adv/Sum | 242          |
+|    train_computeV/Mean  | 0.0183       |
+|    train_computeV/Sum   | 468          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.01         |
+|    train_loss/Sum       | 257          |
+| rollout/                |              |
+|    ep_len_mean          | 111          |
+|    ep_rew_mean          | -110         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 53           |
+|    time_elapsed         | 66385        |
+|    total_timesteps      | 217088       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | 0.0019973516 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.0898      |
+|    explained_variance   | 0.852        |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.881        |
+|    n_updates            | 5200         |
+|    policy_gradient_loss | 0.0402       |
+|    value_loss           | 0.00968      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=220000, episode_reward=-114.80 +/- 29.31
+Episode length: 115.80 +/- 29.31
+-------------------------------------------
+| HPO/                    |               |
+|    margin               | 0.0412        |
+|    negative_advantag... | 0.34343678    |
+|    positive_advantag... | 0.5087315     |
+|    prob_ratio           | 753937.5      |
+|    rollout_return       | -1.4524624    |
+| Time/                   |               |
+|    collect_computeV/... | 0.0127        |
+|    collect_computeV/Sum | 3.24          |
+|    collect_rollout/Mean | 5.77          |
+|    collect_rollout/Sum  | 5.77          |
+|    train_action_adv/... | 0.00946       |
+|    train_action_adv/Sum | 242           |
+|    train_computeV/Mean  | 0.0183        |
+|    train_computeV/Sum   | 468           |
+|    train_epoch/Mean     | 1.27e+03      |
+|    train_epoch/Sum      | 1.27e+03      |
+|    train_loss/Mean      | 0.01          |
+|    train_loss/Sum       | 257           |
+| eval/                   |               |
+|    mean_ep_length       | 116           |
+|    mean_reward          | -115          |
+| rollout/                |               |
+|    ep_len_mean          | 108           |
+|    ep_rew_mean          | -107          |
+| time/                   |               |
+|    fps                  | 3             |
+|    iterations           | 54            |
+|    time_elapsed         | 67665         |
+|    total_timesteps      | 221184        |
+| train/                  |               |
+|    active_example       | 4096          |
+|    approx_kl            | 0.00020955503 |
+|    clip_range           | 0.2           |
+|    entropy_loss         | -0.093        |
+|    explained_variance   | 0.912         |
+|    learning_rate        | 0.01          |
+|    loss                 | 0             |
+|    n_updates            | 5300          |
+|    policy_gradient_loss | 0.000721      |
+|    value_loss           | 0.00625       |
+-------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0316       |
+|    negative_advantag... | 0.2166462    |
+|    positive_advantag... | 0.6272431    |
+|    prob_ratio           | 2145985.2    |
+|    rollout_return       | -1.443034    |
+| Time/                   |              |
+|    collect_computeV/... | 0.0126       |
+|    collect_computeV/Sum | 3.22         |
+|    collect_rollout/Mean | 4.64         |
+|    collect_rollout/Sum  | 4.64         |
+|    train_action_adv/... | 0.00948      |
+|    train_action_adv/Sum | 243          |
+|    train_computeV/Mean  | 0.0183       |
+|    train_computeV/Sum   | 468          |
+|    train_epoch/Mean     | 1.27e+03     |
+|    train_epoch/Sum      | 1.27e+03     |
+|    train_loss/Mean      | 0.01         |
+|    train_loss/Sum       | 257          |
+| rollout/                |              |
+|    ep_len_mean          | 111          |
+|    ep_rew_mean          | -110         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 55           |
+|    time_elapsed         | 68943        |
+|    total_timesteps      | 225280       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.008386716 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.0762      |
+|    explained_variance   | 0.895        |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.673        |
+|    n_updates            | 5400         |
+|    policy_gradient_loss | 0.0191       |
+|    value_loss           | 0.00911      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+--------------------------------------------
+| HPO/                    |                |
+|    margin               | 0.0375         |
+|    negative_advantag... | 0.26396185     |
+|    positive_advantag... | 0.5203108      |
+|    prob_ratio           | 1496963.6      |
+|    rollout_return       | -1.4314805     |
+| Time/                   |                |
+|    collect_computeV/... | 0.0126         |
+|    collect_computeV/Sum | 3.23           |
+|    collect_rollout/Mean | 4.65           |
+|    collect_rollout/Sum  | 4.65           |
+|    train_action_adv/... | 0.00948        |
+|    train_action_adv/Sum | 243            |
+|    train_computeV/Mean  | 0.0183         |
+|    train_computeV/Sum   | 468            |
+|    train_epoch/Mean     | 1.27e+03       |
+|    train_epoch/Sum      | 1.27e+03       |
+|    train_loss/Mean      | 0.01           |
+|    train_loss/Sum       | 257            |
+| rollout/                |                |
+|    ep_len_mean          | 116            |
+|    ep_rew_mean          | -115           |
+| time/                   |                |
+|    fps                  | 3              |
+|    iterations           | 56             |
+|    time_elapsed         | 70222          |
+|    total_timesteps      | 229376         |
+| train/                  |                |
+|    active_example       | 4096           |
+|    approx_kl            | -2.5570393e-05 |
+|    clip_range           | 0.2            |
+|    entropy_loss         | -0.0716        |
+|    explained_variance   | 0.871          |
+|    learning_rate        | 0.01           |
+|    loss                 | 1.12           |
+|    n_updates            | 5500           |
+|    policy_gradient_loss | 0.0468         |
+|    value_loss           | 0.00993        |
+--------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=230000, episode_reward=-97.00 +/- 8.88
+Episode length: 98.00 +/- 8.88
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.036      |
+|    negative_advantag... | 0.2447097  |
+|    positive_advantag... | 0.5166334  |
+|    prob_ratio           | 2239658.5  |
+|    rollout_return       | -1.4803418 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0126     |
+|    collect_computeV/Sum | 3.24       |
+|    collect_rollout/Mean | 5.59       |
+|    collect_rollout/Sum  | 5.59       |
+|    train_action_adv/... | 0.00948    |
+|    train_action_adv/Sum | 243        |
+|    train_computeV/Mean  | 0.0183     |
+|    train_computeV/Sum   | 468        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.0101     |
+|    train_loss/Sum       | 258        |
+| eval/                   |            |
+|    mean_ep_length       | 98         |
+|    mean_reward          | -97        |
+| rollout/                |            |
+|    ep_len_mean          | 115        |
+|    ep_rew_mean          | -114       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 57         |
+|    time_elapsed         | 71500      |
+|    total_timesteps      | 233472     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.03057219 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.077     |
+|    explained_variance   | 0.76       |
+|    learning_rate        | 0.01       |
+|    loss                 | 0          |
+|    n_updates            | 5600       |
+|    policy_gradient_loss | 0.000521   |
+|    value_loss           | 0.0107     |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0365      |
+|    negative_advantag... | 0.2571165   |
+|    positive_advantag... | 0.51353097  |
+|    prob_ratio           | 1650868.1   |
+|    rollout_return       | -1.4187557  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.22        |
+|    collect_rollout/Mean | 4.66        |
+|    collect_rollout/Sum  | 4.66        |
+|    train_action_adv/... | 0.0095      |
+|    train_action_adv/Sum | 243         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.01        |
+|    train_loss/Sum       | 257         |
+| rollout/                |             |
+|    ep_len_mean          | 110         |
+|    ep_rew_mean          | -109        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 58          |
+|    time_elapsed         | 72776       |
+|    total_timesteps      | 237568      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.025156766 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.0779     |
+|    explained_variance   | 0.886       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.422       |
+|    n_updates            | 5700        |
+|    policy_gradient_loss | 0.0166      |
+|    value_loss           | 0.00758     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=240000, episode_reward=-113.80 +/- 21.39
+Episode length: 114.80 +/- 21.39
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.035      |
+|    negative_advantag... | 0.2582125  |
+|    positive_advantag... | 0.5883917  |
+|    prob_ratio           | 3094915.8  |
+|    rollout_return       | -1.4363261 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0127     |
+|    collect_computeV/Sum | 3.25       |
+|    collect_rollout/Mean | 5.82       |
+|    collect_rollout/Sum  | 5.82       |
+|    train_action_adv/... | 0.00946    |
+|    train_action_adv/Sum | 242        |
+|    train_computeV/Mean  | 0.0182     |
+|    train_computeV/Sum   | 467        |
+|    train_epoch/Mean     | 1.27e+03   |
+|    train_epoch/Sum      | 1.27e+03   |
+|    train_loss/Mean      | 0.01       |
+|    train_loss/Sum       | 257        |
+| eval/                   |            |
+|    mean_ep_length       | 115        |
+|    mean_reward          | -114       |
+| rollout/                |            |
+|    ep_len_mean          | 106        |
+|    ep_rew_mean          | -105       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 59         |
+|    time_elapsed         | 74054      |
+|    total_timesteps      | 241664     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.03934844 |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.0813    |
+|    explained_variance   | 0.917      |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.876      |
+|    n_updates            | 5800       |
+|    policy_gradient_loss | 0.0409     |
+|    value_loss           | 0.00553    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0372      |
+|    negative_advantag... | 0.29014376  |
+|    positive_advantag... | 0.62824035  |
+|    prob_ratio           | 2408851.0   |
+|    rollout_return       | -1.3362275  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0126      |
+|    collect_computeV/Sum | 3.23        |
+|    collect_rollout/Mean | 4.68        |
+|    collect_rollout/Sum  | 4.68        |
+|    train_action_adv/... | 0.00947     |
+|    train_action_adv/Sum | 242         |
+|    train_computeV/Mean  | 0.0182      |
+|    train_computeV/Sum   | 467         |
+|    train_epoch/Mean     | 1.27e+03    |
+|    train_epoch/Sum      | 1.27e+03    |
+|    train_loss/Mean      | 0.0101      |
+|    train_loss/Sum       | 258         |
+| rollout/                |             |
+|    ep_len_mean          | 106         |
+|    ep_rew_mean          | -105        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 60          |
+|    time_elapsed         | 75329       |
+|    total_timesteps      | 245760      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.060481757 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.109      |
+|    explained_variance   | 0.899       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 5900        |
+|    policy_gradient_loss | 0.0012      |
+|    value_loss           | 0.00722     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0348      |
+|    negative_advantag... | 0.2572981   |
+|    positive_advantag... | 0.64722854  |
+|    prob_ratio           | 2625029.0   |
+|    rollout_return       | -1.3170257  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0144      |
+|    collect_computeV/Sum | 3.68        |
+|    collect_rollout/Mean | 5.26        |
+|    collect_rollout/Sum  | 5.26        |
+|    train_action_adv/... | 0.00993     |
+|    train_action_adv/Sum | 254         |
+|    train_computeV/Mean  | 0.0189      |
+|    train_computeV/Sum   | 485         |
+|    train_epoch/Mean     | 1.32e+03    |
+|    train_epoch/Sum      | 1.32e+03    |
+|    train_loss/Mean      | 0.0105      |
+|    train_loss/Sum       | 270         |
+| rollout/                |             |
+|    ep_len_mean          | 107         |
+|    ep_rew_mean          | -106        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 61          |
+|    time_elapsed         | 76650       |
+|    total_timesteps      | 249856      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | -0.07651067 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.111      |
+|    explained_variance   | 0.862       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0.33        |
+|    n_updates            | 6000        |
+|    policy_gradient_loss | 0.0248      |
+|    value_loss           | 0.00679     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=250000, episode_reward=-97.80 +/- 16.23
+Episode length: 98.80 +/- 16.23
+------------------------------------------
+| HPO/                    |              |
+|    margin               | 0.0364       |
+|    negative_advantag... | 0.2792933    |
+|    positive_advantag... | 0.6218298    |
+|    prob_ratio           | 2572667.8    |
+|    rollout_return       | -1.3073049   |
+| Time/                   |              |
+|    collect_computeV/... | 0.0144       |
+|    collect_computeV/Sum | 3.68         |
+|    collect_rollout/Mean | 6.3          |
+|    collect_rollout/Sum  | 6.3          |
+|    train_action_adv/... | 0.0109       |
+|    train_action_adv/Sum | 279          |
+|    train_computeV/Mean  | 0.0205       |
+|    train_computeV/Sum   | 526          |
+|    train_epoch/Mean     | 1.42e+03     |
+|    train_epoch/Sum      | 1.42e+03     |
+|    train_loss/Mean      | 0.0115       |
+|    train_loss/Sum       | 295          |
+| eval/                   |              |
+|    mean_ep_length       | 98.8         |
+|    mean_reward          | -97.8        |
+| rollout/                |              |
+|    ep_len_mean          | 103          |
+|    ep_rew_mean          | -102         |
+| time/                   |              |
+|    fps                  | 3            |
+|    iterations           | 62           |
+|    time_elapsed         | 78072        |
+|    total_timesteps      | 253952       |
+| train/                  |              |
+|    active_example       | 4096         |
+|    approx_kl            | -0.008219879 |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.114       |
+|    explained_variance   | 0.896        |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.918        |
+|    n_updates            | 6100         |
+|    policy_gradient_loss | 0.0345       |
+|    value_loss           | 0.00625      |
+------------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+-----------------------------------------
+| HPO/                    |             |
+|    margin               | 0.0371      |
+|    negative_advantag... | 0.27800503  |
+|    positive_advantag... | 0.5868391   |
+|    prob_ratio           | 1850765.5   |
+|    rollout_return       | -1.3432366  |
+| Time/                   |             |
+|    collect_computeV/... | 0.0144      |
+|    collect_computeV/Sum | 3.69        |
+|    collect_rollout/Mean | 5.24        |
+|    collect_rollout/Sum  | 5.24        |
+|    train_action_adv/... | 0.0109      |
+|    train_action_adv/Sum | 279         |
+|    train_computeV/Mean  | 0.0205      |
+|    train_computeV/Sum   | 526         |
+|    train_epoch/Mean     | 1.41e+03    |
+|    train_epoch/Sum      | 1.41e+03    |
+|    train_loss/Mean      | 0.0116      |
+|    train_loss/Sum       | 296         |
+| rollout/                |             |
+|    ep_len_mean          | 104         |
+|    ep_rew_mean          | -103        |
+| time/                   |             |
+|    fps                  | 3           |
+|    iterations           | 63          |
+|    time_elapsed         | 79492       |
+|    total_timesteps      | 258048      |
+| train/                  |             |
+|    active_example       | 4096        |
+|    approx_kl            | 0.025751486 |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.107      |
+|    explained_variance   | 0.901       |
+|    learning_rate        | 0.01        |
+|    loss                 | 0           |
+|    n_updates            | 6200        |
+|    policy_gradient_loss | 0.0013      |
+|    value_loss           | 0.00702     |
+-----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
+self.rollout_buffer.size() 256
+rollbutffer_get_counter 256
+reward_noise_std 0.0
+n_rollout_steps 256
+Eval num_timesteps=260000, episode_reward=-113.80 +/- 48.35
+Episode length: 114.80 +/- 48.35
+----------------------------------------
+| HPO/                    |            |
+|    margin               | 0.0384     |
+|    negative_advantag... | 0.27198073 |
+|    positive_advantag... | 0.526904   |
+|    prob_ratio           | 1504555.4  |
+|    rollout_return       | -1.3207765 |
+| Time/                   |            |
+|    collect_computeV/... | 0.0144     |
+|    collect_computeV/Sum | 3.69       |
+|    collect_rollout/Mean | 6.48       |
+|    collect_rollout/Sum  | 6.48       |
+|    train_action_adv/... | 0.0109     |
+|    train_action_adv/Sum | 279        |
+|    train_computeV/Mean  | 0.0206     |
+|    train_computeV/Sum   | 526        |
+|    train_epoch/Mean     | 1.42e+03   |
+|    train_epoch/Sum      | 1.42e+03   |
+|    train_loss/Mean      | 0.0115     |
+|    train_loss/Sum       | 295        |
+| eval/                   |            |
+|    mean_ep_length       | 115        |
+|    mean_reward          | -114       |
+| rollout/                |            |
+|    ep_len_mean          | 104        |
+|    ep_rew_mean          | -103       |
+| time/                   |            |
+|    fps                  | 3          |
+|    iterations           | 64         |
+|    time_elapsed         | 80914      |
+|    total_timesteps      | 262144     |
+| train/                  |            |
+|    active_example       | 4096       |
+|    approx_kl            | 0.1970618  |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.102     |
+|    explained_variance   | 0.83       |
+|    learning_rate        | 0.01       |
+|    loss                 | 0.57       |
+|    n_updates            | 6300       |
+|    policy_gradient_loss | 0.0122     |
+|    value_loss           | 0.00941    |
+----------------------------------------
+in hpg.py def train: self .aece CE
+self.rgamma 1.0
+actor_delay 3
+self.policy.optimizer SGD (
+Parameter Group 0
+    dampening: 0
+    lr: 0.01
+    momentum: 0
+    nesterov: False
+    weight_decay: 0
+)
