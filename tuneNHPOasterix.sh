@@ -1,0 +1,1 @@
+python train.py --algo nhpo --classifier AM --aece CE --seed 123 --env mini-asterix-v4 --tensorboard-log $PWD/tensorboard-AM --hyperparams device:0

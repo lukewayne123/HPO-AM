@@ -1,1 +1,1 @@
-tensorboard --port=9010 --logdir=./tensorboard
+tensorboard --port=9023 --logdir=./tensorboard

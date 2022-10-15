@@ -17,13 +17,15 @@ gamename = 'Cartpole'
 # gamename = 'lunarlander'
 folder_list = ['vanilla','spt090']
 merge_flag = True
+std_flag = True
 # folder_list = [gamename+'vanilla',gamename+'spt080',gamename+'slt010dY050']
 # folder_list = [gamename+'vanilla',gamename+'spt060']
 # folder_list = ['NNslt40flippedduration0','NNrc40flippedduration0','NN0flippedduration0']
 # folder_list = ['NNsadependent_slt','NNsadependent_rc','NNsadependent_vanilla']
 # seed_list = ['289','666','517','789']
 # seed_list = ['1','2','3','4','5']
-seed_list = ['1','2','3' ]
+# seed_list = ['1','2','3' ]
+seed_list = ['1','2','3','4']
 DataLength = [1] * len(seed_list)
 def load_csv(file_path, x_scale = 1):
     with open(file_path,'r') as csvfile:
@@ -82,8 +84,15 @@ def refine_data(datas):
             if i < len(data[1]):
                 ys.append(data[1][i])
         refined_y.append(np.mean(ys))
-        min_y.append(np.min(ys))
-        max_y.append(np.max(ys))
+        # min_y.append(np.min(ys))
+        # max_y.append(np.max(ys))
+        if std_flag:
+            min_y.append(np.mean(ys) - np.std(ys))
+            max_y.append(np.mean(ys) + np.std(ys))
+        else:
+            min_y.append(np.min(ys))
+            max_y.append(np.max(ys))
+        
     return (refined_x, refined_y, min_y, max_y)
 
 bmap = brewer2mpl.get_map('Set1', 'qualitative', 8) # RBGPOY

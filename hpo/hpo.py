@@ -576,8 +576,9 @@ class HPO(OnPolicyAlgorithm):
                     #print("Before A", action_advantages[i])
                     # action_advantages[a] -= batch_values
                     gpu_action_advantages[a] -= gpu_batch_values
-                    gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
-                    gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
+                    if self.aece == 'AE' or self.aece == 'WAE':
+                        gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
+                        gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
                     
                     # action_advantages.append(gpu_action_advantages[a].cpu().clone().detach().numpy())
                     # print("gpu_action_advantages[a]",gpu_action_advantages[a])
@@ -596,8 +597,9 @@ class HPO(OnPolicyAlgorithm):
                         #     val_q_values[j] = action_q_values[j][a] 
                         #     advantages[j] = action_advantages[a][j]
                     #print("val_log_prob: ", val_log_prob)
-                positive_adv_prob = gpu_positive_adv_prob.cpu().clone().detach().numpy()
-                negative_adv_prob = gpu_negative_adv_prob.cpu().clone().detach().numpy()
+                if self.aece == 'AE' or self.aece == 'WAE':
+                    positive_adv_prob = gpu_positive_adv_prob.cpu().clone().detach().numpy()
+                    negative_adv_prob = gpu_negative_adv_prob.cpu().clone().detach().numpy()
                 # print("action_advantages",action_advantages)
                 # action_advantages[:] = gpu_action_advantages[:].cpu().clone().detach().numpy()
                 for j in range(self.batch_size):
@@ -612,8 +614,10 @@ class HPO(OnPolicyAlgorithm):
                 policy_losses2 = []
                 positive_p.append(positive_adv_prob)
                 negative_p.append(negative_adv_prob)
-                
-                prob_ratio = negative_adv_prob / (positive_adv_prob + 1e-8)
+                if self.aece == 'AE' or self.aece == 'WAE':
+                    prob_ratio = negative_adv_prob / (positive_adv_prob + 1e-8)
+                else:
+                    prob_ratio = negative_adv_prob
                 #print("Prob Ratio", prob_ratio)
                 ratio_p.append(prob_ratio)
                 not_0_loss_counter = 0 
@@ -664,12 +668,12 @@ class HPO(OnPolicyAlgorithm):
                     t_loss_start = time.time()
                     
                     
-                    for key ,value in od:
-                        # print("k,v",key,value)
-                        if deltaYcounter>= deltaYnum:
-                            break
-                        deltaYs[key] = 1
-                        deltaYcounter+=1
+                    # for key ,value in od:
+                    #     # print("k,v",key,value)
+                    #     if deltaYcounter>= deltaYnum:
+                    #         break
+                    #     deltaYs[key] = 1
+                    #     deltaYcounter+=1
                     for i in range(self.batch_size):
                         if self.classifier == "AM":
                             epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -756,12 +760,12 @@ class HPO(OnPolicyAlgorithm):
                     t_loss_start = time.time()
                     
                     
-                    for key ,value in od:
-                        # print("k,v",key,value)
-                        if deltaYcounter>= deltaYnum:
-                            break
-                        deltaYs[key] = 1
-                        deltaYcounter+=1
+                    # for key ,value in od:
+                    #     # print("k,v",key,value)
+                    #     if deltaYcounter>= deltaYnum:
+                    #         break
+                    #     deltaYs[key] = 1
+                    #     deltaYcounter+=1
                     for i in range(self.batch_size):
                         if self.classifier == "AM":
                             epsilon[i] = self.alpha * min(1, prob_ratio[i])
@@ -849,12 +853,12 @@ class HPO(OnPolicyAlgorithm):
                     t_loss_start = time.time()
                     
                     
-                    for key ,value in od:
-                        # print("k,v",key,value)
-                        if deltaYcounter>= deltaYnum:
-                            break
-                        deltaYs[key] = 1
-                        deltaYcounter+=1
+                    # for key ,value in od:
+                    #     # print("k,v",key,value)
+                    #     if deltaYcounter>= deltaYnum:
+                    #         break
+                    #     deltaYs[key] = 1
+                    #     deltaYcounter+=1
                     for i in range(self.batch_size):
                         if self.classifier == "AM":
                             epsilon[i] = self.alpha * min(1, prob_ratio[i])
