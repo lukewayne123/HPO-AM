@@ -211,8 +211,9 @@ class HPO(OnPolicyAlgorithm):
                 self.observation_space,
                 self.action_space,
                 self.lr_schedule,
+                optimizer_class = th.optim.Adam,
                 use_sde=self.use_sde,
-                **self.policy_kwargs  # pytype:disable=not-instantiable
+                # **self.policy_kwargs  # pytype:disable=not-instantiable
             )
             self.value_policy = self.value_policy.to(self.device)
         # print("self.value_policy",self.value_policy)
