@@ -8,33 +8,26 @@ import matplotlib.ticker as ticker
 
 # Folder = 'NNslt40flippedduration0'
 # root_folder ='sptfullsa040advFlip'
-# root_folder ='Cartpole200Epoch'
-root_folder = 'acrobot200epoch'
+root_folder ='Cartpole200Epoch'
 # root_folder ='sptfullsa040advFlipSAindependentAndMoreEpoch'
 # root_folder ='sptfullsa045advFlipSAindependentAndMoreEpoch'
 # gamename = 'cartpole'
 # gamename = 'mountaincar'
-# gamename = 'Cartpole'
+gamename = 'Cartpole'
 # gamename = 'lunarlander'
-# gamename = 'CartPole-v1'
-gamename = 'Acrobot-v1'
 folder_list = ['vanilla','spt090']
-merge_flag = True
-std_flag = True
-# std_flag = False
-median_flag = False
-# median_flag = True
+merge_flag = False
+# std_flag = True
+std_flag = False
 # folder_list = [gamename+'vanilla',gamename+'spt080',gamename+'slt010dY050']
 # folder_list = [gamename+'vanilla',gamename+'spt060']
 # folder_list = ['NNslt40flippedduration0','NNrc40flippedduration0','NN0flippedduration0']
 # folder_list = ['NNsadependent_slt','NNsadependent_rc','NNsadependent_vanilla']
 # seed_list = ['289','666','517','789']
 # seed_list = ['1','2','3','4','5','6']
-# seed_list = ['1','2','3','4','5']
+seed_list = ['1','2','3','4','5']
 # seed_list = ['1','2','3' ]
 # seed_list = ['1','2','3','4']
-# seed_list = ['123','196','285','517','789']
-seed_list = ['123','196','285','517' ]
 DataLength = [1] * len(seed_list)
 def load_csv(file_path, x_scale = 1):
     with open(file_path,'r') as csvfile:
@@ -92,10 +85,7 @@ def refine_data(datas):
         for data in datas:
             if i < len(data[1]):
                 ys.append(data[1][i])
-        if median_flag:
-            refined_y.append(np.median(ys))
-        else:
-            refined_y.append(np.mean(ys))
+        refined_y.append(np.mean(ys))
         # min_y.append(np.min(ys))
         # max_y.append(np.max(ys))
         if std_flag:
@@ -120,6 +110,7 @@ ax = fig.add_subplot(111)
 
 
 data_sets = []
+mean_sets = []
 # for x in range(DataLength[idx]):
 for idx in range( len(folder_list) ):
     Folder =  folder_list[idx]
@@ -131,9 +122,11 @@ for idx in range( len(folder_list) ):
     print( len(samples[0][0]) )
     # Sample = refine_data(samples)
     # data_sets.append(Sample)
-    if merge_flag:
-        samples = refine_data(samples)
+    # if merge_flag:
+        # samples = refine_data(samples)
+    mean_samples = refine_data(samples)
     data_sets.append(samples)
+    mean_sets.append(mean_samples)
     # data_sets = [Sample]
     print(  len(data_sets) )
     print(  len(data_sets[0]) )
@@ -145,13 +138,14 @@ for idx in range( len(folder_list) ):
 # for idx in range( len(folder_list) )
 legend_list = [ 'vanilla CE HPO','CE HPO with SPT ignore pi(s,a)>0.9 state action pair' ]
 for i in range(len(data_sets)):
-    if merge_flag:
-        ax.fill_between(data_sets[i][0], data_sets[i][2], data_sets[i][3], alpha=0.25, linewidth=0, color=colors[i ])
-        ax.plot(data_sets[i][0], data_sets[i][1], linewidth=3, color=colors[i ])
-    else:
-        for x in range( len(seed_list) ):
-            # ax.fill_between(data_sets[i][0], data_sets[i][2], data_sets[i][3], alpha=0.25, linewidth=0, color=colors[i ])
-            ax.plot(data_sets[i][x][0], data_sets[i][x][1], linewidth=3, color=colors[i ],label=legend_list[i] if x == 0 else "" )#, zorder = LineOrder[idx]) #2.5
+    # if merge_flag:
+    #     ax.fill_between(data_sets[i][0], data_sets[i][2], data_sets[i][3], alpha=0.25, linewidth=0, color=colors[i ])
+    #     ax.plot(data_sets[i][0], data_sets[i][1], linewidth=3, color=colors[i ])
+    # else:
+    ax.plot(mean_sets[i][0], mean_sets[i][1], linewidth=3, color=colors[i ])
+    for x in range( len(seed_list) ):
+        # ax.fill_between(data_sets[i][0], data_sets[i][2], data_sets[i][3], alpha=0.25, linewidth=0, color=colors[i ])
+        ax.plot(data_sets[i][x][0], data_sets[i][x][1], alpha=0.1, linewidth=3, color=colors[i ],label=legend_list[i] if x == 0 else "" )#, zorder = LineOrder[idx]) #2.5
     # ax.plot(data_sets[0][i][2], data_sets[0][i][3], linewidth=5, color=colors[idx])#, zorder = LineOrder[idx]) #2.5
     
     # ax.scatter(data_sets[i][0], data_sets[i][3], s=200, color=colors[idx])
@@ -170,17 +164,16 @@ ticks = ticker.FuncFormatter(lambda x, pos: '{0:g} '.format(x*scale))
 ax.xaxis.set_major_formatter(ticks)
 plt.xticks(fontsize=20)
 plt.yticks(fontsize=20)
-# ax.set_ylim([0, 510])
+
 # plt.ylabel('average returns of 100 eval ', fontsize=25)
 plt.ylabel('average returns of policy ', fontsize=25)
 plt.xlabel('timesteps ', fontsize=25)
 # plt.title('NN policy + uniform flipping of advantage signs', fontsize=25)
-# plt.title(gamename+' full sa with 0.2 uniform flipping of advantage signs  ', fontsize=25)
-plt.title(gamename+' with 0.2 uniform flipping of advantage signs  ', fontsize=25)
+plt.title(gamename+' full sa with 0.2 uniform flipping of advantage signs  ', fontsize=25)
 # plt.title(gamename+' full sa with 0.45 uniform flipping of advantage signs  ', fontsize=25)
 # plt.set_size_inches(1400,890)
 # plt.show()
-plt.savefig('./full_sa_spt090_200epoch_adv020flip_{gamename}_merge{mergeflag}_median{medianflag}_std{stdFlag}.png'.format(gamename = gamename, mergeflag = merge_flag, medianflag= median_flag, stdFlag= std_flag ), format='png' )
+plt.savefig('./full_sa_spt090_200epoch_adv020flip_{gamename}_merge{mergeflag}_retainseed.png'.format(gamename = gamename, mergeflag = merge_flag), format='png' )
 # plt.savefig('./full_sa_spt080_slt010_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt060_adv040flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt060_adv045flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
