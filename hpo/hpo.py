@@ -187,7 +187,9 @@ class HPO(OnPolicyAlgorithm):
     def _setup_model(self) -> None:
         print("setup model true")
         super(HPO, self)._setup_model()
+        
         # self._setup_lr_schedule()
+        # print("self.lr_schedule",self.lr_schedule)
         # self.set_random_seed(self.seed)
         # self.target_policy = self.policy_class(  # pytype:disable=not-instantiable
         #     self.observation_space,
@@ -944,8 +946,10 @@ class HPO(OnPolicyAlgorithm):
                 
                 # org version
                 # print("policy_loss.requires_grad:",policy_loss.requires_grad)
-                if self.entropy_hpo == True:
-                    loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
+                if self.entropy_hpo == True and self.independent_value_net == False:
+                    loss = self.pf_coef *policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss ##0810 test ,hope to find 360 HPO-62
+                elif  self.entropy_hpo == True and self.independent_value_net == True:
+                    loss = self.pf_coef * policy_loss+ self.ent_coef * entropy_loss
                 elif self.independent_value_net == True :
                     loss = self.pf_coef * policy_loss
                     # vloss = 
