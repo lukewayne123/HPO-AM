@@ -108,6 +108,7 @@ class HPO(OnPolicyAlgorithm):
         policy_update_scheme: int = 0,
         n_envs: int = 1,
         independent_value_net: bool= False,
+        lunarlander_heuristic: bool= False,
     ):
 
         super(HPO, self).__init__(
@@ -176,6 +177,7 @@ class HPO(OnPolicyAlgorithm):
         self.policy_update_scheme = policy_update_scheme
         # self.n_envs = n_envs
         self.independent_value_net = independent_value_net
+        self.lunarlander_heuristic = lunarlander_heuristic
         # print("self.n_envs 177",self.n_envs)
         # pdb.set_trace()
         # self.robust_delta_y = self.ROBUSTDELTAY()
@@ -414,6 +416,35 @@ class HPO(OnPolicyAlgorithm):
         # print("collect rollout self.ep_info_buffer",self.ep_info_buffer)
         return True
 
+    def lunarlander_heuristic_f(self,s):
+        # Heuristic for:
+        # 1. Testing. 
+        # 2. Demonstration rollout.
+        angle_targ = s[0]*0.5 + s[2]*1.0         # angle should point towards center (s[0] is horizontal coordinate, s[2] hor speed)
+        if angle_targ >  0.4: angle_targ =  0.4  # more than 0.4 radians (22 degrees) is bad
+        if angle_targ < -0.4: angle_targ = -0.4
+        hover_targ = 0.55*np.abs(s[0])           # target y should be proporional to horizontal offset
+
+        # PID controller: s[4] angle, s[5] angularSpeed
+        angle_todo = (angle_targ - s[4])*0.5 - (s[5])*1.0
+        #print("angle_targ=%0.2f, angle_todo=%0.2f" % (angle_targ, angle_todo))
+
+        # PID controller: s[1] vertical coordinate s[3] vertical speed
+        hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
+        #print("hover_targ=%0.2f, hover_todo=%0.2f" % (hover_targ, hover_todo))
+
+        if s[6] or s[7]: # legs have contact
+            angle_todo = 0
+            hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
+        a = 0
+        if hover_todo > np.abs(angle_todo) and hover_todo > 0.05:
+            a = 2
+        elif angle_todo < -0.05:
+            a = 3
+        elif angle_todo > +0.05:
+            a = 1
+        return a
+
     def train(self) -> None:
         """
         Update policy using the currently gathered rollout buffer.
@@ -518,6 +549,7 @@ class HPO(OnPolicyAlgorithm):
                 # for i in range(len(old_p)):
                 #     minMu = min(old_p[i],minMu)
                 # print("train self.policy.evaluate_actions real actions")
+                # print("rollout_data.observations",rollout_data.observations)
                 # action_q_values, val_log_prob, _ = self.policy.evaluate_actions(rollout_data.observations, actions)
                 if self.independent_value_net == True:
                     action_q_values, _ , _ = self.value_policy.evaluate_actions(rollout_data.observations, actions)
@@ -574,32 +606,45 @@ class HPO(OnPolicyAlgorithm):
                 #     minMu[j]  = th.min(action_probs,dim=0)
                 if  self.seed == 1234:
                     pdb.set_trace()
-                for a in range(self.action_space.n):
-                    # print("action_advantages shape",action_advantages[i].shape)
-                    #print("Before A", action_advantages[i])
-                    # action_advantages[a] -= batch_values
-                    gpu_action_advantages[a] -= gpu_batch_values
-                    if self.aece == 'AE' or self.aece == 'WAE':
-                        gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
-                        gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
-                    
-                    # action_advantages.append(gpu_action_advantages[a].cpu().clone().detach().numpy())
-                    # print("gpu_action_advantages[a]",gpu_action_advantages[a])
-                    
-                    #print("After A", action_advantages[i])
-                    # for j in range(self.batch_size):
-                    #     # minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
-                    #     # minMu[j] = min(action_probs[a][j],minMu[j])
-                    #     if action_advantages[a][j] > 0:
-                    #         positive_adv_prob[j] += action_probs[a][j] 
-                    #     elif action_advantages[a][j] < 0:
-                    #         negative_adv_prob[j] += action_probs[a][j] 
-                        # if a == actions[j]:
-                        #     #val_log_prob[j] = action_log_probs[i][j]
-                        #     #val_q_values[j] = action_advantages[i][j] + batch_values[j]
-                        #     val_q_values[j] = action_q_values[j][a] 
-                        #     advantages[j] = action_advantages[a][j]
-                    #print("val_log_prob: ", val_log_prob)
+                if self.lunarlander_heuristic:
+                    # print("rollout_data.observations",rollout_data.observations)
+                    for i in range(self.batch_size):
+                        # print("rollout_data.observations[i]",rollout_data.observations[i])
+                        optimal_a = self.lunarlander_heuristic_f(rollout_data.observations[i].cpu().numpy())
+                        # print("optimal_a",optimal_a)
+                        for a in range(self.action_space.n):
+                            if optimal_a == a:
+                                gpu_action_advantages[a][i] = th.tensor(1)
+                            else:
+                                gpu_action_advantages[a][i] = th.tensor(-1)
+                else:
+                    for a in range(self.action_space.n):
+                        # print("action_advantages shape",action_advantages[i].shape)
+                        #print("Before A", action_advantages[i])
+                        # action_advantages[a] -= batch_values
+                        gpu_action_advantages[a] -= gpu_batch_values
+                        if self.aece == 'AE' or self.aece == 'WAE':
+                            gpu_positive_adv_prob = th.where(gpu_action_advantages[a]>0,gpu_action_probs[a] +gpu_positive_adv_prob,gpu_positive_adv_prob)
+                            gpu_negative_adv_prob = th.where(gpu_action_advantages[a]<0,gpu_action_probs[a] +gpu_negative_adv_prob,gpu_negative_adv_prob)
+                        
+                        # action_advantages.append(gpu_action_advantages[a].cpu().clone().detach().numpy())
+                        # print("gpu_action_advantages[a]",gpu_action_advantages[a])
+                        
+                        #print("After A", action_advantages[i])
+                        # for j in range(self.batch_size):
+                        #     # minMu[j] = min(action_probs[a][j].clone().detach().numpy(),minMu[j])
+                        #     # minMu[j] = min(action_probs[a][j],minMu[j])
+                        #     if action_advantages[a][j] > 0:
+                        #         positive_adv_prob[j] += action_probs[a][j] 
+                        #     elif action_advantages[a][j] < 0:
+                        #         negative_adv_prob[j] += action_probs[a][j] 
+                            # if a == actions[j]:
+                            #     #val_log_prob[j] = action_log_probs[i][j]
+                            #     #val_q_values[j] = action_advantages[i][j] + batch_values[j]
+                            #     val_q_values[j] = action_q_values[j][a] 
+                            #     advantages[j] = action_advantages[a][j]
+                        #print("val_log_prob: ", val_log_prob)
+                # print("gpu_action_advantages",gpu_action_advantages)
                 if self.aece == 'AE' or self.aece == 'WAE':
                     positive_adv_prob = gpu_positive_adv_prob.cpu().clone().detach().numpy()
                     negative_adv_prob = gpu_negative_adv_prob.cpu().clone().detach().numpy()

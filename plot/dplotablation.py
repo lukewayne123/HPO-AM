@@ -14,7 +14,10 @@ import matplotlib.ticker as ticker
 # root_folder ='sptfullsa040advFlipSAindependentAndMoreEpoch'
 # root_folder ='sptfullsa045advFlipSAindependentAndMoreEpoch'
 # root_folder = 'lunarlander4Mfr20'
-root_folder = 'acrobotfr10sub789'
+# root_folder = 'acrobotfr10sub789'
+# root_folder_list = ['lunarlander4Mfr10','lunarlander4Mfr20','lunarlander4Mfr30']
+# root_folder_list = ['acrobotfr10sub789','acrobot200epoch','acrobot30']
+root_folder_list = ['acrobotfr10sub789','acrobotfr20re','acrobot30']
 # gamename = 'cartpole'
 # gamename = 'mountaincar'
 # gamename = 'Cartpole'
@@ -129,33 +132,35 @@ ax = fig.add_subplot(111)
 
 data_sets = []
 # for x in range(DataLength[idx]):
-for idx in range( len(folder_list) ):
-    Folder =  folder_list[idx]
-    samples = []
-    autopath = './{0}/{1}/'.format(root_folder ,Folder)
-    dirs = os.listdir( autopath )
-    for x in dirs:
-        samples.append(load_csv("{0}/{1}/{2}".format(root_folder ,Folder, x ), x_scale=1))
-    # for x in range( len(seed_list) ):
-        # samples.append(load_csv("{0}/{1}/{2}.csv".format(root_folder ,Folder, seed_list[x] ), x_scale=1))
-    print( len(samples) )
-    print( len(samples[0]) )
-    print( len(samples[0][0]) )
-    # Sample = refine_data(samples)
-    # data_sets.append(Sample)
-    if merge_flag:
-        samples = refine_data(samples)
-    data_sets.append(samples)
-    # data_sets = [Sample]
-    print(  len(data_sets) )
-    print(  len(data_sets[0]) )
-    print(  len(data_sets[0][0]) )
+for root_folder in root_folder_list:
+    for idx in range( len(folder_list) ):
+        Folder =  folder_list[idx]
+        samples = []
+        autopath = './{0}/{1}/'.format(root_folder ,Folder)
+        dirs = os.listdir( autopath )
+        for x in dirs:
+            samples.append(load_csv("{0}/{1}/{2}".format(root_folder ,Folder, x ), x_scale=1))
+        # for x in range( len(seed_list) ):
+            # samples.append(load_csv("{0}/{1}/{2}.csv".format(root_folder ,Folder, seed_list[x] ), x_scale=1))
+        print( len(samples) )
+        print( len(samples[0]) )
+        print( len(samples[0][0]) )
+        # Sample = refine_data(samples)
+        # data_sets.append(Sample)
+        if merge_flag:
+            samples = refine_data(samples)
+        data_sets.append(samples)
+        # data_sets = [Sample]
+        print(  len(data_sets) )
+        print(  len(data_sets[0]) )
+        print(  len(data_sets[0][0]) )
 
 # idx = 0
 # print([len(a) for a in data_sets ])
 # print("data_sets",data_sets)
 # for idx in range( len(folder_list) )
-legend_list = [ 'vanilla CE HPO','CE HPO with SPT ignore pi(s,a)>0.9 state action pair' ]
+# legend_list = [ 'vanilla CE HPO','CE HPO with SPT ignore pi(s,a)>0.9 state action pair' ]
+legend_list = ['vanilla with 0.1 uniform flipping of advantage signs','SPT with 0.1 uniform flipping of advantage signs','vanilla with 0.2 uniform flipping of advantage signs','SPT with 0.2 uniform flipping of advantage signs','vanilla with 0.3 uniform flipping of advantage signs','SPT with 0.3 uniform flipping of advantage signs']
 for i in range(len(data_sets)):
     if merge_flag:
         ax.fill_between(data_sets[i][0], data_sets[i][2], data_sets[i][3], alpha=0.25, linewidth=0, color=colors[i ])
@@ -174,7 +179,8 @@ for i in range(len(data_sets)):
 # ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.6 state action pair'], fontsize=12,loc = 'lower right')
 # ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.8 state action pair'], fontsize=12,loc = 'lower right')
 if merge_flag:
-    ax.legend([ 'vanilla CE HPO','CE HPO with SPT ignore pi(s,a)>0.9 state action pair' ], fontsize=12,loc = 'lower right')
+    # ax.legend([ 'vanilla CE HPO','CE HPO with SPT ignore pi(s,a)>0.9 state action pair' ], fontsize=12,loc = 'lower right')
+    ax.legend( legend_list , fontsize=12,loc = 'lower right')
 else:
     ax.legend(  fontsize=12,loc = 'lower right')
 # ax.legend([ 'vanilla WCE HPO','WCE HPO with SPT ignore pi(s,a)>0.8 state action pair','WCE HPO with SLT 10% deltaY=0.5'], fontsize=12,loc = 'lower right')
@@ -190,13 +196,13 @@ plt.xlabel('timesteps ', fontsize=25)
 # plt.title('NN policy + uniform flipping of advantage signs', fontsize=25)
 # plt.title(gamename+' full sa with 0.2 uniform flipping of advantage signs  ', fontsize=25)
 # plt.title(gamename+' with 0.2 uniform flipping of advantage signs  ', fontsize=25)
-plt.title(gamename+' with 0.1 uniform flipping of advantage signs  ', fontsize=25)
+plt.title(gamename+' with 10%,20%,30% uniform flipping of advantage signs  ', fontsize=25)
 # plt.title(gamename+' full sa with 0.45 uniform flipping of advantage signs  ', fontsize=25)
 # plt.set_size_inches(1400,890)
 # plt.show()
 # plt.savefig('./full_sa_spt090_200epoch_adv020flip_{gamename}_merge{mergeflag}_median{medianflag}_std{stdFlag}.png'.format(gamename = gamename, mergeflag = merge_flag, medianflag= median_flag, stdFlag= std_flag ), format='png' )
 # plt.savefig('./full_sa_spt090_20epoch_adv010flip_{gamename}_merge{mergeflag}_median{medianflag}_std{stdFlag}.png'.format(gamename = gamename, mergeflag = merge_flag, medianflag= median_flag, stdFlag= std_flag ), format='png' )
-plt.savefig('./full_sa_spt090_{rootfoldername}_{gamename}_merge{mergeflag}_median{medianflag}_std{stdFlag}.png'.format(rootfoldername = root_folder ,gamename = gamename, mergeflag = merge_flag, medianflag= median_flag, stdFlag= std_flag ), format='png' )
+plt.savefig('./full_sa_spt090_ablation2_{rootfoldername}_{gamename}_merge{mergeflag}_median{medianflag}_std{stdFlag}.png'.format(rootfoldername = root_folder ,gamename = gamename, mergeflag = merge_flag, medianflag= median_flag, stdFlag= std_flag ), format='png' )
 # plt.savefig('./full_sa_spt080_slt010_adv040flip_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt060_adv040flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
 # plt.savefig('./full_sa_spt060_adv045flip_moreEpoch_{gamename}.png'.format(gamename = gamename), format='png' )
