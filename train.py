@@ -122,7 +122,7 @@ if __name__ == "__main__":  # noqa: C901
                     }
                 )
     # noisy_reward_threshold = [-100,]
-    noisy_max_episode_steps= [500,500,200,200,1000]
+    noisy_max_episode_steps= [500,500,500,200,1000]
     gameidx = 0
     for game in ["AcrobotEnv", "CartPoleEnv", "MountainCarEnv", "PendulumEnv","LunarLander" ]:
         
