@@ -63,6 +63,18 @@ def main():  # noqa: C901
     algo = args.algo
     folder = args.folder
 
+    '''register custom env'''
+    from gym.envs.registration import registry, register, make, spec
+    noisy_max_episode_steps= [500,500,500,200,1000]
+    gameidx = 0
+    for game in ["AcrobotEnv", "CartPoleEnv", "MountainCarEnv", "PendulumEnv","LunarLander" ]:
+        
+        register(id='noisy-{}-v1'.format(game), 
+                entry_point='noisyGymClassicControl:'+game,
+                max_episode_steps=noisy_max_episode_steps[gameidx]
+                )
+        gameidx +=1
+
     if args.exp_id == 0:
         args.exp_id = get_latest_run_id(os.path.join(folder, algo), env_id)
         print(f"Loading latest experiment, id={args.exp_id}")
@@ -170,8 +182,16 @@ def main():  # noqa: C901
         for _ in range(args.n_timesteps):
             # print("obs",obs)
             actions, values, log_prob = model.policy.forward(th.tensor(obs).to(model.device))
-            print("s,pi[s,a]",obs,actions.item(), th.exp(log_prob).item() )
+            # print("s",obs,"pi[s,a]",obs,actions.item(), th.exp(log_prob).item() )
+            print("s",obs,"pi[s,a]" , th.exp(log_prob).item() )
+            
+
             action, state = model.predict(obs, state=state, deterministic=deterministic)
+            print("action",action)
+            if args.algo == "hpo" and model.independent_value_net == True:
+                next_q_values, _ , _ = model.value_policy.evaluate_actions(th.tensor(obs).to(model.device), th.tensor(action).to(model.device))
+                print("q:",next_q_values )
+
             obs, reward, done, infos = env.step(action)
             if not args.no_render:
                 env.render("human")
