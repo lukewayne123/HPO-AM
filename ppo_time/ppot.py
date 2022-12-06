@@ -94,6 +94,7 @@ class PPOT(OnPolicyAlgorithm):
         verbose: int = 0,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
+        advantage_flipped_rate: float = 0.0,
         _init_setup_model: bool = True,
     ):
 
@@ -153,6 +154,7 @@ class PPOT(OnPolicyAlgorithm):
         self.clip_range = clip_range
         self.clip_range_vf = clip_range_vf
         self.target_kl = target_kl
+        self.advantage_flipped_rate = advantage_flipped_rate
 
         if _init_setup_model:
             self._setup_model()
@@ -223,9 +225,9 @@ class PPOT(OnPolicyAlgorithm):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
 
             new_obs, rewards, dones, infos = env.step(clipped_actions)
-            print("reward noise TEST")
-            rnoise = np.random.normal(loc=0.0, scale= 5, size= len(rewards) )
-            rewards =  rewards  + rnoise
+            # print("reward noise TEST")
+            # rnoise = np.random.normal(loc=0.0, scale= 5, size= len(rewards) )
+            # rewards =  rewards  + rnoise
             self.num_timesteps += env.num_envs
 
             # Give access to local variables
@@ -286,10 +288,13 @@ class PPOT(OnPolicyAlgorithm):
 
         t_epoch_start = time.time()
         # train for n_epochs epochs
-        for epoch in range(self.n_epochs):
+        flipped_adv = ( th.ones(self.batch_size)-2* th.bernoulli( self.advantage_flipped_rate *th.ones(self.batch_size) ) ).to(self.device)  #1 ,-1
+            # for epoch in range(self.n_epochs):
+        for rollout_data in self.rollout_buffer.get(self.batch_size):
             approx_kl_divs = []
             # Do a complete pass on the rollout buffer
-            for rollout_data in self.rollout_buffer.get(self.batch_size):
+                # for rollout_data in self.rollout_buffer.get(self.batch_size):
+            for epoch in range(self.n_epochs):
                 actions = rollout_data.actions
                 if isinstance(self.action_space, spaces.Discrete):
                     # Convert discrete action from float to long
@@ -310,7 +315,7 @@ class PPOT(OnPolicyAlgorithm):
                 # Normalize advantage
                 advantages = rollout_data.advantages
                 advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-				
+                advantages = advantages * flipped_adv
                 t_loss_start = time.time()
                 # ratio between old and new policy, should be one at the first iteration
                 ratio = th.exp(log_prob - rollout_data.old_log_prob)
