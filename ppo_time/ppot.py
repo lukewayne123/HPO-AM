@@ -323,10 +323,11 @@ class PPOT(OnPolicyAlgorithm):
                 ratio = th.exp(log_prob - rollout_data.old_log_prob)
                 spt_reweight = th.where(th.exp(log_prob)<self.spt_clipped_prob ,th.ones_like(log_prob) ,th.zeros_like(log_prob))
                 # clipped surrogate loss
+                advantages = spt_reweight*advantages
                 policy_loss_1 = advantages * ratio
                 policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
                 policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
-                policy_loss = spt_reweight*policy_loss
+                
                 t_loss_end = time.time()
                 loss_time.append(t_loss_end - t_loss_start)
                 # Logging
