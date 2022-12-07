@@ -95,6 +95,7 @@ class PPOT(OnPolicyAlgorithm):
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         advantage_flipped_rate: float = 0.0,
+        rgamma: float = 1.0,
         _init_setup_model: bool = True,
     ):
 
@@ -155,6 +156,7 @@ class PPOT(OnPolicyAlgorithm):
         self.clip_range_vf = clip_range_vf
         self.target_kl = target_kl
         self.advantage_flipped_rate = advantage_flipped_rate
+        self.spt_clipped_prob = rgamma
 
         if _init_setup_model:
             self._setup_model()
@@ -319,11 +321,12 @@ class PPOT(OnPolicyAlgorithm):
                 t_loss_start = time.time()
                 # ratio between old and new policy, should be one at the first iteration
                 ratio = th.exp(log_prob - rollout_data.old_log_prob)
-
+                spt_reweight = th.where(th.exp(log_prob)<self.spt_clipped_prob ,th.ones_like(log_prob) ,th.zeros_like(log_prob))
                 # clipped surrogate loss
                 policy_loss_1 = advantages * ratio
                 policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
                 policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
+                policy_loss = spt_reweight*policy_loss
                 t_loss_end = time.time()
                 loss_time.append(t_loss_end - t_loss_start)
                 # Logging
