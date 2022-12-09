@@ -14,6 +14,54 @@ atari:
   vf_coef: 0.5
   ent_coef: 0.01
 
+noisy-CartPoleEnv-v1:
+  n_envs: 1
+  n_timesteps: !!float 1e5
+  policy: 'MlpPolicy'
+  n_steps: 256
+  batch_size: 256
+  gae_lambda: 0.8
+  gamma: 0.98
+  n_epochs: 20
+  ent_coef: 0.0
+  learning_rate: lin_0.001
+  clip_range: lin_0.2
+
+noisy-MountainCarEnv-v1:
+  normalize: true
+  n_envs: 16
+  n_timesteps: !!float 1e6
+  policy: 'MlpPolicy'
+  n_steps: 16
+  gae_lambda: 0.98
+  gamma: 0.99
+  n_epochs: 4
+  ent_coef: 0.0
+
+noisy-AcrobotEnv-v1:
+  normalize: true
+  n_envs: 16
+  n_timesteps: !!float 1e6
+  policy: 'MlpPolicy'
+  n_steps: 256
+  gae_lambda: 0.94
+  gamma: 0.99
+  n_epochs: 4
+  ent_coef: 0.0
+  # use_sde: True
+  # sde_sample_freq: 4
+  # ent_coef: 0.01
+noisy-LunarLander-v1:
+  n_envs: 16
+  n_timesteps: !!float 1e6
+  policy: 'MlpPolicy'
+  n_steps: 1024
+  batch_size: 64
+  gae_lambda: 0.98
+  gamma: 0.999
+  n_epochs: 4
+  ent_coef: 0.0
+
 mini-breakout-v4:
 #  tuned but failed but it is the best results i got for now highest ep rew mean 321.2
 #env_wrapper:
