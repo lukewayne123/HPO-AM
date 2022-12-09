@@ -102,9 +102,9 @@ class MountainCarEnv(gym.Env):
             position >= self.goal_position and velocity >= self.goal_velocity
         )
         reward = -1.0
-        # rnoise = random.gauss(0, 0.5*abs(reward))
-        # rnoise = np.random.normal(loc=0.0, scale= 0.5*abs(reward), size= 1 )
-        # reward =  reward  + rnoise
+        rnoise = random.gauss(0, 0.5*abs(reward))
+        rnoise = np.random.normal(loc=0.0, scale= 0.5*abs(reward), size= 1 )
+        reward =  reward  + rnoise
         self.state = (position, velocity)
         return np.array(self.state), reward, done, {}
 
